@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/views/certificates_page.dart';
+import 'package:school_app/views/contact_support_page.dart';
 import 'package:school_app/views/fee_management_page.dart';
 import 'package:school_app/views/gallery_page.dart';
+import 'package:school_app/views/help_and_support_page.dart';
 import 'package:school_app/views/leave_management_page.dart';
 import 'package:school_app/views/notifications_page.dart';
+import 'package:school_app/views/privacy_policy_page.dart';
 import 'package:school_app/views/profile_management_page.dart';
+import 'package:school_app/views/settings_page.dart';
 import 'package:school_app/views/timetable_page.dart';
 import 'package:school_app/views/transport_page.dart';
 
@@ -48,17 +52,19 @@ class MoreOptionsPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 0),
-                      blurRadius: 2,
-                    ),
-                  ],
                 ),
                 padding: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: Icon(Icons.person),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8), // space around the icon
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(
+                        0.1,
+                      ), // light background shade
+                      shape: BoxShape.circle, // makes it round
+                    ),
+                    child: const Icon(Icons.person, color: Colors.lightBlue),
+                  ),
                   title: Text(
                     "Profile Management",
                     style: TextStyle(fontWeight: FontWeight.bold),
@@ -88,28 +94,34 @@ class MoreOptionsPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 0),
-                      blurRadius: 2,
-                    ),
-                  ],
                 ),
                 padding: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: Icon(Icons.article),
-                  title: Text("Leave Management",
-                      style: TextStyle(fontWeight: FontWeight.bold),),
-                  subtitle: Text("Submit and track leave applications",
-                    style: TextStyle(fontWeight: FontWeight.w500),),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8), // space around the icon
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(
+                        0.1,
+                      ), // light background shade
+                      shape: BoxShape.circle, // makes it round
+                    ),
+                    child: const Icon(Icons.article, color: Colors.purple),
+                  ),
+                  title: Text(
+                    "Leave Management",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    "Submit and track leave applications",
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
                   trailing: Icon(Icons.arrow_right),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                        const LeaveManagementPage(), // your target page
+                            const LeaveManagementPage(), // your target page
                       ),
                     );
                   },
@@ -124,18 +136,23 @@ class MoreOptionsPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 0),
-                      blurRadius: 2,
-                    ),
-                  ],
                 ),
                 padding: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: Icon(Icons.location_on),
-                  title: Text("Transport & GPS"),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8), // space around the icon
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(
+                        0.1,
+                      ), // light background shade
+                      shape: BoxShape.circle, // makes it round
+                    ),
+                    child: const Icon(Icons.location_on, color: Colors.green),
+                  ),
+                  title: Text(
+                    "Transport & GPS",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Text("Live bus tracking and transport info"),
                   trailing: Icon(Icons.arrow_right),
                   onTap: () {
@@ -143,7 +160,7 @@ class MoreOptionsPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                        const TransportPage(), // your target page
+                            const TransportPage(), // your target page
                       ),
                     );
                   },
@@ -158,18 +175,26 @@ class MoreOptionsPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 0),
-                      blurRadius: 2,
-                    ),
-                  ],
                 ),
                 padding: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: Icon(Icons.workspace_premium),
-                  title: Text("Certificates"),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8), // space around the icon
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(
+                        0.1,
+                      ), // light background shade
+                      shape: BoxShape.circle, // makes it round
+                    ),
+                    child: const Icon(
+                      Icons.workspace_premium,
+                      color: Colors.orange,
+                    ),
+                  ),
+                  title: Text(
+                    "Certificates",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Text(
                     "Download achievement, character and transfer certificates",
                   ),
@@ -179,7 +204,7 @@ class MoreOptionsPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                        const CertificatesPage(), // your target page
+                            const CertificatesPage(), // your target page
                       ),
                     );
                   },
@@ -194,18 +219,23 @@ class MoreOptionsPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 0),
-                      blurRadius: 2,
-                    ),
-                  ],
                 ),
                 padding: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: Icon(Icons.money),
-                  title: Text("Fees Management"),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8), // space around the icon
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(
+                        0.1,
+                      ), // light background shade
+                      shape: BoxShape.circle, // makes it round
+                    ),
+                    child: const Icon(Icons.money, color: Colors.purple),
+                  ),
+                  title: Text(
+                    "Fees Management",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Text("View and pay school/transport fees"),
                   trailing: Icon(Icons.arrow_right),
                   onTap: () {
@@ -213,7 +243,7 @@ class MoreOptionsPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                        const FeeManagementPage(), // your target page
+                            const FeeManagementPage(), // your target page
                       ),
                     );
                   },
@@ -228,18 +258,23 @@ class MoreOptionsPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 0),
-                      blurRadius: 2,
-                    ),
-                  ],
                 ),
                 padding: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: Icon(Icons.calendar_month),
-                  title: Text("Timetable"),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8), // space around the icon
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(
+                        0.1,
+                      ), // light background shade
+                      shape: BoxShape.circle, // makes it round
+                    ),
+                    child: const Icon(Icons.calendar_month, color: Colors.blue),
+                  ),
+                  title: Text(
+                    "Timetable",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Text("Weekly class schedule"),
                   trailing: Icon(Icons.arrow_right),
                   onTap: () {
@@ -247,7 +282,7 @@ class MoreOptionsPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                        const TimetablePage(), // your target page
+                            const TimetablePage(), // your target page
                       ),
                     );
                   },
@@ -262,18 +297,23 @@ class MoreOptionsPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 0),
-                      blurRadius: 2,
-                    ),
-                  ],
                 ),
                 padding: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: Icon(Icons.photo),
-                  title: Text("Gallery"),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8), // space around the icon
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(
+                        0.1,
+                      ), // light background shade
+                      shape: BoxShape.circle, // makes it round
+                    ),
+                    child: const Icon(Icons.camera, color: Colors.red),
+                  ),
+                  title: Text(
+                    "Gallery",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Text("School events and activities photos"),
                   trailing: Icon(Icons.arrow_right),
                   onTap: () {
@@ -281,7 +321,7 @@ class MoreOptionsPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                        const GalleryPage(), // your target page
+                            const GalleryPage(), // your target page
                       ),
                     );
                   },
@@ -296,18 +336,26 @@ class MoreOptionsPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 0),
-                      blurRadius: 2,
-                    ),
-                  ],
                 ),
                 padding: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: Icon(Icons.notifications),
-                  title: Text("Notifications"),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8), // space around the icon
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(
+                        0.1,
+                      ), // light background shade
+                      shape: BoxShape.circle, // makes it round
+                    ),
+                    child: const Icon(
+                      Icons.notifications,
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                  title: Text(
+                    "Notifications",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Text("All announcements and updates"),
                   trailing: Icon(Icons.arrow_right),
                   onTap: () {
@@ -315,7 +363,7 @@ class MoreOptionsPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                        const NotificationsPage(), // your target page
+                            const NotificationsPage(), // your target page
                       ),
                     );
                   },
@@ -328,22 +376,35 @@ class MoreOptionsPage extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.redAccent,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 2),
-                      blurRadius: 5,
-                    ),
-                  ],
                 ),
                 padding: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: Icon(Icons.settings),
-                  title: Text("Settings"),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8), // space around the icon
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(
+                        0.1,
+                      ), // light background shade
+                      shape: BoxShape.circle, // makes it round
+                    ),
+                    child: const Icon(Icons.settings, color: Colors.brown),
+                  ),
+                  title: Text(
+                    "Settings",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Text("App preferences and account settings"),
                   trailing: Icon(Icons.arrow_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsPage(),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -353,22 +414,35 @@ class MoreOptionsPage extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.redAccent,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 2),
-                      blurRadius: 5,
-                    ),
-                  ],
                 ),
                 padding: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: Icon(Icons.call),
-                  title: Text("Contact School"),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8), // space around the icon
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(
+                        0.1,
+                      ), // light background shade
+                      shape: BoxShape.circle, // makes it round
+                    ),
+                    child: const Icon(Icons.call, color: Colors.green),
+                  ),
+                  title: Text(
+                    "Contact School",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Text("Get in touch with school administration"),
                   trailing: Icon(Icons.arrow_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ContactSupportPage(),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -378,22 +452,35 @@ class MoreOptionsPage extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.redAccent,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 2),
-                      blurRadius: 5,
-                    ),
-                  ],
                 ),
                 padding: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: Icon(Icons.privacy_tip),
-                  title: Text("Privacy Policy"),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8), // space around the icon
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(
+                        0.1,
+                      ), // light background shade
+                      shape: BoxShape.circle, // makes it round
+                    ),
+                    child: const Icon(Icons.privacy_tip, color: Colors.orange),
+                  ),
+                  title: Text(
+                    "Privacy Policy",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Text("Terms and privacy information"),
                   trailing: Icon(Icons.arrow_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PrivacyPolicyPage(),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -403,22 +490,35 @@ class MoreOptionsPage extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.redAccent,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 2),
-                      blurRadius: 5,
-                    ),
-                  ],
                 ),
                 padding: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: Icon(Icons.help),
-                  title: Text("Help & Support"),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8), // space around the icon
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(
+                        0.1,
+                      ), // light background shade
+                      shape: BoxShape.circle, // makes it round
+                    ),
+                    child: const Icon(Icons.help, color: Colors.lightBlue),
+                  ),
+                  title: Text(
+                    "Help & Support",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Text("FAQ and Support contact"),
                   trailing: Icon(Icons.arrow_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HelpAndSupportPage(),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),

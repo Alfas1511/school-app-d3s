@@ -30,10 +30,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Back to More",
-              style: TextStyle(color: Colors.white),
-            ),
+            Text("Back to More", style: TextStyle(color: Colors.white)),
           ],
         ),
       ),
@@ -48,12 +45,36 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
-                      children: [Text("Notifications", style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold, fontSize: 25),),
-                      Text("2 unread notifications", style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold,)),
+                      children: [
+                        Text(
+                          "Notifications",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25,
+                          ),
+                        ),
+                        Text(
+                          "2 unread notifications",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
-                    ElevatedButton(onPressed: (){}, 
-                      child: Text("Mark All Read")),
+                    ElevatedButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Marked as read"),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      },
+                      child: Text("Mark All Read"),
+                    ),
                   ],
                 ),
               ),
@@ -64,14 +85,14 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 width: double.infinity,
                 child: Row(
                   children: [
-                    ElevatedButton(onPressed: (){},
-                        child: Text("All(6)")
+                    ElevatedButton(onPressed: () {}, child: Text("All(6)")),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text("Academic(2)"),
                     ),
-                    ElevatedButton(onPressed: (){},
-                        child: Text("Academic(2)")
-                    ),
-                    ElevatedButton(onPressed: (){},
-                        child: Text("Transport(1)")
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text("Transport(1)"),
                     ),
                   ],
                 ),
@@ -84,18 +105,23 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.white,
-                  boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(-5, 0))],
+                  boxShadow: [
+                    BoxShadow(color: Colors.grey, offset: Offset(-5, 0)),
+                  ],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start, // 👈 align to top
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start, // 👈 align to top
                     children: [
                       const Icon(Icons.book, color: Colors.blue),
                       const SizedBox(width: 10), // spacing
-                      Expanded( // 👈 makes Column take remaining space & allow wrapping
+                      Expanded(
+                        // 👈 makes Column take remaining space & allow wrapping
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start, // left align text
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start, // left align text
                           children: [
                             const Text(
                               "Math Assignment Due Tomorrow",
@@ -110,12 +136,22 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: const [
-                                Text("2 hours ago",
-                                    style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                Text("View Details",
-                                    style: TextStyle(color: Colors.blue, fontSize: 12)),
+                                Text(
+                                  "2 hours ago",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                Text(
+                                  "View Details",
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -131,18 +167,23 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.white,
-                  boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(-5, 0))],
+                  boxShadow: [
+                    BoxShadow(color: Colors.grey, offset: Offset(-5, 0)),
+                  ],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start, // 👈 align to top
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start, // 👈 align to top
                     children: [
                       const Icon(Icons.book, color: Colors.blue),
                       const SizedBox(width: 10), // spacing
-                      Expanded( // 👈 makes Column take remaining space & allow wrapping
+                      Expanded(
+                        // 👈 makes Column take remaining space & allow wrapping
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start, // left align text
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start, // left align text
                           children: [
                             const Text(
                               "Math Assignment Due Tomorrow",
@@ -157,12 +198,22 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: const [
-                                Text("2 hours ago",
-                                    style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                Text("View Details",
-                                    style: TextStyle(color: Colors.blue, fontSize: 12)),
+                                Text(
+                                  "2 hours ago",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                Text(
+                                  "View Details",
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -178,18 +229,23 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.white,
-                  boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(-5, 0))],
+                  boxShadow: [
+                    BoxShadow(color: Colors.grey, offset: Offset(-5, 0)),
+                  ],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start, // 👈 align to top
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start, // 👈 align to top
                     children: [
                       const Icon(Icons.book, color: Colors.blue),
                       const SizedBox(width: 10), // spacing
-                      Expanded( // 👈 makes Column take remaining space & allow wrapping
+                      Expanded(
+                        // 👈 makes Column take remaining space & allow wrapping
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start, // left align text
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start, // left align text
                           children: [
                             const Text(
                               "Math Assignment Due Tomorrow",
@@ -204,12 +260,22 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: const [
-                                Text("2 hours ago",
-                                    style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                Text("View Details",
-                                    style: TextStyle(color: Colors.blue, fontSize: 12)),
+                                Text(
+                                  "2 hours ago",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                Text(
+                                  "View Details",
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -225,18 +291,23 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.white,
-                  boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(-5, 0))],
+                  boxShadow: [
+                    BoxShadow(color: Colors.grey, offset: Offset(-5, 0)),
+                  ],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start, // 👈 align to top
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start, // 👈 align to top
                     children: [
                       const Icon(Icons.book, color: Colors.blue),
                       const SizedBox(width: 10), // spacing
-                      Expanded( // 👈 makes Column take remaining space & allow wrapping
+                      Expanded(
+                        // 👈 makes Column take remaining space & allow wrapping
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start, // left align text
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start, // left align text
                           children: [
                             const Text(
                               "Math Assignment Due Tomorrow",
@@ -251,12 +322,22 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: const [
-                                Text("2 hours ago",
-                                    style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                Text("View Details",
-                                    style: TextStyle(color: Colors.blue, fontSize: 12)),
+                                Text(
+                                  "2 hours ago",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                Text(
+                                  "View Details",
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -272,18 +353,23 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.white,
-                  boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(-5, 0))],
+                  boxShadow: [
+                    BoxShadow(color: Colors.grey, offset: Offset(-5, 0)),
+                  ],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start, // 👈 align to top
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start, // 👈 align to top
                     children: [
                       const Icon(Icons.book, color: Colors.blue),
                       const SizedBox(width: 10), // spacing
-                      Expanded( // 👈 makes Column take remaining space & allow wrapping
+                      Expanded(
+                        // 👈 makes Column take remaining space & allow wrapping
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start, // left align text
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start, // left align text
                           children: [
                             const Text(
                               "Math Assignment Due Tomorrow",
@@ -298,12 +384,22 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: const [
-                                Text("2 hours ago",
-                                    style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                Text("View Details",
-                                    style: TextStyle(color: Colors.blue, fontSize: 12)),
+                                Text(
+                                  "2 hours ago",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                Text(
+                                  "View Details",
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -319,18 +415,23 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.white,
-                  boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(-5, 0))],
+                  boxShadow: [
+                    BoxShadow(color: Colors.grey, offset: Offset(-5, 0)),
+                  ],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start, // 👈 align to top
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start, // 👈 align to top
                     children: [
                       const Icon(Icons.book, color: Colors.blue),
                       const SizedBox(width: 10), // spacing
-                      Expanded( // 👈 makes Column take remaining space & allow wrapping
+                      Expanded(
+                        // 👈 makes Column take remaining space & allow wrapping
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start, // left align text
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start, // left align text
                           children: [
                             const Text(
                               "Math Assignment Due Tomorrow",
@@ -345,12 +446,22 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: const [
-                                Text("2 hours ago",
-                                    style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                Text("View Details",
-                                    style: TextStyle(color: Colors.blue, fontSize: 12)),
+                                Text(
+                                  "2 hours ago",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                Text(
+                                  "View Details",
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -359,12 +470,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 ),
               ),
             ),
-
           ],
         ),
-      )
+      ),
     );
   }
 }
-
-

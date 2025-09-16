@@ -172,7 +172,15 @@ class _CertificatesPageState extends State<CertificatesPage> {
                               borderRadius: BorderRadius.circular(8)),
                           backgroundColor: Colors.blue,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Certificate Request Submitted!"),
+                              duration: Duration(seconds: 2),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        },
                         child: const Text("Request Certificate",
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
@@ -276,7 +284,15 @@ class _CertificatesPageState extends State<CertificatesPage> {
               const SizedBox(height: 6),
               if (status == "Available")
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Downloading.."),
+                        duration: Duration(seconds: 2),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6A11CB),
                     padding: const EdgeInsets.symmetric(

@@ -193,10 +193,35 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 6),
 
                           // Sign In button or loader
+                          // _loading
+                          //     ? const Center(child: CircularProgressIndicator())
+                          //     : ElevatedButton(
+                          //   onPressed: _login,
+                          //   style: ElevatedButton.styleFrom(
+                          //     padding: const EdgeInsets.symmetric(vertical: 14),
+                          //     shape: RoundedRectangleBorder(
+                          //       borderRadius: BorderRadius.circular(10),
+                          //     ),
+                          //     backgroundColor: const Color(0xFF6A11CB),
+                          //   ),
+                          //   child: const Text(
+                          //     "Sign In",
+                          //     style: TextStyle(fontSize: 18, color: Colors.white),
+                          //   ),
+                          // ),
+                          // Sign In button or loader
                           _loading
                               ? const Center(child: CircularProgressIndicator())
                               : ElevatedButton(
-                            onPressed: _login,
+                            onPressed: () {
+                              // 🔹 Skipping authentication for now
+                              // await _login();   <-- Disabled
+
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const HomePage()),
+                              );
+                            },
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
@@ -209,6 +234,7 @@ class _LoginPageState extends State<LoginPage> {
                               style: TextStyle(fontSize: 18, color: Colors.white),
                             ),
                           ),
+
                         ],
                       ),
                     ),

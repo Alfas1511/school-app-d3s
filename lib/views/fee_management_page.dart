@@ -305,7 +305,15 @@ class _FeeManagementPageState extends State<FeeManagementPage> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Submitted successfully!"),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF6A11CB),
                         padding: const EdgeInsets.symmetric(vertical: 12),

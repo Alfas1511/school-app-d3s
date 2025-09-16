@@ -9,7 +9,9 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()..checkLoginStatus()),
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider()..checkLoginStatus(),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -25,7 +27,8 @@ class MyApp extends StatelessWidget {
       builder: (context, authProvider, _) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          home: HomePage(),
+          // home: HomePage(),
+          home: LoginPage(),
           // home: authProvider.isLoggedIn ? const HomePage() : const LoginPage(),
         );
       },

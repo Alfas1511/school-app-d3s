@@ -1,8 +1,15 @@
 import "package:flutter/material.dart";
 import "package:school_app/views/home_page.dart";
 
-class TransportPage extends StatelessWidget {
+class TransportPage extends StatefulWidget {
   const TransportPage({super.key});
+
+  @override
+  State<TransportPage> createState() => _TransportPageState();
+}
+
+class _TransportPageState extends State<TransportPage> {
+  bool _gpsTrackingToggle = false; // initial state
 
   @override
   Widget build(BuildContext context) {
@@ -76,9 +83,29 @@ class TransportPage extends StatelessWidget {
                             ),
                             const SizedBox(width: 6),
                             Switch(
-                              value: true,
-                              activeColor: Colors.green,
-                              onChanged: (val) {},
+                              value: _gpsTrackingToggle,
+                              activeColor: _gpsTrackingToggle
+                                  ? Colors.green
+                                  : Colors.red,
+                              // onChanged: (val) {},
+                              onChanged: (value) {
+                                setState(() {
+                                  _gpsTrackingToggle = value;
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      _gpsTrackingToggle
+                                          ? "Tracking Enabled"
+                                          : "Tracking Disabled",
+                                    ),
+                                    duration: const Duration(seconds: 2),
+                                    backgroundColor: _gpsTrackingToggle
+                                        ? Colors.green
+                                        : Colors.red,
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),

@@ -259,7 +259,15 @@ class _LeaveManagementState extends State<LeaveManagementPage> {
                             borderRadius: BorderRadius.circular(8)),
                         backgroundColor: const Color(0xFF6A11CB),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Leave submitted successfully!"),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      },
                       child: const Text("Submit Leave",
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
