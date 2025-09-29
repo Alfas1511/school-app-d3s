@@ -2,7 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_app/components/button_component.dart';
-import 'package:school_app/resources/app_colours.dart';
+import 'package:school_app/components/text_field_component.dart';
+import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/resources/app_spacing.dart';
 import 'package:school_app/resources/app_strings.dart';
 import 'package:school_app/resources/app_styles.dart';
@@ -29,6 +30,38 @@ class _LoginPageState extends State<LoginPage> {
     passwordController.dispose();
     super.dispose();
   }
+
+  // Future<void> _login() async {
+  //   final phone = phoneController.text.trim();
+  //   final password = passwordController.text.trim();
+
+  //   if (phone.isEmpty || password.isEmpty) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Phone and password are required')),
+  //     );
+  //     return;
+  //   }
+
+  //   setState(() => _loading = true);
+
+  //   try {
+  //     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+  //     await authProvider.login(phone, password);
+
+  //     if (authProvider.isLoggedIn) {
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => const HomePage()),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(
+  //       context,
+  //     ).showSnackBar(SnackBar(content: Text(e.toString())));
+  //   } finally {
+  //     if (mounted) setState(() => _loading = false);
+  //   }
+  // }
 
   Future<void> _login() async {
     final phone = phoneController.text.trim();
@@ -107,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
               // Title & subtitle
               Column(
                 children: [
-                  Image.asset("assets/images/logo.png", height: 120),
+                  Image.asset("assets/images/logo.png", height: 100),
                   Text(
                     AppStrings.loginScreenTitle,
                     style: AppStyles.title(size: 40.0),
@@ -123,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
 
-              AppSpacing.vertical(),
+              // AppSpacing.vertical(),
 
               // Login box
               Container(
@@ -142,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: loginForm(), // login Form
               ),
 
-              AppSpacing.vertical(height: 40),
+              // AppSpacing.vertical(height: 40),
 
               // Footer (help / terms)
               footer(),
@@ -158,33 +191,41 @@ class _LoginPageState extends State<LoginPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 8),
+        AppSpacing.vertical(height: 8),
+
         const Text(
           AppStrings.phoneNumber,
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 10),
-        TextField(
+
+        AppSpacing.vertical(height: 8),
+
+        TextFieldComponent(
           controller: phoneController,
+          hint: "Enter your phone number",
+          prefixIcon: Icons.phone,
           keyboardType: TextInputType.phone,
-          decoration: _inputDecoration(
-            hint: "Enter your phone number",
-            prefix: const Icon(Icons.phone),
-          ),
+          label: "Phone",
+          onChanged: (value) {
+            //
+          },
         ),
+
         AppSpacing.vertical(height: 8),
 
         const Text(
           AppStrings.password,
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 10),
+
+        AppSpacing.vertical(height: 8),
+
         TextField(
           controller: passwordController,
           obscureText: _obscurePassword,
           decoration: _inputDecoration(
             hint: "Enter your password",
-            prefix: const Icon(Icons.lock),
+            prefix: AppIcons.lock,
             suffix: IconButton(
               icon: Icon(
                 _obscurePassword ? Icons.visibility_off : Icons.visibility,
@@ -195,6 +236,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
+
         AppSpacing.vertical(height: 8),
 
         Align(
@@ -215,12 +257,7 @@ class _LoginPageState extends State<LoginPage> {
         _loading
             ? const Center(child: CircularProgressIndicator())
             : ButtonComponent(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HomePage()),
-                  );
-                },
+                onPressed: _login,
                 label: AppStrings.signIn,
                 // backgroundColor: AppColours.primaryColor1,
                 gradient: const LinearGradient(
