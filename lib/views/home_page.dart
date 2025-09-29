@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:school_app/views/attendance_page.dart';
 import 'package:school_app/views/more_options_page.dart';
 import '../providers/auth_provider.dart';
-import '../views/login_page.dart';
+import 'auth/login_page.dart';
 import '../views/academics_page.dart';
 import '../views/transport_page.dart';
 
