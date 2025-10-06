@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/resources/app_icons.dart';
+import 'package:school_app/resources/app_strings.dart';
 import 'package:school_app/views/certificates_page.dart';
 import 'package:school_app/views/contact_support_page.dart';
 import 'package:school_app/views/fee_management_page.dart';
@@ -371,42 +373,90 @@ class MoreOptionsPage extends StatelessWidget {
               ),
             ),
 
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8), // space around the icon
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(
-                        0.1,
-                      ), // light background shade
-                      shape: BoxShape.circle, // makes it round
-                    ),
-                    child: const Icon(Icons.settings, color: Colors.brown),
+            // Notifications tile
+            _listingTiles(
+              title: AppStrings.notifications,
+              subtitle: AppStrings.settingsSubtitle,
+              leadingIcon: AppIcons.settings, // ← must be IconData
+              leadingIconColor: Colors.brown,
+              trailingIcon: AppIcons.rightArrow, // ← must be IconData
+              padding: const EdgeInsets.all(12),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                );
+              },
+            ),
+
+            // Settings tile
+            _listingTiles(
+              title: AppStrings.settings,
+              subtitle: AppStrings.settingsSubtitle,
+              leadingIcon: AppIcons.settings, // ← must be IconData
+              leadingIconColor: Colors.brown,
+              trailingIcon: AppIcons.rightArrow, // ← must be IconData
+              padding: const EdgeInsets.all(12),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                );
+              },
+            ),
+
+            // Contact School tile
+            _listingTiles(
+              title: AppStrings.contatSchool,
+              subtitle: AppStrings.contatSchoolSubtitle,
+              leadingIcon: AppIcons.call, // ← must be IconData
+              leadingIconColor: Colors.green,
+              trailingIcon: AppIcons.rightArrow, // ← must be IconData
+              padding: const EdgeInsets.all(12),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ContactSupportPage(),
                   ),
-                  title: Text(
-                    "Settings",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                );
+              },
+            ),
+
+            // Privacy Policy tile
+            _listingTiles(
+              title: AppStrings.privacyPolicy,
+              subtitle: AppStrings.privacyPolicySubtitle,
+              leadingIcon: AppIcons.privacy, // ← must be IconData
+              leadingIconColor: Colors.orange,
+              trailingIcon: AppIcons.rightArrow, // ← must be IconData
+              padding: const EdgeInsets.all(12),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PrivacyPolicyPage(),
                   ),
-                  subtitle: Text("App preferences and account settings"),
-                  trailing: Icon(Icons.arrow_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SettingsPage(),
-                      ),
-                    );
-                  },
-                ),
-              ),
+                );
+              },
+            ),
+
+            // Help and Support tile
+            _listingTiles(
+              title: AppStrings.helpAndSupport,
+              subtitle: AppStrings.helpAndSupportSubTitle,
+              leadingIcon: AppIcons.help, // ← must be IconData
+              leadingIconColor: Colors.blue,
+              trailingIcon: AppIcons.rightArrow, // ← must be IconData
+              padding: const EdgeInsets.all(12),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HelpAndSupportPage(),
+                  ),
+                );
+              },
             ),
 
             Padding(
@@ -427,89 +477,16 @@ class MoreOptionsPage extends StatelessWidget {
                       ), // light background shade
                       shape: BoxShape.circle, // makes it round
                     ),
-                    child: const Icon(Icons.call, color: Colors.green),
-                  ),
-                  title: Text(
-                    "Contact School",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text("Get in touch with school administration"),
-                  trailing: Icon(Icons.arrow_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ContactSupportPage(),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8), // space around the icon
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(
-                        0.1,
-                      ), // light background shade
-                      shape: BoxShape.circle, // makes it round
+                    child: const Icon(
+                      Icons.exit_to_app_rounded,
+                      color: Colors.red,
                     ),
-                    child: const Icon(Icons.privacy_tip, color: Colors.orange),
                   ),
                   title: Text(
-                    "Privacy Policy",
+                    "Sign Out",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  subtitle: Text("Terms and privacy information"),
-                  trailing: Icon(Icons.arrow_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const PrivacyPolicyPage(),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8), // space around the icon
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(
-                        0.1,
-                      ), // light background shade
-                      shape: BoxShape.circle, // makes it round
-                    ),
-                    child: const Icon(Icons.help, color: Colors.lightBlue),
-                  ),
-                  title: Text(
-                    "Help & Support",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text("FAQ and Support contact"),
+                  subtitle: Text("Sign out of the app"),
                   trailing: Icon(Icons.arrow_right),
                   onTap: () {
                     Navigator.push(
@@ -523,6 +500,44 @@ class MoreOptionsPage extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _listingTiles({
+    required String title,
+    required String subtitle,
+    required Color leadingIconColor,
+    required IconData leadingIcon,
+    required IconData trailingIcon,
+    required EdgeInsets padding,
+    required VoidCallback onTap,
+  }) {
+    return Padding(
+      padding: padding,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(8),
+        child: ListTile(
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(leadingIcon, color: leadingIconColor),
+          ),
+          title: Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(subtitle),
+          trailing: Icon(trailingIcon),
+          onTap: onTap,
         ),
       ),
     );

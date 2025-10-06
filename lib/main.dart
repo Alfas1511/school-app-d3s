@@ -1,6 +1,7 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_app/views/auth/splash_screen.dart';
 import 'providers/auth_provider.dart';
 import 'views/auth/login_page.dart';
 import 'views/home_page.dart';
@@ -28,7 +29,8 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           // home: HomePage(),
-          home: LoginPage(),
+          // home: LoginPage(),
+          home: const SplashScreen(),
           // home: authProvider.isLoggedIn ? const HomePage() : const LoginPage(),
         );
       },

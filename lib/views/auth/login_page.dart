@@ -31,43 +31,11 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  // Future<void> _login() async {
-  //   final phone = phoneController.text.trim();
-  //   final password = passwordController.text.trim();
-
-  //   if (phone.isEmpty || password.isEmpty) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Phone and password are required')),
-  //     );
-  //     return;
-  //   }
-
-  //   setState(() => _loading = true);
-
-  //   try {
-  //     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-  //     await authProvider.login(phone, password);
-
-  //     if (authProvider.isLoggedIn) {
-  //       Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(builder: (_) => const HomePage()),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(
-  //       context,
-  //     ).showSnackBar(SnackBar(content: Text(e.toString())));
-  //   } finally {
-  //     if (mounted) setState(() => _loading = false);
-  //   }
-  // }
-
   Future<void> _login() async {
-    final phone = phoneController.text.trim();
-    final password = passwordController.text.trim();
+    final parent_phone = phoneController.text.trim();
+    final parent_password = passwordController.text.trim();
 
-    if (phone.isEmpty || password.isEmpty) {
+    if (parent_phone.isEmpty || parent_password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Phone and password are required')),
       );
@@ -78,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.login(phone, password);
+      await authProvider.login(parent_phone, parent_password);
 
       if (authProvider.isLoggedIn) {
         Navigator.pushReplacement(
@@ -225,7 +193,7 @@ class _LoginPageState extends State<LoginPage> {
           obscureText: _obscurePassword,
           decoration: _inputDecoration(
             hint: "Enter your password",
-            prefix: AppIcons.lock,
+            prefix: Icon(AppIcons.lock),
             suffix: IconButton(
               icon: Icon(
                 _obscurePassword ? Icons.visibility_off : Icons.visibility,
