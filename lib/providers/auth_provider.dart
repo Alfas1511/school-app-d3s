@@ -1,73 +1,12 @@
 // // lib/providers/auth_provider.dart
-// import 'dart:convert';
-// import 'package:flutter/material.dart';
-// import '../core/services/api_service.dart';
-// import '../core/constants/api_constants.dart';
-// import '../core/utils/storage_helper.dart';
-// import '../models/user_model.dart';
-
-// class AuthProvider extends ChangeNotifier {
-//   final ApiService _apiService = ApiService();
-
-//   bool _isLoggedIn = false;
-//   String? _token;
-//   UserModel? _user;
-
-//   bool get isLoggedIn => _isLoggedIn;
-//   UserModel? get user => _user;
-
-//   Future<void> login(String phone, String password) async {
-//     try {
-//       final response = await _apiService.postRequest(
-//         ApiConstants.login,
-//         {"phone": phone, "password": password},
-//       );
-
-//       final token = response['data']['token'];
-//       final userData = response['data']['user'];
-
-//       _token = token;
-//       _user = UserModel.fromJson(userData);
-
-//       await StorageHelper.saveToken(token);
-//       await StorageHelper.saveUser(jsonEncode(userData));
-
-//       _isLoggedIn = true;
-//       notifyListeners();
-//     } catch (e) {
-//       throw Exception("Login failed: ${e.toString()}");
-//     }
-//   }
-
-//   Future<void> logout() async {
-//     await StorageHelper.clearToken();
-//     _token = null;
-//     _user = null;
-//     _isLoggedIn = false;
-//     notifyListeners();
-//   }
-
-//   Future<void> checkLoginStatus() async {
-//     final token = await StorageHelper.getToken();
-//     final userJson = await StorageHelper.getUser();
-
-//     if (token != null && userJson != null) {
-//       _token = token;
-//       _user = UserModel.fromJson(jsonDecode(userJson));
-//       _isLoggedIn = true;
-//     } else {
-//       _isLoggedIn = false;
-//     }
-//     notifyListeners();
-//   }
-// }
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/constants/api_constants.dart';
 import '../models/login_response.dart';
 import '../core/utils/shared_prefs.dart';
+import 'package:school_app/views/auth/login_page.dart';
 
 class AuthProvider with ChangeNotifier {
   bool _isLoggedIn = false;
@@ -119,5 +58,54 @@ class AuthProvider with ChangeNotifier {
     final token = await SharedPrefs.getToken();
     _isLoggedIn = token != null;
     notifyListeners();
+  }
+
+  Future<void> logoutUser(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(
+      'auth_token',
+    ); // 👈 Make sure you store token here when logging in
+
+    if (token == null) {
+      // If no token is found, go straight to login
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+        (route) => false,
+      );
+      return;
+    }
+
+    final response = await http.post(
+      Uri.parse(ApiConstants.logout),
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      if (jsonData['status'] == true) {
+        // ✅ Logout successful
+        await prefs.clear(); // Clear all stored session data
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Logged out successfully')),
+        );
+
+        // 🔁 Navigate to login screen and remove all previous routes
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+          (route) => false,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(jsonData['message'] ?? 'Logout failed')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to log out. Try again.')));
+    }
   }
 }

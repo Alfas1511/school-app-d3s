@@ -7,6 +7,6 @@ class ApiConstants {
 
   // Endpoints
   static const String login = "$baseUrl/parent/login";
-  static const String logout = "$baseUrl/logout";
+  static const String logout = "$baseUrl/parent/logout";
   static const String user = "$baseUrl/user";
 }

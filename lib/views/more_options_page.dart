@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/providers/auth_provider.dart';
 import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/resources/app_strings.dart';
 import 'package:school_app/views/certificates_page.dart';
@@ -32,12 +33,12 @@ class MoreOptionsPage extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 5),
+            SizedBox(height: 5),
             Text(
               "Access all app features and settings",
               style: TextStyle(color: Colors.black, fontSize: 16),
             ),
-            const SizedBox(height: 5),
+            SizedBox(height: 5),
           ],
         ),
       ),
@@ -47,344 +48,144 @@ class MoreOptionsPage extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
 
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8), // space around the icon
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(
-                        0.1,
-                      ), // light background shade
-                      shape: BoxShape.circle, // makes it round
-                    ),
-                    child: const Icon(Icons.person, color: Colors.lightBlue),
+            // Profile Management tile
+            _listingTiles(
+              title: AppStrings.profileManagement,
+              subtitle: AppStrings.profileManagementSubtitle,
+              leadingIcon: AppIcons.profile, // ← must be IconData
+              leadingIconColor: Colors.lightBlue,
+              trailingIcon: AppIcons.rightArrow, // ← must be IconData
+              padding: const EdgeInsets.all(12),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProfileManagementPage(),
                   ),
-                  title: Text(
-                    "Profile Management",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    "View and edit family and student information",
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  trailing: Icon(Icons.arrow_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const ProfileManagementPage(), // your target page
-                      ),
-                    );
-                  },
-                ),
-              ),
+                );
+              },
             ),
 
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8), // space around the icon
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(
-                        0.1,
-                      ), // light background shade
-                      shape: BoxShape.circle, // makes it round
-                    ),
-                    child: const Icon(Icons.article, color: Colors.purple),
+            // Leave Management tile
+            _listingTiles(
+              title: AppStrings.leaveManagement,
+              subtitle: AppStrings.leaveManagementSubtitle,
+              leadingIcon: AppIcons.article, // ← must be IconData
+              leadingIconColor: Colors.purple,
+              trailingIcon: AppIcons.rightArrow, // ← must be IconData
+              padding: const EdgeInsets.all(12),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LeaveManagementPage(),
                   ),
-                  title: Text(
-                    "Leave Management",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    "Submit and track leave applications",
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  trailing: Icon(Icons.arrow_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const LeaveManagementPage(), // your target page
-                      ),
-                    );
-                  },
-                ),
-              ),
+                );
+              },
             ),
 
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8), // space around the icon
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(
-                        0.1,
-                      ), // light background shade
-                      shape: BoxShape.circle, // makes it round
-                    ),
-                    child: const Icon(Icons.location_on, color: Colors.green),
+            // Transport and GPS tile
+            _listingTiles(
+              title: AppStrings.transportAndGps,
+              subtitle: AppStrings.transportAndGpsSubtitle,
+              leadingIcon: AppIcons.location, // ← must be IconData
+              leadingIconColor: Colors.green,
+              trailingIcon: AppIcons.rightArrow, // ← must be IconData
+              padding: const EdgeInsets.all(12),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TransportPage(),
                   ),
-                  title: Text(
-                    "Transport & GPS",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text("Live bus tracking and transport info"),
-                  trailing: Icon(Icons.arrow_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const TransportPage(), // your target page
-                      ),
-                    );
-                  },
-                ),
-              ),
+                );
+              },
             ),
 
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8), // space around the icon
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(
-                        0.1,
-                      ), // light background shade
-                      shape: BoxShape.circle, // makes it round
-                    ),
-                    child: const Icon(
-                      Icons.workspace_premium,
-                      color: Colors.orange,
-                    ),
+            // Certificates tile
+            _listingTiles(
+              title: AppStrings.certficates,
+              subtitle: AppStrings.certficatesSubtitle,
+              leadingIcon: AppIcons.workspacePremium, // ← must be IconData
+              leadingIconColor: Colors.orange,
+              trailingIcon: AppIcons.rightArrow, // ← must be IconData
+              padding: const EdgeInsets.all(12),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CertificatesPage(),
                   ),
-                  title: Text(
-                    "Certificates",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    "Download achievement, character and transfer certificates",
-                  ),
-                  trailing: Icon(Icons.arrow_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const CertificatesPage(), // your target page
-                      ),
-                    );
-                  },
-                ),
-              ),
+                );
+              },
             ),
 
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8), // space around the icon
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(
-                        0.1,
-                      ), // light background shade
-                      shape: BoxShape.circle, // makes it round
-                    ),
-                    child: const Icon(Icons.money, color: Colors.purple),
+            // Fee Management tile
+            _listingTiles(
+              title: AppStrings.feesManagement,
+              subtitle: AppStrings.feesManagementSubtitle,
+              leadingIcon: AppIcons.money, // ← must be IconData
+              leadingIconColor: Colors.purple,
+              trailingIcon: AppIcons.rightArrow, // ← must be IconData
+              padding: const EdgeInsets.all(12),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FeeManagementPage(),
                   ),
-                  title: Text(
-                    "Fees Management",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text("View and pay school/transport fees"),
-                  trailing: Icon(Icons.arrow_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const FeeManagementPage(), // your target page
-                      ),
-                    );
-                  },
-                ),
-              ),
+                );
+              },
             ),
 
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8), // space around the icon
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(
-                        0.1,
-                      ), // light background shade
-                      shape: BoxShape.circle, // makes it round
-                    ),
-                    child: const Icon(Icons.calendar_month, color: Colors.blue),
+            // Timetable tile
+            _listingTiles(
+              title: AppStrings.timetable,
+              subtitle: AppStrings.timetableSubtitle,
+              leadingIcon: AppIcons.calendarMonth, // ← must be IconData
+              leadingIconColor: Colors.blue,
+              trailingIcon: AppIcons.rightArrow, // ← must be IconData
+              padding: const EdgeInsets.all(12),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TimetablePage(),
                   ),
-                  title: Text(
-                    "Timetable",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text("Weekly class schedule"),
-                  trailing: Icon(Icons.arrow_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const TimetablePage(), // your target page
-                      ),
-                    );
-                  },
-                ),
-              ),
+                );
+              },
             ),
 
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8), // space around the icon
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(
-                        0.1,
-                      ), // light background shade
-                      shape: BoxShape.circle, // makes it round
-                    ),
-                    child: const Icon(Icons.camera, color: Colors.red),
-                  ),
-                  title: Text(
-                    "Gallery",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text("School events and activities photos"),
-                  trailing: Icon(Icons.arrow_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const GalleryPage(), // your target page
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8), // space around the icon
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(
-                        0.1,
-                      ), // light background shade
-                      shape: BoxShape.circle, // makes it round
-                    ),
-                    child: const Icon(
-                      Icons.notifications,
-                      color: Colors.redAccent,
-                    ),
-                  ),
-                  title: Text(
-                    "Notifications",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text("All announcements and updates"),
-                  trailing: Icon(Icons.arrow_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const NotificationsPage(), // your target page
-                      ),
-                    );
-                  },
-                ),
-              ),
+            // Gallery tile
+            _listingTiles(
+              title: AppStrings.gallery,
+              subtitle: AppStrings.gallerySubtitle,
+              leadingIcon: AppIcons.camera, // ← must be IconData
+              leadingIconColor: Colors.redAccent,
+              trailingIcon: AppIcons.rightArrow, // ← must be IconData
+              padding: const EdgeInsets.all(12),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const GalleryPage()),
+                );
+              },
             ),
 
             // Notifications tile
             _listingTiles(
               title: AppStrings.notifications,
               subtitle: AppStrings.settingsSubtitle,
-              leadingIcon: AppIcons.settings, // ← must be IconData
-              leadingIconColor: Colors.brown,
+              leadingIcon: AppIcons.notifications, // ← must be IconData
+              leadingIconColor: Colors.redAccent,
               trailingIcon: AppIcons.rightArrow, // ← must be IconData
               padding: const EdgeInsets.all(12),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                  MaterialPageRoute(
+                    builder: (context) => const NotificationsPage(),
+                  ),
                 );
               },
             ),
@@ -459,45 +260,16 @@ class MoreOptionsPage extends StatelessWidget {
               },
             ),
 
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8), // space around the icon
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(
-                        0.1,
-                      ), // light background shade
-                      shape: BoxShape.circle, // makes it round
-                    ),
-                    child: const Icon(
-                      Icons.exit_to_app_rounded,
-                      color: Colors.red,
-                    ),
-                  ),
-                  title: Text(
-                    "Sign Out",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text("Sign out of the app"),
-                  trailing: Icon(Icons.arrow_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HelpAndSupportPage(),
-                      ),
-                    );
-                  },
-                ),
-              ),
+            // Sign Out tile
+            _listingTiles(
+              title: AppStrings.signOut,
+              subtitle: AppStrings.signOutSubtitle,
+              leadingIcon: AppIcons.signOut, // ← must be IconData
+              leadingIconColor: Colors.red,
+              padding: const EdgeInsets.all(12),
+              onTap: () {
+                AuthProvider().logoutUser(context);
+              },
             ),
           ],
         ),
@@ -510,7 +282,7 @@ class MoreOptionsPage extends StatelessWidget {
     required String subtitle,
     required Color leadingIconColor,
     required IconData leadingIcon,
-    required IconData trailingIcon,
+    IconData? trailingIcon,
     required EdgeInsets padding,
     required VoidCallback onTap,
   }) {
@@ -536,7 +308,7 @@ class MoreOptionsPage extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           subtitle: Text(subtitle),
-          trailing: Icon(trailingIcon),
+          trailing: trailingIcon != null ? Icon(trailingIcon) : null,
           onTap: onTap,
         ),
       ),

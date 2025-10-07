@@ -9,4 +9,13 @@ class AppIcons {
   static const IconData privacy = Icons.privacy_tip;
   static const IconData call = Icons.call;
   static const IconData settings = Icons.settings;
+  static const IconData notifications = Icons.notifications;
+  static const IconData camera = Icons.camera;
+  static const IconData calendarMonth = Icons.calendar_month;
+  static const IconData money = Icons.money;
+  static const IconData workspacePremium = Icons.workspace_premium;
+  static const IconData location = Icons.location_on;
+  static const IconData article = Icons.article;
+  static const IconData profile = Icons.person;
+  static const IconData signOut = Icons.exit_to_app;
 }
