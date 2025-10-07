@@ -18,4 +18,8 @@ class AppIcons {
   static const IconData article = Icons.article;
   static const IconData profile = Icons.person;
   static const IconData signOut = Icons.exit_to_app;
+  static const IconData time = Icons.access_time;
+  static const IconData bus = Icons.directions_bus;
+  static const IconData book = Icons.book;
+  static const IconData payment = Icons.payment;
 }

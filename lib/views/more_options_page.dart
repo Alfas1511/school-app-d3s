@@ -124,7 +124,7 @@ class MoreOptionsPage extends StatelessWidget {
             _listingTiles(
               title: AppStrings.feesManagement,
               subtitle: AppStrings.feesManagementSubtitle,
-              leadingIcon: AppIcons.money, // ← must be IconData
+              leadingIcon: AppIcons.payment, // ← must be IconData
               leadingIconColor: Colors.purple,
               trailingIcon: AppIcons.rightArrow, // ← must be IconData
               padding: const EdgeInsets.all(12),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:school_app/views/home_page.dart';
 import 'package:school_app/views/more_options_page.dart';
 
 class ProfileManagementPage extends StatefulWidget {
