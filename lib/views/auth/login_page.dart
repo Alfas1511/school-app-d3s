@@ -32,10 +32,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
-    final parent_phone = phoneController.text.trim();
-    final parent_password = passwordController.text.trim();
+    final parentPhone = phoneController.text.trim();
+    final parentPassword = passwordController.text.trim();
 
-    if (parent_phone.isEmpty || parent_password.isEmpty) {
+    if (parentPhone.isEmpty || parentPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Phone and password are required')),
       );
@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.login(parent_phone, parent_password);
+      await authProvider.login(parentPhone, parentPassword);
 
       if (authProvider.isLoggedIn) {
         Navigator.pushReplacement(

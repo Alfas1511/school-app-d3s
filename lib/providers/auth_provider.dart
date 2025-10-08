@@ -15,15 +15,15 @@ class AuthProvider with ChangeNotifier {
   bool get isLoggedIn => _isLoggedIn;
   User? get user => _user;
 
-  Future<void> login(String parent_phone, String parent_password) async {
+  Future<void> login(String parentPhone, String parentPassword) async {
     final url = Uri.parse(ApiConstants.login);
 
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'parent_phone': parent_phone,
-        'parent_password': parent_password,
+        'parent_phone': parentPhone,
+        'parent_password': parentPassword,
       }),
     );
 

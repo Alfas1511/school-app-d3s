@@ -1,13 +1,17 @@
 // lib/views/home_page.dart
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:school_app/core/constants/api_constants.dart';
+import 'package:school_app/core/services/api_service.dart';
+import 'package:school_app/models/parent_profile_model.dart';
+import 'package:school_app/models/students_list.dart';
 import 'package:school_app/resources/app_icons.dart';
+import 'package:school_app/resources/app_spacing.dart';
 import 'package:school_app/views/attendance_page.dart';
 import 'package:school_app/views/fee_management_page.dart';
 import 'package:school_app/views/more_options_page.dart';
 import 'package:school_app/views/profile_management_page.dart';
 import 'package:school_app/views/timetable_page.dart';
-import '../providers/auth_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../views/academics_page.dart';
 import '../views/transport_page.dart';
 
@@ -20,12 +24,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  bool isLoading = true;
+  ParentProfile? parentProfile;
 
+  List<Student> students = [];
   late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
+    _fetchParentProfile();
+    _fetchStudents();
     _pages = [
       _buildHomeContent(),
       const AcademicPage(),
@@ -35,16 +44,68 @@ class _HomePageState extends State<HomePage> {
     ];
   }
 
+  Future<void> _fetchParentProfile() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+
+      final apiService = ApiService();
+      final response = await apiService.getRequest(
+        ApiConstants.parentProfile,
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        final data = response['data'];
+        setState(() {
+          parentProfile = ParentProfile.fromJson(data);
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message']);
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _fetchStudents() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+
+      final apiService = ApiService();
+      final response = await apiService.getRequest(
+        ApiConstants.studentList,
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        final data = response['data'] as List;
+        setState(() {
+          students = data.map((json) => Student.fromJson(json)).toList();
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message']);
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  // ✅ Main Home Content
+  // Main Home Content
   Widget _buildHomeContent() {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
       body: SingleChildScrollView(
@@ -80,13 +141,13 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           IconButton(
                             onPressed: () {
-                              print("Icon Pressed");
+                              //
                             },
                             icon: Icon(Icons.wb_sunny),
                           ),
                           IconButton(
                             onPressed: () {
-                              print("Icon pressed");
+                              //
                             },
                             icon: Icon(Icons.notifications),
                           ),
@@ -94,22 +155,39 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  const Text(
-                    "Sarah Johnson",
-                    style: TextStyle(
+                  Text(
+                    parentProfile?.parentInfo.fatherName ?? "Parent",
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 15),
-                  Row(
-                    children: [
-                      _buildStudentCard("Emma", "5th Grade - A"),
-                      const SizedBox(width: 12),
-                      _buildStudentCard("Alex", "3rd Grade - B"),
-                    ],
-                  ),
+                  AppSpacing.vertical(height: 8),
+                  isLoading
+                      ? const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      : students.isEmpty
+                      ? const Text(
+                          "No students found",
+                          style: TextStyle(color: Colors.white70, fontSize: 14),
+                        )
+                      : Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: students.map((student) {
+                            return _buildStudentCard(
+                              "${student.firstName} ${student.lastName}",
+                              "Admission No: ${student.admissionNo}",
+                            );
+                          }).toList(),
+                        ),
                 ],
               ),
             ),
@@ -377,9 +455,6 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(color: Colors.redAccent),
                     ),
                   ),
-                  // const SizedBox(height: 10),
-                  // _buildUpdateCard(Icons.emoji_events, "Mathematics Excellence Award",
-                  //     "Awarded on March 10, 2024", null),
                 ],
               ),
             ),
@@ -389,7 +464,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // ✅ Reusable Widgets
+  // Child List Widgets
   Widget _buildStudentCard(String name, String grade) {
     return Container(
       padding: const EdgeInsets.all(10),
@@ -404,7 +479,9 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: Colors.blue,
             child: Icon(Icons.person, color: Colors.white),
           ),
-          const SizedBox(width: 8),
+
+          AppSpacing.horizontal(width: 8),
+
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

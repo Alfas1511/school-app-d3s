@@ -6,6 +6,10 @@ class Student {
   final String admissionDate;
   final String dob;
   final String gender;
+  final String? studentImage;
+  final String? bloodGroup;
+  final String? address;
+  final String? emergencyContact;
 
   Student({
     required this.id,
@@ -15,6 +19,10 @@ class Student {
     required this.admissionDate,
     required this.dob,
     required this.gender,
+    this.studentImage,
+    this.bloodGroup,
+    this.address,
+    this.emergencyContact,
   });
 
   factory Student.fromJson(Map<String, dynamic> json) {
@@ -26,6 +34,10 @@ class Student {
       admissionDate: json['admission_date'],
       dob: json['dob'],
       gender: json['gender'],
+      studentImage: json['student_image'],
+      bloodGroup: json['blood_group'],
+      address: json['address'],
+      emergencyContact: json['primary_contact_number'],
     );
   }
 }

@@ -1,23 +1,23 @@
-// // lib/models/user_model.dart
 // class UserModel {
 //   final int id;
-//   final String name;
-//   final String email;
-//   final String phone;
+//   final String parentPhone;
+//   final bool parentStatus;
+//   final String token;
 
 //   UserModel({
 //     required this.id,
-//     required this.name,
-//     required this.email,
-//     required this.phone,
+//     required this.parentPhone,
+//     required this.parentStatus,
+//     required this.token,
 //   });
 
 //   factory UserModel.fromJson(Map<String, dynamic> json) {
+//     final user = json['data']['user'];
 //     return UserModel(
-//       id: json['id'],
-//       name: json['name'],
-//       email: json['email'] ?? '',
-//       phone: json['phone'] ?? '',
+//       id: user['id'],
+//       parentPhone: user['parent_phone'],
+//       parentStatus: user['parent_status'],
+//       token: json['data']['token'],
 //     );
 //   }
 // }
@@ -36,12 +36,22 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    final user = json['data']['user'];
+    final user = json['data']?['user'] ?? {};
+
     return UserModel(
-      id: user['id'],
-      parentPhone: user['parent_phone'],
-      parentStatus: user['parent_status'],
-      token: json['data']['token'], // 👈 store token here
+      id: user['id'] ?? 0,
+      parentPhone: user['parent_phone'] ?? '',
+      parentStatus: user['parent_status'] ?? false,
+      token: json['data']?['token'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'parent_phone': parentPhone,
+      'parent_status': parentStatus,
+      'token': token,
+    };
   }
 }

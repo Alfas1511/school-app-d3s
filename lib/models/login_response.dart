@@ -36,7 +36,7 @@ class User {
   final bool parentStatus;
   final String createdAt;
   final String updatedAt;
-  final int createdBy;
+  final int? createdBy;
 
   User({
     required this.id,
@@ -44,7 +44,7 @@ class User {
     required this.parentStatus,
     required this.createdAt,
     required this.updatedAt,
-    required this.createdBy,
+    this.createdBy,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {

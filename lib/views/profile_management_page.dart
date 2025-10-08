@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:school_app/views/more_options_page.dart';
+import 'package:school_app/core/constants/api_constants.dart';
+import 'package:school_app/core/services/api_service.dart';
+import 'package:school_app/models/parent_profile_model.dart';
+import 'package:school_app/models/students_list.dart';
+import 'package:school_app/resources/app_spacing.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileManagementPage extends StatefulWidget {
   const ProfileManagementPage({super.key});
@@ -9,14 +14,85 @@ class ProfileManagementPage extends StatefulWidget {
 }
 
 class _ProfileManagementState extends State<ProfileManagementPage> {
-  int selectedChildren = 0;
-  // int selectedTab = 0;
+  int selectedStudentIndex = 0;
+  bool isLoading = true;
+  ParentProfile? parentProfile;
+  Student? student;
 
-  final List<String> children = ["Emma", "James"];
-  final List<String> tabs = ["Study Materials", "Syllabus"];
+  List<Student> students = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchParentProfile();
+    _fetchStudents();
+  }
+
+  Future<void> _fetchParentProfile() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+
+      final apiService = ApiService();
+      final response = await apiService.getRequest(
+        ApiConstants.parentProfile,
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        final data = response['data'];
+        setState(() {
+          parentProfile = ParentProfile.fromJson(data);
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message']);
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _fetchStudents() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+
+      final apiService = ApiService();
+      final response = await apiService.getRequest(
+        ApiConstants.studentList,
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        final data = response['data'] as List;
+        setState(() {
+          students = data.map((json) => Student.fromJson(json)).toList();
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message']);
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (parentProfile == null) {
+      return const Scaffold(
+        body: Center(child: Text("Failed to load profile")),
+      );
+    }
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
@@ -33,10 +109,7 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const MoreOptionsPage()),
-          ),
+          onPressed: () => Navigator.pop(context)
         ),
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +120,7 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
             ),
             Text(
               "Family Information",
-              style: TextStyle(color: Colors.white70, fontSize: 18),
+              style: TextStyle(color: Colors.white70, fontSize: 15),
             ),
           ],
         ),
@@ -58,574 +131,467 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
           children: [
             // Child Selection Section
             Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start, // ✅ left align content
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSectionTitle("Select Child"),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List.generate(children.length, (index) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedChildren = index;
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: selectedChildren == index
-                                ? const Color(0xFF6A11CB)
-                                : Colors.grey[400],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            children[index],
-                            style: TextStyle(
-                              color: selectedChildren == index
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
+                  AppSpacing.vertical(height: 8),
+                  students.isEmpty
+                      ? const Text("No students available")
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: List.generate(students.length, (index) {
+                              final student = students[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedStudentIndex = index;
+                                  });
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: selectedStudentIndex == index
+                                        ? const Color(0xFF6A11CB)
+                                        : Colors.grey[400],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    "${student.firstName} ${student.lastName}",
+                                    style: TextStyle(
+                                      color: selectedStudentIndex == index
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
                           ),
                         ),
-                      );
-                    }),
-                  ),
                 ],
               ),
             ),
 
-            SizedBox(height: 20),
+            AppSpacing.vertical(height: 8),
 
-            // Child Details Section
-            Container(
-              padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ClipOval(
-                        child: Image.network(
-                          "https://img.freepik.com/free-photo/programming-background-with-person-working-with-codes-computer_23-2150010125.jpg",
-                          height: 80,
-                          width: 80,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Emma Johnson",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text("Grade 5A", style: TextStyle(fontSize: 15)),
-                          Text(
-                            "Roll No: 2024-05-05",
-                            style: TextStyle(fontSize: 15),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
+            isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : students.isNotEmpty
+                ? _buildStudentCard(students[selectedStudentIndex])
+                : const Text("No student data available"),
 
-                  Table(
-                    columnWidths: const {
-                      0: FlexColumnWidth(1),
-                      1: FlexColumnWidth(1),
-                    },
-                    children: const [
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 4),
-                            child: Text("Date of Birth"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 4),
-                            child: Text("Blood Group"),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 4),
-                            child: Text(
-                              "15/08/2014",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 4),
-                            child: Text(
-                              "O+",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 4),
-                            child: Text("Section"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 4),
-                            child: Text("Admission Date"),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 4),
-                            child: Text(
-                              "A",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 4),
-                            child: Text(
-                              "1/4/2020",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 20),
             // Father Information
-            Container(
-              padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Father Information",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  // ✅ Structured info with Table
-                  Table(
-                    columnWidths: const {
-                      0: FlexColumnWidth(3),
-                      1: FlexColumnWidth(2),
-                    },
-                    children: const [
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text("Name"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text(
-                              "",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "Robert Johnson",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text("Phone"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text("Occupation"),
-                          ),
-                        ],
-                      ),
-
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "+1 555-0123",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "Software Engineer",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text("Email"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text(""),
-                          ),
-                        ],
-                      ),
-
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "robert1.johnson@gmail.com",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(""),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            AppSpacing.vertical(height: 8),
+            _parentInformation(
+              title: "Father Information",
+              name: parentProfile!.parentInfo.fatherName,
+              phone: parentProfile!.parentPhone,
+              email: parentProfile!.parentInfo.fatherEmail,
+              occupation: parentProfile!.parentInfo.fatherOccupation,
             ),
 
-            SizedBox(height: 20),
             // Mother Information
-            Container(
-              padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Mother Information",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  Table(
-                    columnWidths: const {
-                      0: FlexColumnWidth(3),
-                      1: FlexColumnWidth(2),
-                    },
-                    children: const [
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text("Name"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text(
-                              "",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "Sarah Johnson",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 0),
-                            child: Text("Phone"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 0),
-                            child: Text("Occupation"),
-                          ),
-                        ],
-                      ),
-
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "+1 555-0124",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "Marketing Manager",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text("Email"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text(""),
-                          ),
-                        ],
-                      ),
-
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "sarah.johnson@gmail.com",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(""),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            AppSpacing.vertical(height: 8),
+            _parentInformation(
+              title: "Mother Information",
+              name: parentProfile!.parentInfo.motherName,
+              phone: parentProfile!.parentInfo.motherPhone,
+              email: parentProfile!.parentInfo.motherEmail,
+              occupation: parentProfile!.parentInfo.motherOccupation,
             ),
 
-            SizedBox(height: 20),
             // Contact Information
-            Container(
-              padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Contact Information",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  Table(
-                    columnWidths: const {
-                      0: FlexColumnWidth(3),
-                      1: FlexColumnWidth(1),
-                    },
-                    children: const [
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text("Home Address"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text(
-                              "",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "123 Oak Street, Downtown, CA 90210",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text("Emergency Contact"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                            child: Text(""),
-                          ),
-                        ],
-                      ),
-
-                      TableRow(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "+1 555-0125",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                            child: Text(
-                              "",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            AppSpacing.vertical(height: 8),
+            isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : students.isNotEmpty
+                ? _contactInformation(students[selectedStudentIndex])
+                : const Text("Contact information unavailable"),
           ],
         ),
       ),
     );
   }
+}
+
+Widget _buildStudentCard(Student student) {
+  return Container(
+    margin: const EdgeInsets.only(bottom: 16),
+    padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 5,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ClipOval(
+              child: Image.network(
+                // student.studentImage ??
+                "https://img.freepik.com/free-photo/programming-background-with-person-working-with-codes-computer_23-2150010125.jpg",
+                height: 80,
+                width: 80,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${student.firstName} ${student.lastName}",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "Admission No: ${student.admissionNo}",
+                  style: const TextStyle(fontSize: 15),
+                ),
+                Text(
+                  "Admission Date: ${student.admissionDate}",
+                  style: const TextStyle(fontSize: 15),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        Table(
+          columnWidths: const {0: FlexColumnWidth(1), 1: FlexColumnWidth(1)},
+          children: [
+            TableRow(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text("Date of Birth"),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text("Blood Group"),
+                ),
+              ],
+            ),
+            TableRow(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    student.dob,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    student.bloodGroup ?? "",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            TableRow(
+              children: const [
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text("Section"),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text("Admission Date"),
+                ),
+              ],
+            ),
+            TableRow(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Text("A"),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    student.admissionDate,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _parentInformation({
+  required String title,
+  required String name,
+  required String phone,
+  required String email,
+  required String occupation,
+}) {
+  return Container(
+    padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 5,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ],
+        ),
+
+        // ✅ Structured info with Table
+        Table(
+          columnWidths: const {0: FlexColumnWidth(3), 1: FlexColumnWidth(2)},
+          children: [
+            TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
+                  child: Text("Name"),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
+                  child: Text(
+                    "",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
+                  child: Text(
+                    name,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
+                  child: Text(
+                    "",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
+                  child: Text("Phone"),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
+                  child: Text("Occupation"),
+                ),
+              ],
+            ),
+
+            TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
+                  child: Text(
+                    phone,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
+                  child: Text(
+                    occupation,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+
+            TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
+                  child: Text("Email"),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
+                  child: Text(""),
+                ),
+              ],
+            ),
+
+            TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
+                  child: Text(
+                    email,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
+                  child: Text(""),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _contactInformation(Student student) {
+  return Container(
+    padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 5,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  "Contact Information",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ],
+        ),
+
+        Table(
+          columnWidths: const {0: FlexColumnWidth(3), 1: FlexColumnWidth(1)},
+          children: [
+            TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
+                  child: Text("Home Address"),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
+                  child: Text(
+                    "",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
+                  child: Text(
+                    student.address ?? "--",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
+                  child: Text(
+                    "",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
+                  child: Text("Emergency Contact"),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
+                  child: Text(""),
+                ),
+              ],
+            ),
+
+            TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
+                  child: Text(
+                    student.emergencyContact ?? "--",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
+                  child: Text(
+                    "",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 }
 
 Widget _buildSectionTitle(String title) {

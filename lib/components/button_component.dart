@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:school_app/resources/app_styles.dart';
 
 class ButtonComponent extends StatelessWidget {
   final VoidCallback onPressed;

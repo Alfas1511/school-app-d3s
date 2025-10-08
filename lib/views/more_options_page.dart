@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/providers/auth_provider.dart';
 import 'package:school_app/resources/app_icons.dart';
+import 'package:school_app/resources/app_spacing.dart';
 import 'package:school_app/resources/app_strings.dart';
 import 'package:school_app/views/certificates_page.dart';
 import 'package:school_app/views/contact_support_page.dart';
@@ -22,23 +23,22 @@ class MoreOptionsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               "More Options",
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 25,
+                fontSize: 22,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 5),
             Text(
               "Access all app features and settings",
               style: TextStyle(color: Colors.black, fontSize: 16),
             ),
-            SizedBox(height: 5),
+            AppSpacing.vertical(height: 4),
           ],
         ),
       ),
