@@ -10,6 +10,8 @@ class Student {
   final String? bloodGroup;
   final String? address;
   final String? emergencyContact;
+  final String? grade;
+  final String? division;
 
   Student({
     required this.id,
@@ -23,6 +25,8 @@ class Student {
     this.bloodGroup,
     this.address,
     this.emergencyContact,
+    this.grade,
+    this.division,
   });
 
   factory Student.fromJson(Map<String, dynamic> json) {
@@ -38,6 +42,8 @@ class Student {
       bloodGroup: json['blood_group'],
       address: json['address'],
       emergencyContact: json['primary_contact_number'],
+      grade: json['grade'],
+      division: json['divison'],
     );
   }
 }

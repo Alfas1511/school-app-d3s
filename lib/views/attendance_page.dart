@@ -1,8 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/views/academics_page.dart';
+import 'package:table_calendar/table_calendar.dart';
 
-class AttendancePage extends StatelessWidget {
+class AttendancePage extends StatefulWidget {
   const AttendancePage({super.key});
+
+  @override
+  State<AttendancePage> createState() => _AttendancePageState();
+}
+
+class _AttendancePageState extends State<AttendancePage> {
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
+
+  // Example attendance data
+  final Map<DateTime, String> attendanceStatus = {
+    DateTime(2024, 3, 1): 'present',
+    DateTime(2024, 3, 2): 'absent',
+    DateTime(2024, 3, 4): 'present',
+    DateTime(2024, 3, 5): 'present',
+    DateTime(2024, 3, 10): 'late',
+  };
+
+  Color _getStatusColor(DateTime day) {
+    final status = attendanceStatus[DateTime(day.year, day.month, day.day)];
+    switch (status) {
+      case 'present':
+        return Colors.green;
+      case 'absent':
+        return Colors.red;
+      case 'late':
+        return Colors.orange;
+      case 'holiday':
+        return Colors.blueGrey;
+      default:
+        return Colors.grey[300]!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,44 +146,90 @@ class AttendancePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
 
-                    // Calendar Grid
-                    GridView.count(
-                      crossAxisCount: 7,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: List.generate(31, (index) {
-                        int day = index + 1;
-                        Color? bgColor;
-                        if ([1, 4, 5, 6, 7, 11, 12, 13, 14, 15].contains(day)) {
-                          bgColor = Colors.green; // Present
-                        } else if ([2, 8].contains(day)) {
-                          bgColor = Colors.red; // Absent
-                        } else if (day == 10) {
-                          bgColor = Colors.orange; // Late
-                        } else {
-                          bgColor = Colors.grey[300]; // Default
-                        }
-                        return Center(
-                          child: Container(
-                            margin: const EdgeInsets.all(4),
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              color: bgColor,
-                              shape: BoxShape.circle,
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "$day",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
+                    // // Calendar Grid
+                    // GridView.count(
+                    //   crossAxisCount: 7,
+                    //   shrinkWrap: true,
+                    //   physics: const NeverScrollableScrollPhysics(),
+                    //   children: List.generate(31, (index) {
+                    //     int day = index + 1;
+                    //     Color? bgColor;
+                    //     if ([1, 4, 5, 6, 7, 11, 12, 13, 14, 15].contains(day)) {
+                    //       bgColor = Colors.green; // Present
+                    //     } else if ([2, 8].contains(day)) {
+                    //       bgColor = Colors.red; // Absent
+                    //     } else if (day == 10) {
+                    //       bgColor = Colors.orange; // Late
+                    //     } else {
+                    //       bgColor = Colors.grey[300]; // Default
+                    //     }
+                    //     return Center(
+                    //       child: Container(
+                    //         margin: const EdgeInsets.all(4),
+                    //         width: 36,
+                    //         height: 36,
+                    //         decoration: BoxDecoration(
+                    //           color: bgColor,
+                    //           shape: BoxShape.circle,
+                    //         ),
+                    //         alignment: Alignment.center,
+                    //         child: Text(
+                    //           "$day",
+                    //           style: const TextStyle(
+                    //             color: Colors.white,
+                    //             fontWeight: FontWeight.bold,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     );
+                    //   }),
+                    // ),
+
+                    // TableCalendar Widget
+                    TableCalendar(
+                      focusedDay: _focusedDay,
+                      firstDay: DateTime(2020),
+                      lastDay: DateTime(2030),
+                      calendarFormat: CalendarFormat.month,
+                      startingDayOfWeek: StartingDayOfWeek.monday,
+                      availableGestures: AvailableGestures.all,
+                      selectedDayPredicate: (day) =>
+                          isSameDay(_selectedDay, day),
+                      onDaySelected: (selectedDay, focusedDay) {
+                        setState(() {
+                          _selectedDay = selectedDay;
+                          _focusedDay = focusedDay;
+                        });
+                      },
+                      onPageChanged: (focusedDay) {
+                        setState(() => _focusedDay = focusedDay);
+                      },
+                      calendarStyle: CalendarStyle(
+                        outsideDaysVisible: false,
+                        isTodayHighlighted: true,
+                        defaultTextStyle: const TextStyle(color: Colors.black),
+                        todayDecoration: BoxDecoration(
+                          color: Colors.blue.shade200,
+                          shape: BoxShape.circle,
+                        ),
+                        selectedDecoration: const BoxDecoration(
+                          color: Colors.blue,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      calendarBuilders: CalendarBuilders(
+                        defaultBuilder: (context, day, focusedDay) {
+                          return _buildDayCell(day);
+                        },
+                        todayBuilder: (context, day, focusedDay) {
+                          return _buildDayCell(day, isToday: true);
+                        },
+                        selectedBuilder: (context, day, focusedDay) {
+                          return _buildDayCell(day, isSelected: true);
+                        },
+                      ),
                     ),
+
                     const SizedBox(height: 12),
 
                     // Legend
@@ -286,6 +366,34 @@ class AttendancePage extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDayCell(
+    DateTime day, {
+    bool isToday = false,
+    bool isSelected = false,
+  }) {
+    final bgColor = _getStatusColor(day);
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.all(4),
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? Colors.blue
+              : isToday
+              ? Colors.blue.shade200
+              : bgColor,
+          shape: BoxShape.circle,
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          '${day.day}',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );

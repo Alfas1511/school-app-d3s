@@ -82,6 +82,19 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
     }
   }
 
+  Future<void> _handleRefresh() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    // Re-fetch data
+    await Future.wait([_fetchParentProfile(), _fetchStudents()]);
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -109,7 +122,7 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context)
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,102 +138,107 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            // Child Selection Section
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle("Select Child"),
-                  AppSpacing.vertical(height: 8),
-                  students.isEmpty
-                      ? const Text("No students available")
-                      : SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: List.generate(students.length, (index) {
-                              final student = students[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedStudentIndex = index;
-                                  });
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(right: 8),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: selectedStudentIndex == index
-                                        ? const Color(0xFF6A11CB)
-                                        : Colors.grey[400],
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    "${student.firstName} ${student.lastName}",
-                                    style: TextStyle(
+      body: RefreshIndicator(
+        color: Colors.blue,
+        backgroundColor: Colors.white,
+        onRefresh: _handleRefresh,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            children: [
+              // Child Selection Section
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSectionTitle("Select Child"),
+                    AppSpacing.vertical(height: 8),
+                    students.isEmpty
+                        ? const Text("No students available")
+                        : SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: List.generate(students.length, (index) {
+                                final student = students[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedStudentIndex = index;
+                                    });
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(right: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
                                       color: selectedStudentIndex == index
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontWeight: FontWeight.bold,
+                                          ? const Color(0xFF6A11CB)
+                                          : Colors.grey[400],
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      "${student.firstName} ${student.lastName}",
+                                      style: TextStyle(
+                                        color: selectedStudentIndex == index
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            }),
+                                );
+                              }),
+                            ),
                           ),
-                        ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            AppSpacing.vertical(height: 8),
+              AppSpacing.vertical(height: 8),
 
-            isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : students.isNotEmpty
-                ? _buildStudentCard(students[selectedStudentIndex])
-                : const Text("No student data available"),
+              isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : students.isNotEmpty
+                  ? _buildStudentCard(students[selectedStudentIndex])
+                  : const Text("No student data available"),
 
-            // Father Information
-            AppSpacing.vertical(height: 8),
-            _parentInformation(
-              title: "Father Information",
-              name: parentProfile!.parentInfo.fatherName,
-              phone: parentProfile!.parentPhone,
-              email: parentProfile!.parentInfo.fatherEmail,
-              occupation: parentProfile!.parentInfo.fatherOccupation,
-            ),
+              // Father Information
+              AppSpacing.vertical(height: 8),
+              _parentInformation(
+                title: "Father Information",
+                name: parentProfile!.parentInfo.fatherName,
+                phone: parentProfile!.parentPhone,
+                email: parentProfile!.parentInfo.fatherEmail,
+                occupation: parentProfile!.parentInfo.fatherOccupation,
+              ),
 
-            // Mother Information
-            AppSpacing.vertical(height: 8),
-            _parentInformation(
-              title: "Mother Information",
-              name: parentProfile!.parentInfo.motherName,
-              phone: parentProfile!.parentInfo.motherPhone,
-              email: parentProfile!.parentInfo.motherEmail,
-              occupation: parentProfile!.parentInfo.motherOccupation,
-            ),
+              // Mother Information
+              AppSpacing.vertical(height: 8),
+              _parentInformation(
+                title: "Mother Information",
+                name: parentProfile!.parentInfo.motherName,
+                phone: parentProfile!.parentInfo.motherPhone,
+                email: parentProfile!.parentInfo.motherEmail,
+                occupation: parentProfile!.parentInfo.motherOccupation,
+              ),
 
-            // Contact Information
-            AppSpacing.vertical(height: 8),
-            isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : students.isNotEmpty
-                ? _contactInformation(students[selectedStudentIndex])
-                : const Text("Contact information unavailable"),
-          ],
+              // Contact Information
+              AppSpacing.vertical(height: 8),
+              isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : students.isNotEmpty
+                  ? _contactInformation(students[selectedStudentIndex])
+                  : const Text("Contact information unavailable"),
+            ],
+          ),
         ),
       ),
     );
@@ -228,6 +246,9 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
 }
 
 Widget _buildStudentCard(Student student) {
+  String studentImage =
+      // student.studentImage ??
+      "https://img.freepik.com/free-photo/programming-background-with-person-working-with-codes-computer_23-2150010125.jpg";
   return Container(
     margin: const EdgeInsets.only(bottom: 16),
     padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
@@ -250,8 +271,7 @@ Widget _buildStudentCard(Student student) {
           children: [
             ClipOval(
               child: Image.network(
-                // student.studentImage ??
-                "https://img.freepik.com/free-photo/programming-background-with-person-working-with-codes-computer_23-2150010125.jpg",
+                studentImage,
                 height: 80,
                 width: 80,
                 fit: BoxFit.cover,
@@ -328,9 +348,12 @@ Widget _buildStudentCard(Student student) {
             ),
             TableRow(
               children: [
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Text("A"),
+                  child: Text(
+                    student.division ?? "--",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),

@@ -28,20 +28,19 @@ class _HomePageState extends State<HomePage> {
   ParentProfile? parentProfile;
 
   List<Student> students = [];
-  late final List<Widget> _pages;
+  List<Widget> get _pages => [
+    _buildHomeContent(),
+    const AcademicPage(),
+    const AttendancePage(),
+    const TransportPage(),
+    const MoreOptionsPage(),
+  ];
 
   @override
   void initState() {
     super.initState();
     _fetchParentProfile();
     _fetchStudents();
-    _pages = [
-      _buildHomeContent(),
-      const AcademicPage(),
-      const AttendancePage(),
-      const TransportPage(),
-      const MoreOptionsPage(),
-    ];
   }
 
   Future<void> _fetchParentProfile() async {
@@ -98,6 +97,19 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _handleRefresh() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    // Re-fetch data
+    await Future.wait([_fetchParentProfile(), _fetchStudents()]);
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -108,357 +120,373 @@ class _HomePageState extends State<HomePage> {
   Widget _buildHomeContent() {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Top Section
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF1181CB), Color(0xFF10D6A5)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+      body: RefreshIndicator(
+        color: Colors.blue,
+        backgroundColor: Colors.white,
+        onRefresh: _handleRefresh,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Top Section
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF1181CB), Color(0xFF10D6A5)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                 ),
-              ),
-              padding: const EdgeInsets.only(
-                top: 50,
-                left: 20,
-                right: 20,
-                bottom: 30,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Good Morning!",
-                        style: TextStyle(color: Colors.white70, fontSize: 18),
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              //
-                            },
-                            icon: Icon(Icons.wb_sunny),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              //
-                            },
-                            icon: Icon(Icons.notifications),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Text(
-                    parentProfile?.parentInfo.fatherName ?? "Parent",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                padding: const EdgeInsets.only(
+                  top: 50,
+                  left: 20,
+                  right: 20,
+                  bottom: 30,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Good Morning!",
+                          style: TextStyle(color: Colors.white70, fontSize: 18),
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                //
+                              },
+                              icon: Icon(Icons.wb_sunny),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                //
+                              },
+                              icon: Icon(Icons.notifications),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                  AppSpacing.vertical(height: 8),
-                  isLoading
-                      ? const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
+                    Text(
+                      parentProfile?.parentInfo.fatherName.isNotEmpty == true
+                          ? parentProfile!.parentInfo.fatherName
+                          : "Parent",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    AppSpacing.vertical(height: 8),
+                    isLoading
+                        ? const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : students.isEmpty
+                        ? const Text(
+                            "No students found",
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                            ),
+                          )
+                        : SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: students.map((student) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 12,
+                                  ), // spacing between cards
+                                  child: _buildStudentCard(
+                                    "${student.firstName} ${student.lastName}",
+                                    "Grade - ${student.grade}${student.division}",
+                                  ),
+                                );
+                              }).toList(),
                             ),
                           ),
-                        )
-                      : students.isEmpty
-                      ? const Text(
-                          "No students found",
-                          style: TextStyle(color: Colors.white70, fontSize: 14),
-                        )
-                      : Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: students.map((student) {
-                            return _buildStudentCard(
-                              "${student.firstName} ${student.lastName}",
-                              "Admission No: ${student.admissionNo}",
-                            );
-                          }).toList(),
-                        ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Important Updates
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text(
-                        "Important Updates",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+              // Important Updates
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text(
+                          "Important Updates",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        "3 New",
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          "3 New",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  _buildUpdateCard(
-                    Icons.payment,
-                    "Pending Fee Payment",
-                    "Quarterly fee: \$850 due by March 15",
-                    "Pay Now",
-                  ),
-                  _buildUpdateCard(
-                    Icons.event,
-                    "Annual Sports Day",
-                    "March 20, 2024 - Registration open",
-                    null,
-                  ),
-                  _buildUpdateCard(
-                    Icons.book,
-                    "Mid-term Results",
-                    "Mathematics test results available",
-                    null,
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Quick Access
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: const Text(
-                "Quick Access",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: GridView.count(
-                crossAxisCount: 3,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                childAspectRatio: 1.2,
-                children: [
-                  _buildQuickAccess(
-                    AppIcons.time,
-                    "Attendance",
-                    Colors.blue,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AttendancePage(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildQuickAccess(
-                    AppIcons.book,
-                    "Homework",
-                    Colors.green,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AcademicPage(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildQuickAccess(
-                    AppIcons.bus,
-                    "Transport",
-                    Colors.orange,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const TransportPage(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildQuickAccess(
-                    AppIcons.payment,
-                    "Fees",
-                    Colors.purple,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const FeeManagementPage(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildQuickAccess(
-                    AppIcons.calendarMonth,
-                    "Calendar",
-                    Colors.teal,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const TimetablePage(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildQuickAccess(
-                    AppIcons.profile,
-                    "Profile",
-                    Colors.red,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProfileManagementPage(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Today's Highlights
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text(
-                        "Today's Highlights",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  _buildUpdateCard(
-                    Icons.event,
-                    "Math Assignment Submitted",
-                    "Grade; A+ Great Work",
-                    null,
-                  ),
-                  _buildUpdateCard(
-                    Icons.book,
-                    "Science Project Winner",
-                    "1st Place in School Science Fair",
-                    null,
-                  ),
-                ],
-              ),
-            ),
-
-            // Recent Achievements
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text(
-                        "Recent Achievements",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  _buildUpdateCard(
-                    Icons.emoji_events,
-                    "Mathematics Excellence Award",
-                    "Awarded on March 10, 2024",
-                    null,
-                  ),
-                ],
-              ),
-            ),
-
-            // Latest Exam Results
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text(
-                        "Latest Exam Results",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        "View All",
-                        style: TextStyle(color: Colors.lightBlue),
-                      ),
-                    ],
-                  ),
-                  ListTile(
-                    title: Text("Mathematics"),
-                    trailing: Text(
-                      "95%",
-                      style: TextStyle(color: Colors.greenAccent),
+                      ],
                     ),
-                  ),
-                  ListTile(
-                    title: Text("English"),
-                    trailing: Text(
-                      "88%",
-                      style: TextStyle(color: Colors.blueAccent),
+                    const SizedBox(height: 10),
+                    _buildUpdateCard(
+                      Icons.payment,
+                      "Pending Fee Payment",
+                      "Quarterly fee: \$850 due by March 15",
+                      "Pay Now",
                     ),
-                  ),
-                  ListTile(
-                    title: Text("Science"),
-                    trailing: Text(
-                      "92%",
-                      style: TextStyle(color: Colors.redAccent),
+                    _buildUpdateCard(
+                      Icons.event,
+                      "Annual Sports Day",
+                      "March 20, 2024 - Registration open",
+                      null,
                     ),
-                  ),
-                ],
+                    _buildUpdateCard(
+                      Icons.book,
+                      "Mid-term Results",
+                      "Mathematics test results available",
+                      null,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 20),
+
+              // Quick Access
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: const Text(
+                  "Quick Access",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  childAspectRatio: 1.2,
+                  children: [
+                    _buildQuickAccess(
+                      AppIcons.time,
+                      "Attendance",
+                      Colors.blue,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AttendancePage(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickAccess(
+                      AppIcons.book,
+                      "Homework",
+                      Colors.green,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AcademicPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickAccess(
+                      AppIcons.bus,
+                      "Transport",
+                      Colors.orange,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TransportPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickAccess(
+                      AppIcons.payment,
+                      "Fees",
+                      Colors.purple,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FeeManagementPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickAccess(
+                      AppIcons.calendarMonth,
+                      "Calendar",
+                      Colors.teal,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TimetablePage(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickAccess(
+                      AppIcons.profile,
+                      "Profile",
+                      Colors.red,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ProfileManagementPage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Today's Highlights
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text(
+                          "Today's Highlights",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    _buildUpdateCard(
+                      Icons.event,
+                      "Math Assignment Submitted",
+                      "Grade; A+ Great Work",
+                      null,
+                    ),
+                    _buildUpdateCard(
+                      Icons.book,
+                      "Science Project Winner",
+                      "1st Place in School Science Fair",
+                      null,
+                    ),
+                  ],
+                ),
+              ),
+
+              // Recent Achievements
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text(
+                          "Recent Achievements",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    _buildUpdateCard(
+                      Icons.emoji_events,
+                      "Mathematics Excellence Award",
+                      "Awarded on March 10, 2024",
+                      null,
+                    ),
+                  ],
+                ),
+              ),
+
+              // Latest Exam Results
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text(
+                          "Latest Exam Results",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          "View All",
+                          style: TextStyle(color: Colors.lightBlue),
+                        ),
+                      ],
+                    ),
+                    ListTile(
+                      title: Text("Mathematics"),
+                      trailing: Text(
+                        "95%",
+                        style: TextStyle(color: Colors.greenAccent),
+                      ),
+                    ),
+                    ListTile(
+                      title: Text("English"),
+                      trailing: Text(
+                        "88%",
+                        style: TextStyle(color: Colors.blueAccent),
+                      ),
+                    ),
+                    ListTile(
+                      title: Text("Science"),
+                      trailing: Text(
+                        "92%",
+                        style: TextStyle(color: Colors.redAccent),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -467,30 +495,58 @@ class _HomePageState extends State<HomePage> {
   // Child List Widgets
   Widget _buildStudentCard(String name, String grade) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      width: 180,
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          colors: [
+            Colors.white.withOpacity(0.25),
+            Colors.white.withOpacity(0.1),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: Border.all(color: Colors.white.withOpacity(0.2)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Row(
         children: [
+          // Profile image
           const CircleAvatar(
-            radius: 18,
-            backgroundColor: Colors.blue,
-            child: Icon(Icons.person, color: Colors.white),
+            radius: 20,
+            backgroundImage: AssetImage('assets/images/student.png'),
           ),
+          const SizedBox(width: 10),
 
-          AppSpacing.horizontal(width: 8),
-
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(
-                grade,
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ],
+          // Student details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  grade,
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -22,4 +22,12 @@ class AppIcons {
   static const IconData bus = Icons.directions_bus;
   static const IconData book = Icons.book;
   static const IconData payment = Icons.payment;
+  static const IconData school = Icons.school;
+  static const IconData file = Icons.insert_drive_file;
+  static const IconData pdf = Icons.picture_as_pdf;
+  static const IconData exam = Icons.assignment;
+  static const IconData progress = Icons.analytics;
+  static const IconData report = Icons.report;
+  static const IconData results = Icons.leaderboard;
+  static const IconData records = Icons.data_array;
 }
