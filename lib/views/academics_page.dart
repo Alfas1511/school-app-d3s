@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/resources/app_spacing.dart';
 import 'package:school_app/widgets/academic_sections.dart';
+import 'package:school_app/widgets/exam_card_component.dart';
+import 'package:school_app/widgets/progress_row_component.dart';
+import 'package:school_app/widgets/tab_button_component.dart';
 
 class AcademicPage extends StatefulWidget {
   const AcademicPage({super.key});
@@ -392,11 +395,25 @@ class _AcademicPageState extends State<AcademicPage> {
   Widget _buildSyllabusContent() {
     return Column(
       children: [
-        _buildSectionTitle("Content Area"),
-        const SizedBox(height: 10),
-        const Text(
-          "This area can be used to display detailed content based on the selected academic section. For example, if 'Materials' is selected, you could show a list of downloadable files here.",
-          style: TextStyle(color: Colors.grey),
+        _buildSectionTitle("Current Syllabus Progress"),
+        const SizedBox(height: 20),
+        // Progress rows
+        ProgressRowComponent(
+          subject: "Mathematics",
+          progress: 0.85,
+          color: Colors.blue,
+        ),
+        SizedBox(height: 12),
+        ProgressRowComponent(
+          subject: "Science",
+          progress: 0.78,
+          color: Colors.green,
+        ),
+        SizedBox(height: 12),
+        ProgressRowComponent(
+          subject: "English",
+          progress: 0.92,
+          color: Colors.purple,
         ),
       ],
     );
@@ -405,11 +422,67 @@ class _AcademicPageState extends State<AcademicPage> {
   Widget _buildExamsContent() {
     return Column(
       children: [
-        _buildSectionTitle("Content Area"),
-        const SizedBox(height: 10),
-        const Text(
-          "This area can be used to display detailed content based on the selected academic section. For example, if 'Materials' is selected, you could show a list of downloadable files here.",
-          style: TextStyle(color: Colors.grey),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Tabs (Upcoming / Completed)
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  TabButtonComponent(
+                    title: "Upcoming Exams",
+                    isActive: true,
+                    onTap: () {
+                      // handle tab change
+                    },
+                  ),
+                  TabButtonComponent(
+                    title: "Completed Exams",
+                    isActive: false,
+                    onTap: () {
+                      // handle tab change
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "Upcoming Exams",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+
+            // Exam cards
+            ExamCardComponent(
+              subject: "Mathematics Mid-term",
+              date: "March 18, 2024 • 10:00 AM",
+              details: "Chapters 6–8 • Duration 2 hours",
+              daysLeft: 3,
+              color: Colors.redAccent.shade100,
+            ),
+            const SizedBox(height: 12),
+            ExamCardComponent(
+              subject: "Science Practical",
+              date: "March 22, 2024 • 2:00 PM",
+              details: "Lab experiments • Duration 1.5 hours",
+              daysLeft: 7,
+              color: Colors.orangeAccent.shade100,
+            ),
+            const SizedBox(height: 12),
+            ExamCardComponent(
+              subject: "English Literature",
+              date: "March 25, 2024 • 9:00 AM",
+              details: "Poetry & Stories • Duration 2.5 hours",
+              daysLeft: 10,
+              color: Colors.amberAccent.shade100,
+            ),
+          ],
         ),
       ],
     );

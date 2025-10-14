@@ -21,11 +21,28 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
 
   List<Student> students = [];
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _fetchParentProfile();
+  //   _fetchStudents();
+  // }
+
   @override
   void initState() {
     super.initState();
-    _fetchParentProfile();
-    _fetchStudents();
+    _loadAllData();
+  }
+
+  Future<void> _loadAllData() async {
+    setState(() => isLoading = true);
+    try {
+      await Future.wait([_fetchParentProfile(), _fetchStudents()]);
+    } catch (e) {
+      print("Error fetching data: $e");
+    } finally {
+      setState(() => isLoading = false);
+    }
   }
 
   Future<void> _fetchParentProfile() async {
@@ -43,15 +60,15 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
         final data = response['data'];
         setState(() {
           parentProfile = ParentProfile.fromJson(data);
-          isLoading = false;
+          // isLoading = false;
         });
       } else {
         throw Exception(response['message']);
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+      // setState(() {
+      //   // isLoading = false;
+      // });
     }
   }
 
@@ -70,15 +87,15 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
         final data = response['data'] as List;
         setState(() {
           students = data.map((json) => Student.fromJson(json)).toList();
-          isLoading = false;
+          // isLoading = false;
         });
       } else {
         throw Exception(response['message']);
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+      // setState(() {
+      //   // isLoading = false;
+      // });
     }
   }
 

@@ -31,19 +31,19 @@ class Student {
 
   factory Student.fromJson(Map<String, dynamic> json) {
     return Student(
-      id: json['id'],
-      admissionNo: json['admission_no'],
-      firstName: json['first_name'],
-      lastName: json['last_name'],
-      admissionDate: json['admission_date'],
-      dob: json['dob'],
-      gender: json['gender'],
+      id: json['id'] is int ? json['id'] : int.parse(json['id'].toString()),
+      admissionNo: json['admission_no']?.toString() ?? '',
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+      admissionDate: json['admission_date']?.toString() ?? '',
+      dob: json['dob']?.toString() ?? '',
+      gender: json['gender'] ?? '',
       studentImage: json['student_image'],
       bloodGroup: json['blood_group'],
       address: json['address'],
       emergencyContact: json['primary_contact_number'],
-      grade: json['grade'],
-      division: json['divison'],
+      grade: json['grade']?.toString(),
+      division: json['division']?.toString(),
     );
   }
 }
