@@ -146,44 +146,6 @@ class _AttendancePageState extends State<AttendancePage> {
                     ),
                     const SizedBox(height: 16),
 
-                    // // Calendar Grid
-                    // GridView.count(
-                    //   crossAxisCount: 7,
-                    //   shrinkWrap: true,
-                    //   physics: const NeverScrollableScrollPhysics(),
-                    //   children: List.generate(31, (index) {
-                    //     int day = index + 1;
-                    //     Color? bgColor;
-                    //     if ([1, 4, 5, 6, 7, 11, 12, 13, 14, 15].contains(day)) {
-                    //       bgColor = Colors.green; // Present
-                    //     } else if ([2, 8].contains(day)) {
-                    //       bgColor = Colors.red; // Absent
-                    //     } else if (day == 10) {
-                    //       bgColor = Colors.orange; // Late
-                    //     } else {
-                    //       bgColor = Colors.grey[300]; // Default
-                    //     }
-                    //     return Center(
-                    //       child: Container(
-                    //         margin: const EdgeInsets.all(4),
-                    //         width: 36,
-                    //         height: 36,
-                    //         decoration: BoxDecoration(
-                    //           color: bgColor,
-                    //           shape: BoxShape.circle,
-                    //         ),
-                    //         alignment: Alignment.center,
-                    //         child: Text(
-                    //           "$day",
-                    //           style: const TextStyle(
-                    //             color: Colors.white,
-                    //             fontWeight: FontWeight.bold,
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     );
-                    //   }),
-                    // ),
 
                     // TableCalendar Widget
                     TableCalendar(
@@ -268,71 +230,6 @@ class _AttendancePageState extends State<AttendancePage> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //     color: Colors.red.withOpacity(0.1),
-                    //     borderRadius: BorderRadius.circular(8),
-                    //   ),
-                    //   padding: const EdgeInsets.all(12),
-                    //   child: Column(
-                    //     children: [
-                    //       Row(
-                    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //         children: [
-                    //           const Column(
-                    //             crossAxisAlignment: CrossAxisAlignment.start,
-                    //             children: [
-                    //               Text("Absent",
-                    //                   style: TextStyle(
-                    //                       color: Colors.red,
-                    //                       fontWeight: FontWeight.bold)),
-                    //               Text("March 14, 2024",
-                    //                   style: TextStyle(color: Colors.black54)),
-                    //             ],
-                    //           ),
-                    //           Container(
-                    //             padding: const EdgeInsets.symmetric(
-                    //                 horizontal: 12, vertical: 6),
-                    //             decoration: BoxDecoration(
-                    //               color: Colors.red,
-                    //               borderRadius: BorderRadius.circular(20),
-                    //             ),
-                    //             child: const Text("Sick Leave",
-                    //                 style: TextStyle(color: Colors.white)),
-                    //           ),
-                    //
-                    //         ],
-                    //       ),
-                    //       Row(
-                    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //         children: [
-                    //           const Column(
-                    //             crossAxisAlignment: CrossAxisAlignment.start,
-                    //             children: [
-                    //               Text("Absent",
-                    //                   style: TextStyle(
-                    //                       color: Colors.red,
-                    //                       fontWeight: FontWeight.bold)),
-                    //               Text("March 14, 2024",
-                    //                   style: TextStyle(color: Colors.black54)),
-                    //             ],
-                    //           ),
-                    //           Container(
-                    //             padding: const EdgeInsets.symmetric(
-                    //                 horizontal: 12, vertical: 6),
-                    //             decoration: BoxDecoration(
-                    //               color: Colors.red,
-                    //               borderRadius: BorderRadius.circular(20),
-                    //             ),
-                    //             child: const Text("Sick Leave",
-                    //                 style: TextStyle(color: Colors.white)),
-                    //           ),
-                    //
-                    //         ],
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
                     Column(
                       children: [
                         Card(
