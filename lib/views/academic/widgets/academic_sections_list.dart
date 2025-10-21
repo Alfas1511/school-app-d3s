@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class AcademicSection {
+class AcademicSectionsList {
   final String title;
   final IconData icon;
 
-  AcademicSection(this.title, this.icon);
+  AcademicSectionsList(this.title, this.icon);
 }

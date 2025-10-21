@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:school_app/views/home_page.dart";
+import "package:school_app/views/home/home_page.dart";
 
 class TransportPage extends StatefulWidget {
   const TransportPage({super.key});

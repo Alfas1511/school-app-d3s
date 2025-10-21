@@ -10,5 +10,6 @@ class ApiConstants {
   static const String logout = "$baseUrl/parent/logout";
   static const String parentProfile = "$baseUrl/parent/profile";
   static const String studentList = "$baseUrl/parent/students-list";
+  static const String studentDetails = "$baseUrl/parent/students-details";
   static const String studentAttendance = "$baseUrl/parent/student-attendance";
 }

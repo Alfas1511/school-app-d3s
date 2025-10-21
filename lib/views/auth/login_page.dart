@@ -8,7 +8,7 @@ import 'package:school_app/resources/app_spacing.dart';
 import 'package:school_app/resources/app_strings.dart';
 import 'package:school_app/resources/app_styles.dart';
 import '../../providers/auth_provider.dart';
-import '../home_page.dart';
+import '../home/home_page.dart';
 import 'forgot_password_page.dart';
 
 class LoginPage extends StatefulWidget {

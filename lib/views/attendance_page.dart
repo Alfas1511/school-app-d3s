@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_app/views/academics_page.dart';
+import 'package:school_app/views/academic/academics_page.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class AttendancePage extends StatefulWidget {
