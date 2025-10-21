@@ -5,7 +5,7 @@ import 'package:school_app/core/services/api_service.dart';
 import 'package:school_app/models/parent_profile_model.dart';
 import 'package:school_app/models/student_details.dart';
 import 'package:school_app/models/students_list.dart';
-import 'package:school_app/views/attendance_page.dart';
+import 'package:school_app/views/attendance/attendance_page.dart';
 import 'package:school_app/views/home/important_updates.dart';
 import 'package:school_app/views/home/latest_exam_results.dart';
 import 'package:school_app/views/home/quick_access.dart';
