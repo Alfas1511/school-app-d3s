@@ -17,9 +17,9 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
   int selectedStudentIndex = 0;
   bool isLoading = true;
   ParentProfile? parentProfile;
-  Student? student;
+  StudentsList? student;
 
-  List<Student> students = [];
+  List<StudentsList> students = [];
 
   // @override
   // void initState() {
@@ -86,7 +86,7 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
       if (response['status'] == true) {
         final data = response['data'] as List;
         setState(() {
-          students = data.map((json) => Student.fromJson(json)).toList();
+          students = data.map((json) => StudentsList.fromJson(json)).toList();
           // isLoading = false;
         });
       } else {
@@ -262,7 +262,7 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
   }
 }
 
-Widget _buildStudentCard(Student student) {
+Widget _buildStudentCard(StudentsList student) {
   String studentImage =
       // student.studentImage ??
       "https://img.freepik.com/free-photo/programming-background-with-person-working-with-codes-computer_23-2150010125.jpg";
@@ -529,7 +529,7 @@ Widget _parentInformation({
   );
 }
 
-Widget _contactInformation(Student student) {
+Widget _contactInformation(StudentsList student) {
   return Container(
     padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
     decoration: BoxDecoration(

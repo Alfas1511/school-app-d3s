@@ -4,10 +4,10 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   Future<Map<String, dynamic>> postRequest(
-      String url,
-      Map<String, dynamic> body, {
-        String? token,
-      }) async {
+    String url,
+    Map<String, dynamic> body, {
+    String? token,
+  }) async {
     final response = await http.post(
       Uri.parse(url),
       body: jsonEncode(body),
@@ -19,10 +19,7 @@ class ApiService {
     return _handleResponse(response);
   }
 
-  Future<Map<String, dynamic>> getRequest(
-      String url, {
-        String? token,
-      }) async {
+  Future<Map<String, dynamic>> getRequest(String url, {String? token}) async {
     final response = await http.get(
       Uri.parse(url),
       headers: {

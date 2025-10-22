@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/resources/app_spacing.dart';
+import 'package:school_app/views/academic/widgets/listing_card_component.dart';
 import 'package:school_app/views/academic/widgets/section_title.dart';
 
 class ImportantUpdates extends StatelessWidget {
@@ -18,70 +19,31 @@ class ImportantUpdates extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // Study Materials List
             AppSpacing.vertical(height: 10),
 
             SectionTitle(title: "Important Updates"),
 
             const SizedBox(height: 10),
 
-            _buildMaterialCard(
-              "",
-              AppIcons.pdf,
-              "Math Exam Tomorrow",
-              "March 18, 10:00 AM - Don't forget calculator",
-              Colors.red[50],
+            ListingCardComponent(
+              cardTitle: "",
+              icon: AppIcons.pdf,
+              title: "Math Exam Tomorrow",
+              subtitle: "March 18, 10:00 AM - Don't forget calculator",
+              color: Colors.red[50],
+              trailingContent: "",
             ),
-            _buildMaterialCard(
-              "",
-              AppIcons.file,
-              "New Study Material",
-              "Science Chapter 5 Notes Uploaded",
-              Colors.blue[50],
+
+            ListingCardComponent(
+              cardTitle: "",
+              icon: AppIcons.file,
+              title: "New Study Material",
+              subtitle: "Science Chapter 5 Notes Uploaded",
+              color: Colors.blue[50],
+              trailingContent: "",
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildMaterialCard(
-    String? cardTitle,
-    IconData icon,
-    String title,
-    String subtitle,
-    Color? color,
-  ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.red, size: 22),
-
-          const SizedBox(width: 12),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-
-                Text(subtitle, style: const TextStyle(color: Colors.grey)),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

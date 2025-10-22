@@ -1,16 +1,12 @@
-class StudentDetailsResponse {
+class StudentDetails {
   final bool status;
   final String message;
   final StudentData? data;
 
-  StudentDetailsResponse({
-    required this.status,
-    required this.message,
-    this.data,
-  });
+  StudentDetails({required this.status, required this.message, this.data});
 
-  factory StudentDetailsResponse.fromJson(Map<String, dynamic> json) {
-    return StudentDetailsResponse(
+  factory StudentDetails.fromJson(Map<String, dynamic> json) {
+    return StudentDetails(
       status: json['status'] ?? false,
       message: json['message'] ?? '',
       data: json['data'] != null ? StudentData.fromJson(json['data']) : null,
@@ -31,7 +27,9 @@ class StudentData {
   final String bloodGroup;
   final String admissionDate;
   final String aadhaarNo;
+  final String gradeId;
   final String grade;
+  final String divisionId;
   final String division;
   final String address;
   final String primaryContactNumber;
@@ -53,7 +51,9 @@ class StudentData {
     required this.bloodGroup,
     required this.admissionDate,
     required this.aadhaarNo,
+    required this.gradeId,
     required this.grade,
+    required this.divisionId,
     required this.division,
     required this.address,
     required this.primaryContactNumber,
@@ -77,7 +77,9 @@ class StudentData {
       bloodGroup: json['blood_group'] ?? '',
       admissionDate: json['admission_date'] ?? '',
       aadhaarNo: json['aadhaar_no'] ?? '',
+      gradeId: json['grade_id'] ?? '',
       grade: json['grade'] ?? '',
+      divisionId: json['division_id'] ?? '',
       division: json['division'] ?? '',
       address: json['address'] ?? '',
       primaryContactNumber: json['primary_contact_number'] ?? '',

@@ -5,10 +5,10 @@ import 'package:school_app/resources/app_spacing.dart';
 
 class TopSection extends StatelessWidget {
   final ParentProfile? parentProfile;
-  final List<Student> students;
+  final List<StudentsList> students;
   final bool isLoading;
-  final Student? selectedStudent;
-  final Function(Student) onStudentSelected;
+  final StudentsList? selectedStudent;
+  final Function(StudentsList) onStudentSelected;
 
   const TopSection({
     super.key,

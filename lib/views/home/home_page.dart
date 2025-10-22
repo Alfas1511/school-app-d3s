@@ -28,9 +28,9 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   bool isLoading = true;
   ParentProfile? parentProfile;
-  Student? selectedStudent;
+  StudentsList? selectedStudent;
 
-  List<Student> students = [];
+  List<StudentsList> students = [];
   List<Widget> get _pages => [
     _buildHomeContent(),
     AcademicPage(),
@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _loadSelectedStudent();
     _fetchParentProfile();
-    _fetchStudents();
+    _fetchStudentsList();
   }
 
   Future<void> _fetchParentProfile() async {
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
     if (selectedId != null) {
       // If student list isn’t loaded yet, we’ll assign it once list is fetched
       setState(() {
-        selectedStudent = Student(
+        selectedStudent = StudentsList(
           id: selectedId,
           admissionNo: '',
           firstName: '',
@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _fetchStudents() async {
+  Future<void> _fetchStudentsList() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token');
@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> {
       if (response['status'] == true) {
         final data = response['data'] as List;
         setState(() {
-          students = data.map((json) => Student.fromJson(json)).toList();
+          students = data.map((json) => StudentsList.fromJson(json)).toList();
           if (students.isNotEmpty) {
             selectedStudent = students.first;
           }
@@ -136,15 +136,18 @@ class _HomePageState extends State<HomePage> {
       final apiService = ApiService();
       final response = await apiService.postRequest(
         ApiConstants.studentDetails,
-        {'student_id': studentId.toString()}, // your API expects this
+        {'student_id': studentId},
         token: token,
       );
 
+      debugPrint("STUDENT DETAILS RESPONSE: $response");
+
+      // Check if API returned a proper JSON with 'status'
       if (response['status'] == true) {
-        final studentResponse = StudentDetailsResponse.fromJson(response);
+        final studentResponse = StudentDetails.fromJson(response);
         return studentResponse.data;
       } else {
-        throw Exception(response['message']);
+        throw Exception(response['message'] ?? 'Unknown error');
       }
     } catch (e) {
       debugPrint("Error fetching student details: $e");
@@ -158,7 +161,7 @@ class _HomePageState extends State<HomePage> {
     });
 
     // Re-fetch data
-    await Future.wait([_fetchParentProfile(), _fetchStudents()]);
+    await Future.wait([_fetchParentProfile(), _fetchStudentsList()]);
 
     setState(() {
       isLoading = false;
@@ -195,26 +198,36 @@ class _HomePageState extends State<HomePage> {
                   });
 
                   final prefs = await SharedPreferences.getInstance();
+                  // Fetch and store basic student info first
                   await prefs.setInt('student_id', student.id);
                   await prefs.setString(
                     'student_name',
                     "${student.firstName} ${student.lastName}",
                   );
-                  await prefs.setString(
-                    'student_grade',
-                    "${student.grade}",
-                  );
-                  await prefs.setString(
-                    'student_division',
-                    "${student.division}",
-                  );
-
-                  // Fetch and display details
+                  // Fetch full student details (which includes grade_id and division_id)
                   final studentDetails = await _fetchStudentDetails(student.id);
+                  // print(studentDetails);
                   if (studentDetails != null) {
+                    // Store complete details in SharedPreferences
+                    await prefs.setString(
+                      'student_grade',
+                      studentDetails.grade,
+                    );
+                    await prefs.setString(
+                      'student_grade_id',
+                      studentDetails.gradeId,
+                    );
+                    await prefs.setString(
+                      'student_division',
+                      studentDetails.division,
+                    );
+                    await prefs.setString(
+                      'student_division_id',
+                      studentDetails.divisionId,
+                    );
+
                     setState(() {
-                      // You can store the details to display later
-                      selectedStudent = Student(
+                      selectedStudent = StudentsList(
                         id: studentDetails.id,
                         admissionNo: '',
                         firstName: studentDetails.firstName,
