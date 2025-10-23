@@ -48,7 +48,9 @@ class ListingCardComponent extends StatelessWidget {
 
                 Text(subtitle, style: const TextStyle(color: Colors.grey)),
 
-                Text('$tag', style: const TextStyle(color: Colors.grey)),
+                tag != null
+                    ? Text(tag!, style: const TextStyle(color: Colors.grey))
+                    : SizedBox.shrink(),
               ],
             ),
           ),

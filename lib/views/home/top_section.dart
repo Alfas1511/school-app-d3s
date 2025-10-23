@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/models/parent_profile_model.dart';
-import 'package:school_app/models/students_list.dart';
+import 'package:school_app/models/students_list_model.dart';
 import 'package:school_app/resources/app_spacing.dart';
 
 class TopSection extends StatelessWidget {
-  final ParentProfile? parentProfile;
-  final List<StudentsList> students;
+  final ParentProfileModel? parentProfile;
+  final List<StudentsListModel> students;
   final bool isLoading;
-  final StudentsList? selectedStudent;
-  final Function(StudentsList) onStudentSelected;
+  final StudentsListModel? selectedStudent;
+  final Function(StudentsListModel) onStudentSelected;
 
   const TopSection({
     super.key,

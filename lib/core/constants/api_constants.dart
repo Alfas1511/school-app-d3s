@@ -13,5 +13,9 @@ class ApiConstants {
   static const String studentDetails = "$baseUrl/parent/student-details";
   static const String studentAttendance = "$baseUrl/parent/student-attendance";
 
-  static const String gradeStudyMaterials = "$baseUrl/parent/grade-study-materials";
+  static const String gradeStudyMaterials =
+      "$baseUrl/parent/grade-study-materials";
+
+  static const String studentBusInformation =
+      "$baseUrl/parent/student-bus-information";
 }

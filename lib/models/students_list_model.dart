@@ -1,4 +1,4 @@
-class StudentsList {
+class StudentsListModel {
   final int id;
   final String admissionNo;
   final String firstName;
@@ -13,7 +13,7 @@ class StudentsList {
   final String? grade;
   final String? division;
 
-  StudentsList({
+  StudentsListModel({
     required this.id,
     required this.admissionNo,
     required this.firstName,
@@ -29,8 +29,8 @@ class StudentsList {
     this.division,
   });
 
-  factory StudentsList.fromJson(Map<String, dynamic> json) {
-    return StudentsList(
+  factory StudentsListModel.fromJson(Map<String, dynamic> json) {
+    return StudentsListModel(
       id: json['id'] is int ? json['id'] : int.parse(json['id'].toString()),
       admissionNo: json['admission_no']?.toString() ?? '',
       firstName: json['first_name'] ?? '',

@@ -7,7 +7,7 @@ class ImportantUpdates extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(

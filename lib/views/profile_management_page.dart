@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_app/core/constants/api_constants.dart';
 import 'package:school_app/core/services/api_service.dart';
 import 'package:school_app/models/parent_profile_model.dart';
-import 'package:school_app/models/students_list.dart';
+import 'package:school_app/models/students_list_model.dart';
 import 'package:school_app/resources/app_spacing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,10 +16,10 @@ class ProfileManagementPage extends StatefulWidget {
 class _ProfileManagementState extends State<ProfileManagementPage> {
   int selectedStudentIndex = 0;
   bool isLoading = true;
-  ParentProfile? parentProfile;
-  StudentsList? student;
+  ParentProfileModel? parentProfile;
+  StudentsListModel? student;
 
-  List<StudentsList> students = [];
+  List<StudentsListModel> students = [];
 
   // @override
   // void initState() {
@@ -59,7 +59,7 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
       if (response['status'] == true) {
         final data = response['data'];
         setState(() {
-          parentProfile = ParentProfile.fromJson(data);
+          parentProfile = ParentProfileModel.fromJson(data);
           // isLoading = false;
         });
       } else {
@@ -86,7 +86,9 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
       if (response['status'] == true) {
         final data = response['data'] as List;
         setState(() {
-          students = data.map((json) => StudentsList.fromJson(json)).toList();
+          students = data
+              .map((json) => StudentsListModel.fromJson(json))
+              .toList();
           // isLoading = false;
         });
       } else {
@@ -262,7 +264,7 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
   }
 }
 
-Widget _buildStudentCard(StudentsList student) {
+Widget _buildStudentCard(StudentsListModel student) {
   String studentImage =
       // student.studentImage ??
       "https://img.freepik.com/free-photo/programming-background-with-person-working-with-codes-computer_23-2150010125.jpg";
@@ -529,7 +531,7 @@ Widget _parentInformation({
   );
 }
 
-Widget _contactInformation(StudentsList student) {
+Widget _contactInformation(StudentsListModel student) {
   return Container(
     padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
     decoration: BoxDecoration(

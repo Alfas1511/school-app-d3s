@@ -1,12 +1,12 @@
-class StudentDetails {
+class StudentDetailsModel {
   final bool status;
   final String message;
   final StudentData? data;
 
-  StudentDetails({required this.status, required this.message, this.data});
+  StudentDetailsModel({required this.status, required this.message, this.data});
 
-  factory StudentDetails.fromJson(Map<String, dynamic> json) {
-    return StudentDetails(
+  factory StudentDetailsModel.fromJson(Map<String, dynamic> json) {
+    return StudentDetailsModel(
       status: json['status'] ?? false,
       message: json['message'] ?? '',
       data: json['data'] != null ? StudentData.fromJson(json['data']) : null,

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:school_app/core/constants/api_constants.dart';
 import 'package:school_app/core/services/api_service.dart';
 import 'package:school_app/models/parent_profile_model.dart';
-import 'package:school_app/models/student_details.dart';
-import 'package:school_app/models/students_list.dart';
+import 'package:school_app/models/student_details_model.dart';
+import 'package:school_app/models/students_list_model.dart';
 import 'package:school_app/views/attendance/attendance_page.dart';
 import 'package:school_app/views/home/important_updates.dart';
 import 'package:school_app/views/home/latest_exam_results.dart';
@@ -15,7 +15,7 @@ import 'package:school_app/views/home/top_section.dart';
 import 'package:school_app/views/more_options_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../academic/academics_page.dart';
-import '../transport_page.dart';
+import '../transport/transport_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,10 +27,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   bool isLoading = true;
-  ParentProfile? parentProfile;
-  StudentsList? selectedStudent;
+  ParentProfileModel? parentProfile;
+  StudentsListModel? selectedStudent;
 
-  List<StudentsList> students = [];
+  List<StudentsListModel> students = [];
   List<Widget> get _pages => [
     _buildHomeContent(),
     AcademicPage(),
@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
       if (response['status'] == true) {
         final data = response['data'];
         setState(() {
-          parentProfile = ParentProfile.fromJson(data);
+          parentProfile = ParentProfileModel.fromJson(data);
           isLoading = false;
         });
       } else {
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
     if (selectedId != null) {
       // If student list isn’t loaded yet, we’ll assign it once list is fetched
       setState(() {
-        selectedStudent = StudentsList(
+        selectedStudent = StudentsListModel(
           id: selectedId,
           admissionNo: '',
           firstName: '',
@@ -107,7 +107,9 @@ class _HomePageState extends State<HomePage> {
       if (response['status'] == true) {
         final data = response['data'] as List;
         setState(() {
-          students = data.map((json) => StudentsList.fromJson(json)).toList();
+          students = data
+              .map((json) => StudentsListModel.fromJson(json))
+              .toList();
           if (students.isNotEmpty) {
             selectedStudent = students.first;
           }
@@ -140,11 +142,11 @@ class _HomePageState extends State<HomePage> {
         token: token,
       );
 
-      debugPrint("STUDENT DETAILS RESPONSE: $response");
+      // debugPrint("STUDENT DETAILS RESPONSE: $response");
 
       // Check if API returned a proper JSON with 'status'
       if (response['status'] == true) {
-        final studentResponse = StudentDetails.fromJson(response);
+        final studentResponse = StudentDetailsModel.fromJson(response);
         return studentResponse.data;
       } else {
         throw Exception(response['message'] ?? 'Unknown error');
@@ -227,7 +229,7 @@ class _HomePageState extends State<HomePage> {
                     );
 
                     setState(() {
-                      selectedStudent = StudentsList(
+                      selectedStudent = StudentsListModel(
                         id: studentDetails.id,
                         admissionNo: '',
                         firstName: studentDetails.firstName,
@@ -260,6 +262,8 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 20),
               // Latest Exam Results
               LatestExamResults(),
+
+              const SizedBox(height: 20),
             ],
           ),
         ),

@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:school_app/views/academic/academics_page.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:school_app/core/constants/api_constants.dart';
+import 'package:school_app/core/services/api_service.dart';
+import 'package:school_app/models/student_attendance_model.dart';
+import 'package:school_app/resources/app_icons.dart';
+import 'package:school_app/views/attendance/attendance_summary_card.dart';
+import 'package:school_app/views/attendance/monthly_view_card.dart';
+import 'package:school_app/views/attendance/recent_activity_card.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AttendancePage extends StatefulWidget {
   const AttendancePage({super.key});
@@ -10,8 +16,9 @@ class AttendancePage extends StatefulWidget {
 }
 
 class _AttendancePageState extends State<AttendancePage> {
-  DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+  String? studentName;
+  String? grade;
+  String? division;
 
   // Example attendance data
   final Map<DateTime, String> attendanceStatus = {
@@ -22,20 +29,62 @@ class _AttendancePageState extends State<AttendancePage> {
     DateTime(2024, 3, 10): 'late',
   };
 
-  Color _getStatusColor(DateTime day) {
-    final status = attendanceStatus[DateTime(day.year, day.month, day.day)];
-    switch (status) {
-      case 'present':
-        return Colors.green;
-      case 'absent':
-        return Colors.red;
-      case 'late':
-        return Colors.orange;
-      case 'holiday':
-        return Colors.blueGrey;
-      default:
-        return Colors.grey[300]!;
+  Future<void> _loadStudentName() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('student_name');
+    final gradeValue = prefs.getString('student_grade');
+    final divisionValue = prefs.getString('student_division');
+    setState(() {
+      studentName = name ?? "Student";
+      grade = gradeValue ?? "";
+      division = divisionValue ?? "";
+    });
+  }
+
+  Future<StudentAttendanceData?> _fetchStudentAttendance(int studentId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+
+      final apiService = ApiService();
+      final response = await apiService.postRequest(
+        ApiConstants.studentAttendance,
+        {'student_id': studentId},
+        token: token,
+      );
+
+      // debugPrint("STUDENT ATTENDANCE RESPONSE: $response");
+
+      // Check if API returned a proper JSON with 'status'
+      if (response['status'] == true) {
+        final studentResponse = StudentAttendanceModel.fromJson(response);
+        return studentResponse.data;
+      } else {
+        debugPrint("⚠️ No attendance data: ${response['message']}");
+        return null;
+      }
+    } catch (e) {
+      debugPrint("Error fetching student attendance details: $e");
+      return null;
     }
+  }
+
+  Future<StudentAttendanceData?> _getStudentAttendance() async {
+    final prefs = await SharedPreferences.getInstance();
+    final studentId = prefs.getInt('student_id');
+
+    if (studentId == null) {
+      debugPrint("⚠️ No student_id found in SharedPreferences");
+      return null;
+    }
+
+    return await _fetchStudentAttendance(studentId);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStudentName();
   }
 
   @override
@@ -43,6 +92,7 @@ class _AttendancePageState extends State<AttendancePage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
+        toolbarHeight: 80,
         elevation: 0,
         backgroundColor: const Color(0xFF6A11CB),
         flexibleSpace: Container(
@@ -54,295 +104,76 @@ class _AttendancePageState extends State<AttendancePage> {
             ),
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const AcademicPage()),
-          ),
-        ),
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Attendance",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
+            SizedBox(height: 5),
             Text(
-              "Emma Johnson - Grade 5A",
-              style: TextStyle(color: Colors.white70, fontSize: 16),
+              studentName != null
+                  ? "Grade ${grade != null && grade!.isNotEmpty ? "$grade" : ""}${division != null && division!.isNotEmpty ? "$division - " : ""}$studentName"
+                  : "Loading...",
+              style: const TextStyle(color: Colors.white70, fontSize: 15),
             ),
           ],
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Top Summary
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildSummaryItem(
-                      Icons.check,
-                      "18",
-                      "Present",
-                      Colors.green,
-                    ),
-                    _buildSummaryItem(Icons.close, "2", "Absent", Colors.red),
-                    _buildSummaryItem(
-                      Icons.schedule,
-                      "1",
-                      "Late",
-                      Colors.orange,
-                    ),
-                    _buildSummaryItem(
-                      Icons.calendar_month,
-                      "21",
-                      "Total Days",
-                      Colors.blue,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Monthly View
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text(
-                          "Monthly View",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          "March 2024",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-
-                    // TableCalendar Widget
-                    TableCalendar(
-                      focusedDay: _focusedDay,
-                      firstDay: DateTime(2020),
-                      lastDay: DateTime(2030),
-                      calendarFormat: CalendarFormat.month,
-                      startingDayOfWeek: StartingDayOfWeek.monday,
-                      availableGestures: AvailableGestures.all,
-                      selectedDayPredicate: (day) =>
-                          isSameDay(_selectedDay, day),
-                      onDaySelected: (selectedDay, focusedDay) {
-                        setState(() {
-                          _selectedDay = selectedDay;
-                          _focusedDay = focusedDay;
-                        });
-                      },
-                      onPageChanged: (focusedDay) {
-                        setState(() => _focusedDay = focusedDay);
-                      },
-                      calendarStyle: CalendarStyle(
-                        outsideDaysVisible: false,
-                        isTodayHighlighted: true,
-                        defaultTextStyle: const TextStyle(color: Colors.black),
-                        todayDecoration: BoxDecoration(
-                          color: Colors.blue.shade200,
-                          shape: BoxShape.circle,
-                        ),
-                        selectedDecoration: const BoxDecoration(
-                          color: Colors.blue,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      calendarBuilders: CalendarBuilders(
-                        defaultBuilder: (context, day, focusedDay) {
-                          return _buildDayCell(day);
-                        },
-                        todayBuilder: (context, day, focusedDay) {
-                          return _buildDayCell(day, isToday: true);
-                        },
-                        selectedBuilder: (context, day, focusedDay) {
-                          return _buildDayCell(day, isSelected: true);
-                        },
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // Legend
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildLegend(Colors.green, "Present"),
-                        _buildLegend(Colors.red, "Absent"),
-                        _buildLegend(Colors.orange, "Late"),
-                        _buildLegend(Colors.blueGrey, "Holiday"),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Recent Activity
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Recent Activity",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Column(
-                      children: [
-                        Card(
-                          color: Colors.red[100],
-                          child: ListTile(
-                            leading: Icon(Icons.close),
-                            title: Text(
-                              "Absent",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text("March 14, 2024"),
-                            iconColor: Colors.red,
-                          ),
-                        ),
-                        Card(
-                          color: Colors.red[100],
-                          child: ListTile(
-                            leading: Icon(Icons.schedule),
-                            title: Text(
-                              "Late Arrival",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text("March 8, 2024"),
-                            iconColor: Colors.orange[900],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDayCell(
-    DateTime day, {
-    bool isToday = false,
-    bool isSelected = false,
-  }) {
-    final bgColor = _getStatusColor(day);
-    return Center(
-      child: Container(
-        margin: const EdgeInsets.all(4),
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: isSelected
-              ? Colors.blue
-              : isToday
-              ? Colors.blue.shade200
-              : bgColor,
-          shape: BoxShape.circle,
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          '${day.day}',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
-
-  // Summary widget
-  Widget _buildSummaryItem(
-    IconData icon,
-    String value,
-    String label,
-    Color color,
-  ) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
-            shape: BoxShape.circle,
+        actions: [
+          IconButton(
+            icon: const Icon(AppIcons.school, color: Colors.white),
+            onPressed: () {},
           ),
-          child: Icon(icon, color: color),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          value,
-          style: TextStyle(
-            color: color,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        Text(label, style: const TextStyle(fontSize: 14)),
-      ],
-    );
-  }
+        ],
+      ),
+      body: FutureBuilder<StudentAttendanceData?>(
+        future: _getStudentAttendance(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else if (!snapshot.hasData || snapshot.data == null) {
+            return const Center(child: Text("No attendance data available"));
+          }
 
-  // Legend widget
-  Widget _buildLegend(Color color, String label) {
-    return Row(
-      children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(3),
-          ),
-        ),
-        const SizedBox(width: 6),
-        Text(label, style: const TextStyle(fontSize: 14)),
-      ],
+          final attendanceData = snapshot.data!;
+
+          final totalDays =
+              attendanceData.presentCount +
+              attendanceData.absentCount +
+              attendanceData.lateCount;
+
+          // ✅ Build map from attendance details
+          final Map<DateTime, String> attendanceStatusMap = {
+            for (var detail in attendanceData.attendanceDetails)
+              DateTime.parse(detail.attendanceDate): detail.attendanceStatus
+                  .toLowerCase(),
+          };
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                AttendanceSummaryCard(
+                  presentCount: attendanceData.presentCount.toString(),
+                  absentCount: attendanceData.absentCount.toString(),
+                  lateCount: attendanceData.lateCount.toString(),
+                  totalDays: totalDays.toString(),
+                ),
+                MonthlyViewCard(attendanceStatus: attendanceStatusMap),
+                RecentActivityCard(
+                  attendanceDetails: attendanceData.attendanceDetails,
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

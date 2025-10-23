@@ -1,16 +1,16 @@
-class ParentProfile {
+class ParentProfileModel {
   final int id;
   final String parentPhone;
   final ParentInfo parentInfo;
 
-  ParentProfile({
+  ParentProfileModel({
     required this.id,
     required this.parentPhone,
     required this.parentInfo,
   });
 
-  factory ParentProfile.fromJson(Map<String, dynamic> json) {
-    return ParentProfile(
+  factory ParentProfileModel.fromJson(Map<String, dynamic> json) {
+    return ParentProfileModel(
       id: json['id'] is int ? json['id'] : int.parse(json['id'].toString()),
       parentPhone: json['parent_phone'] ?? '',
       parentInfo: ParentInfo.fromJson(json['parent_info'] ?? {}),

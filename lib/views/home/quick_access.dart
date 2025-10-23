@@ -5,7 +5,7 @@ import 'package:school_app/views/attendance/attendance_page.dart';
 import 'package:school_app/views/fee_management_page.dart';
 import 'package:school_app/views/profile_management_page.dart';
 import 'package:school_app/views/timetable_page.dart';
-import 'package:school_app/views/transport_page.dart';
+import 'package:school_app/views/transport/transport_page.dart';
 
 class QuickAccess extends StatelessWidget {
   const QuickAccess({super.key});
@@ -13,7 +13,7 @@ class QuickAccess extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),

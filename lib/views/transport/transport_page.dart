@@ -1,5 +1,9 @@
 import "package:flutter/material.dart";
-import "package:school_app/views/home/home_page.dart";
+import "package:school_app/core/constants/api_constants.dart";
+import "package:school_app/core/services/api_service.dart";
+import "package:school_app/models/student_bus_information_model.dart";
+import "package:school_app/views/transport/bus_information_card.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
 class TransportPage extends StatefulWidget {
   const TransportPage({super.key});
@@ -10,13 +14,56 @@ class TransportPage extends StatefulWidget {
 
 class _TransportPageState extends State<TransportPage> {
   bool _gpsTrackingToggle = false; // initial state
+  bool isLoading = true;
+  String studentName = '';
+  StudentBusInformationModel? studentBusInfo;
+
+  Future<void> _fetchBusInformation() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      final studentId = prefs.getInt('student_id');
+      studentName = prefs.getString('student_name') ?? '';
+
+      final apiService = ApiService();
+      final response = await apiService.postRequest(
+        ApiConstants.studentBusInformation,
+        {'student_id': studentId},
+        token: token,
+      );
+
+      // debugPrint("STUDENT BUS RESPONSE: $response");
+
+      if (response['status'] == true) {
+        setState(() {
+          studentBusInfo = StudentBusInformationModel.fromJson(response);
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message']);
+      }
+    } catch (e) {
+      debugPrint("FETCH ERROR: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchBusInformation();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
+        toolbarHeight: 80,
         elevation: 0,
+        backgroundColor: const Color(0xFF6A11CB),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -29,27 +76,26 @@ class _TransportPageState extends State<TransportPage> {
             ),
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const HomePage()),
-          ),
-        ),
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Transport",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
+            SizedBox(height: 5),
             Text(
-              "Emma Johnson - Route A",
-              style: TextStyle(color: Colors.white70, fontSize: 16),
+              studentName,
+              style: const TextStyle(color: Colors.white, fontSize: 20),
             ),
           ],
         ),
       ),
+
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -61,7 +107,7 @@ class _TransportPageState extends State<TransportPage> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   children: [
                     // Header row
@@ -194,53 +240,7 @@ class _TransportPageState extends State<TransportPage> {
             ),
 
             // Bus Info Section
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Bus Information",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    _buildInfoRow("Bus Number", "BUS-042"),
-                    _buildInfoRow("Route", "Route A - Downtown"),
-                    _buildInfoRow("Driver", "John Williams"),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Contact",
-                          style: TextStyle(color: Colors.black54),
-                        ),
-                        Row(
-                          children: const [
-                            Text(
-                              "+1 555-0123",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(width: 8),
-                            Icon(Icons.call, color: Colors.green),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            BusInformationCard(busData: studentBusInfo?.data),
 
             Padding(
               padding: const EdgeInsets.all(8),
@@ -350,23 +350,6 @@ class _TransportPageState extends State<TransportPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  // Reusable info row
-  Widget _buildInfoRow(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: const TextStyle(color: Colors.black54)),
-          Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-        ],
       ),
     );
   }
