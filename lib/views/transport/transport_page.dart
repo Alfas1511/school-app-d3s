@@ -1,8 +1,12 @@
 import "package:flutter/material.dart";
 import "package:school_app/core/constants/api_constants.dart";
 import "package:school_app/core/services/api_service.dart";
+import "package:school_app/models/bus_notifications_model.dart";
+import "package:school_app/models/bus_recent_trips_model.dart";
 import "package:school_app/models/student_bus_information_model.dart";
 import "package:school_app/views/transport/bus_information_card.dart";
+import "package:school_app/views/transport/bus_notifications_card.dart";
+import "package:school_app/views/transport/recent_trips_card.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
 class TransportPage extends StatefulWidget {
@@ -17,6 +21,8 @@ class _TransportPageState extends State<TransportPage> {
   bool isLoading = true;
   String studentName = '';
   StudentBusInformationModel? studentBusInfo;
+  BusRecentTripsModel? busRecentTripInfo;
+  BusNotificationsModel? busNotificationsInfo;
 
   Future<void> _fetchBusInformation() async {
     try {
@@ -50,10 +56,76 @@ class _TransportPageState extends State<TransportPage> {
     }
   }
 
+  Future<void> _fetchBusRecentTrips() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      final studentId = prefs.getInt('student_id');
+      studentName = prefs.getString('student_name') ?? '';
+
+      final apiService = ApiService();
+      final response = await apiService.postRequest(
+        ApiConstants.busRecentTrips,
+        {'student_id': studentId},
+        token: token,
+      );
+
+      // debugPrint("STUDENT BUS RESPONSE: $response");
+
+      if (response['status'] == true) {
+        setState(() {
+          busRecentTripInfo = BusRecentTripsModel.fromJson(response);
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message']);
+      }
+    } catch (e) {
+      debugPrint("FETCH ERROR: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _fetchBusNotifications() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      final studentId = prefs.getInt('student_id');
+      studentName = prefs.getString('student_name') ?? '';
+
+      final apiService = ApiService();
+      final response = await apiService.postRequest(
+        ApiConstants.busNotifications,
+        {'student_id': studentId},
+        token: token,
+      );
+
+      // debugPrint("STUDENT BUS RESPONSE: $response");
+
+      if (response['status'] == true) {
+        setState(() {
+          busNotificationsInfo = BusNotificationsModel.fromJson(response);
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message']);
+      }
+    } catch (e) {
+      debugPrint("FETCH ERROR: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _fetchBusInformation();
+    _fetchBusRecentTrips();
+    _fetchBusNotifications();
   }
 
   @override
@@ -242,111 +314,11 @@ class _TransportPageState extends State<TransportPage> {
             // Bus Info Section
             BusInformationCard(busData: studentBusInfo?.data),
 
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Recent Trips",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    Card(
-                      color: Colors.green[100],
-                      child: ListTile(
-                        leading: Icon(Icons.calendar_month),
-                        title: Text("15/3/2024"),
-                        subtitle: Text("7:45 AM - 8:20 AM"),
-                        trailing: Text(
-                          "Completed",
-                          style: TextStyle(color: Colors.green[800]),
-                        ),
-                      ),
-                    ),
-                    Card(
-                      color: Colors.green[100],
-                      child: ListTile(
-                        leading: Icon(Icons.calendar_month),
-                        title: Text("15/3/2024"),
-                        subtitle: Text("7:45 AM - 8:20 AM"),
-                        trailing: Text(
-                          "Completed",
-                          style: TextStyle(color: Colors.green[800]),
-                        ),
-                      ),
-                    ),
-                    Card(
-                      color: Colors.green[100],
-                      child: ListTile(
-                        leading: Icon(Icons.calendar_month),
-                        title: Text("15/3/2024"),
-                        subtitle: Text("7:45 AM - 8:20 AM"),
-                        trailing: Text(
-                          "Completed",
-                          style: TextStyle(color: Colors.green[800]),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            RecentTripsCard(recentTripsData: busRecentTripInfo?.data),
 
             // Notifications
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Notifications",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    Card(
-                      color: Colors.green[100],
-                      child: ListTile(
-                        leading: Icon(Icons.notifications),
-                        title: Text("Bus Delay Alert"),
-                        subtitle: Text(
-                          "Your bus in running 5 minutes late due to traffic",
-                        ),
-                      ),
-                    ),
-                    Card(
-                      color: Colors.green[100],
-                      child: ListTile(
-                        leading: Icon(Icons.check),
-                        title: Text("Safe Arrival"),
-                        subtitle: Text("Emma has arrived safely at school"),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            BusNotificationsCard(
+              busNotificationsData: busNotificationsInfo?.data,
             ),
           ],
         ),

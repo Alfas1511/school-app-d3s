@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/core/constants/api_constants.dart';
 import 'package:school_app/core/services/api_service.dart';
+import 'package:school_app/models/important_updates_model.dart';
 import 'package:school_app/models/parent_profile_model.dart';
 import 'package:school_app/models/student_details_model.dart';
 import 'package:school_app/models/students_list_model.dart';
@@ -29,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = true;
   ParentProfileModel? parentProfile;
   StudentsListModel? selectedStudent;
+  ImportantUpdatesModel? importantUpdates;
 
   List<StudentsListModel> students = [];
   List<Widget> get _pages => [
@@ -39,13 +41,49 @@ class _HomePageState extends State<HomePage> {
     const MoreOptionsPage(),
   ];
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _loadSelectedStudent();
+  //   _fetchParentProfile();
+  //   _fetchStudentsList();
+  //   _loadImportantUpdates();
+  // }
+
   @override
   void initState() {
     super.initState();
-    _loadSelectedStudent();
-    _fetchParentProfile();
-    _fetchStudentsList();
+    _initializeHome();
   }
+
+  Future<void> _initializeHome() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    await _loadSelectedStudent(); // Load previously selected student
+    await _fetchParentProfile(); // Load parent profile
+    await _fetchStudentsList(); // Load student list & set selected student
+
+    if (selectedStudent != null) {
+      await _loadImportantUpdates(
+        selectedStudent!.id,
+      ); // Load updates for selected student
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  // Future<void> _debugPrintSharedPrefs() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final allPrefs = prefs.getKeys();
+
+  //   for (var key in allPrefs) {
+  //     debugPrint('$key: ${prefs.get(key)}');
+  //   }
+  // }
 
   Future<void> _fetchParentProfile() async {
     try {
@@ -93,10 +131,48 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Future<void> _fetchStudentsList() async {
+  //   try {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     final token = prefs.getString('auth_token');
+
+  //     final apiService = ApiService();
+  //     final response = await apiService.getRequest(
+  //       ApiConstants.studentList,
+  //       token: token,
+  //     );
+
+  //     if (response['status'] == true) {
+  //       final data = response['data'] as List;
+  //       setState(() {
+  //         students = data
+  //             .map((json) => StudentsListModel.fromJson(json))
+  //             .toList();
+  //         if (students.isNotEmpty) {
+  //           selectedStudent = students.first;
+  //         }
+  //         isLoading = false;
+  //       });
+
+  //       // Save selected student ID
+  //       if (students.isNotEmpty) {
+  //         await prefs.setInt('selected_student_id', students.first.id);
+  //       }
+  //     } else {
+  //       throw Exception(response['message']);
+  //     }
+  //   } catch (e) {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
+
   Future<void> _fetchStudentsList() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token');
+      final selectedId = prefs.getInt('selected_student_id');
 
       final apiService = ApiService();
       final response = await apiService.getRequest(
@@ -106,24 +182,31 @@ class _HomePageState extends State<HomePage> {
 
       if (response['status'] == true) {
         final data = response['data'] as List;
+        final fetchedStudents = data
+            .map((json) => StudentsListModel.fromJson(json))
+            .toList();
+
+        StudentsListModel? matchedStudent;
+        if (selectedId != null) {
+          matchedStudent = fetchedStudents.firstWhere(
+            (s) => s.id == selectedId,
+            orElse: () => fetchedStudents.first,
+          );
+        }
+
         setState(() {
-          students = data
-              .map((json) => StudentsListModel.fromJson(json))
-              .toList();
-          if (students.isNotEmpty) {
-            selectedStudent = students.first;
-          }
+          students = fetchedStudents;
+          selectedStudent = matchedStudent ?? fetchedStudents.first;
           isLoading = false;
         });
 
-        // Save selected student ID
-        if (students.isNotEmpty) {
-          await prefs.setInt('selected_student_id', students.first.id);
-        }
+        // Make sure to store the correct selected ID again
+        await prefs.setInt('selected_student_id', selectedStudent!.id);
       } else {
         throw Exception(response['message']);
       }
     } catch (e) {
+      debugPrint("Error fetching student list: $e");
       setState(() {
         isLoading = false;
       });
@@ -144,7 +227,6 @@ class _HomePageState extends State<HomePage> {
 
       // debugPrint("STUDENT DETAILS RESPONSE: $response");
 
-      // Check if API returned a proper JSON with 'status'
       if (response['status'] == true) {
         final studentResponse = StudentDetailsModel.fromJson(response);
         return studentResponse.data;
@@ -157,13 +239,46 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _loadImportantUpdates(int studentId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+
+      final apiService = ApiService();
+      final response = await apiService.getRequest(
+        '${ApiConstants.homeImportantUpdates}?student_id=$studentId',
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        setState(() {
+          importantUpdates = ImportantUpdatesModel.fromJson(response);
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message']);
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      debugPrint("Error loading important updates: $e");
+    }
+  }
+
   Future<void> _handleRefresh() async {
     setState(() {
       isLoading = true;
     });
 
-    // Re-fetch data
-    await Future.wait([_fetchParentProfile(), _fetchStudentsList()]);
+    final prefs = await SharedPreferences.getInstance();
+    final selectedId = prefs.getInt('selected_student_id');
+
+    await Future.wait([
+      _fetchParentProfile(),
+      _fetchStudentsList(),
+      if (selectedId != null) _loadImportantUpdates(selectedId),
+    ]);
 
     setState(() {
       isLoading = false;
@@ -200,17 +315,15 @@ class _HomePageState extends State<HomePage> {
                   });
 
                   final prefs = await SharedPreferences.getInstance();
-                  // Fetch and store basic student info first
                   await prefs.setInt('student_id', student.id);
                   await prefs.setString(
                     'student_name',
                     "${student.firstName} ${student.lastName}",
                   );
-                  // Fetch full student details (which includes grade_id and division_id)
+
+                  // Fetch full student details
                   final studentDetails = await _fetchStudentDetails(student.id);
-                  // print(studentDetails);
                   if (studentDetails != null) {
-                    // Store complete details in SharedPreferences
                     await prefs.setString(
                       'student_grade',
                       studentDetails.grade,
@@ -240,12 +353,15 @@ class _HomePageState extends State<HomePage> {
                       );
                     });
                   }
+
+                  // 🔹 Fetch important updates for newly selected student
+                  await _loadImportantUpdates(student.id);
                 },
               ),
 
               const SizedBox(height: 20),
               // Important Updates
-              ImportantUpdates(),
+              ImportantUpdates(importantUpdatesData: importantUpdates),
 
               const SizedBox(height: 20),
               // Quick Access

@@ -26,12 +26,14 @@ class RecentAchievements extends StatelessWidget {
                 ),
               ],
             ),
+
             const SizedBox(height: 10),
+
             UpdateCard(
               icon: Icons.emoji_events,
               title: "Mathematics Excellence Award",
               subtitle: "Awarded on March 10, 2024",
-              color: const Color.fromARGB(255, 249, 248, 203),
+              color: Colors.yellow,
             ),
           ],
         ),

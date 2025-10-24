@@ -62,7 +62,14 @@ class BusInformationCard extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(width: 8),
-                    Icon(Icons.call, color: Colors.green),
+                    Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: Colors.green[100],
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.call, color: Colors.green, size: 15),
+                    ),
                   ],
                 ),
               ],

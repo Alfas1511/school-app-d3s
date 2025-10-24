@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/models/important_updates_model.dart';
 import 'package:school_app/views/home/widgets/update_card.dart';
 
 class ImportantUpdates extends StatelessWidget {
-  const ImportantUpdates({super.key});
+  final ImportantUpdatesModel? importantUpdatesData;
+  const ImportantUpdates({super.key, this.importantUpdatesData});
 
   @override
   Widget build(BuildContext context) {
+    final updates = importantUpdatesData?.data ?? [];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(
@@ -27,13 +30,13 @@ class ImportantUpdates extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
                         color: Colors.red[100],
                       ),
                       child: Text(
-                        "3 New",
+                        "${updates.length} New",
                         style: TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
@@ -54,26 +57,52 @@ class ImportantUpdates extends StatelessWidget {
                 ),
               ],
             ),
+
             SizedBox(height: 10),
-            UpdateCard(
-              icon: Icons.payment,
-              title: "Pending Fee Payment",
-              subtitle: "Quarterly fee: \$850 due by March 15",
-              actionText: "Pay Now",
-              color: const Color.fromARGB(255, 167, 232, 255),
-            ),
-            UpdateCard(
-              icon: Icons.event,
-              title: "Annual Sports Day",
-              subtitle: "March 20, 2024 - Registration open",
-              color: const Color.fromARGB(255, 193, 248, 183),
-            ),
-            UpdateCard(
-              icon: Icons.book,
-              title: "Mid-term Results",
-              subtitle: "Mathematics test results available",
-              color: const Color.fromARGB(255, 252, 220, 186),
-            ),
+
+            if (updates.isEmpty)
+              const Center(
+                child: Text(
+                  "No updates available",
+                  style: TextStyle(color: Colors.grey),
+                ),
+              )
+            else
+              ...updates.map((update) {
+                // Optional: Map color based on type
+                MaterialColor cardColor;
+                IconData icon;
+
+                switch (update.typeName.toLowerCase()) {
+                  case "fees":
+                    cardColor = Colors.lightBlue;
+                    icon = Icons.payment;
+                    break;
+                  case "events":
+                    cardColor = Colors.lightGreen;
+                    icon = Icons.event;
+                    break;
+                  case "exams":
+                    cardColor = Colors.orange;
+                    icon = Icons.book;
+                    break;
+                  case "results":
+                    cardColor = Colors.purple;
+                    icon = Icons.assessment;
+                    break;
+                  default:
+                    cardColor = Colors.grey;
+                    icon = Icons.notifications;
+                }
+
+                return UpdateCard(
+                  icon: icon,
+                  title: update.title,
+                  subtitle: update.description,
+                  color: cardColor,
+                  actionText: update.links.isNotEmpty ? "View Details" : null,
+                );
+              }),
           ],
         ),
       ),

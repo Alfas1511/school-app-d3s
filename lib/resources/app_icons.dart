@@ -30,4 +30,5 @@ class AppIcons {
   static const IconData report = Icons.report;
   static const IconData results = Icons.leaderboard;
   static const IconData records = Icons.data_array;
+  static const IconData check = Icons.check;
 }
