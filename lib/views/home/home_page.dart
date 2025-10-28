@@ -309,13 +309,64 @@ class _HomePageState extends State<HomePage> {
                 students: students,
                 isLoading: isLoading,
                 selectedStudent: selectedStudent,
+
+                // onStudentSelected: (student) async {
+                //   setState(() {
+                //     selectedStudent = student;
+                //   });
+
+                //   final prefs = await SharedPreferences.getInstance();
+                //   await prefs.setInt('student_id', student.id);
+                //   await prefs.setString(
+                //     'student_name',
+                //     "${student.firstName} ${student.lastName}",
+                //   );
+
+                //   // Fetch full student details
+                //   final studentDetails = await _fetchStudentDetails(student.id);
+                //   if (studentDetails != null) {
+                //     await prefs.setString(
+                //       'student_grade',
+                //       studentDetails.grade,
+                //     );
+                //     await prefs.setString(
+                //       'student_grade_id',
+                //       studentDetails.gradeId,
+                //     );
+                //     await prefs.setString(
+                //       'student_division',
+                //       studentDetails.division,
+                //     );
+                //     await prefs.setString(
+                //       'student_division_id',
+                //       studentDetails.divisionId,
+                //     );
+
+                //     setState(() {
+                //       selectedStudent = StudentsListModel(
+                //         id: studentDetails.id,
+                //         admissionNo: '',
+                //         firstName: studentDetails.firstName,
+                //         lastName: studentDetails.lastName,
+                //         admissionDate: '',
+                //         dob: studentDetails.dob,
+                //         gender: '',
+                //       );
+                //     });
+                //   }
+
+                //   // 🔹 Fetch important updates for newly selected student
+                //   await _loadImportantUpdates(student.id);
+                // },
                 onStudentSelected: (student) async {
                   setState(() {
                     selectedStudent = student;
+                    importantUpdates = null; // Clear old updates
+                    isLoading = true;
                   });
 
                   final prefs = await SharedPreferences.getInstance();
-                  await prefs.setInt('student_id', student.id);
+                  await prefs.setInt('selected_student_id', student.id);
                   await prefs.setString(
                     'student_name',
                     "${student.firstName} ${student.lastName}",
@@ -354,8 +405,12 @@ class _HomePageState extends State<HomePage> {
                     });
                   }
 
-                  // 🔹 Fetch important updates for newly selected student
+                  // 🔹 Fetch important updates for the newly selected student
                   await _loadImportantUpdates(student.id);
+
+                  setState(() {
+                    isLoading = false;
+                  });
                 },
               ),
 
