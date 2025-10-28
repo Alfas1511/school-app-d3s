@@ -3,6 +3,7 @@ import 'package:school_app/core/constants/api_constants.dart';
 import 'package:school_app/core/services/api_service.dart';
 import 'package:school_app/models/events_images_model.dart';
 import 'package:school_app/models/events_list_model.dart';
+import 'package:school_app/models/upcoming_events_model.dart';
 import 'package:school_app/views/gallery/event_images_card.dart';
 import 'package:school_app/views/gallery/events_list_card.dart';
 import 'package:school_app/views/gallery/upcoming_events_card.dart';
@@ -19,6 +20,7 @@ class _GalleryPageState extends State<GalleryPage> {
   bool isLoading = true;
   EventsListModel? eventsList;
   EventImagesModel? eventImages;
+  UpcomingEventsModel? upcomingEvents;
   int? selectedEventId;
 
   @override
@@ -26,6 +28,7 @@ class _GalleryPageState extends State<GalleryPage> {
     super.initState();
     _fetchEventsList();
     _fetchEventImagesList();
+    _fetchUpcomingEventsList();
   }
 
   /// Fetch Events List
@@ -89,6 +92,33 @@ class _GalleryPageState extends State<GalleryPage> {
     }
   }
 
+  Future<void> _fetchUpcomingEventsList() async {
+    setState(() => isLoading = true);
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+
+      final apiService = ApiService();
+
+      final response = await apiService.getRequest(
+        ApiConstants.upcomingEventsList,
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        final fetchedEvents = UpcomingEventsModel.fromJson(response);
+        setState(() {
+          upcomingEvents = fetchedEvents;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error fetching upcoming events list: $e");
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,7 +177,7 @@ class _GalleryPageState extends State<GalleryPage> {
 
                   const SizedBox(height: 20),
 
-                  UpcomingEventsCard(),
+                  UpcomingEventsCard(upcomingEvents: upcomingEvents),
                 ],
               ),
             ),
