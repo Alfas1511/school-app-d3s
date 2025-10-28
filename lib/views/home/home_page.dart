@@ -172,6 +172,7 @@ class _HomePageState extends State<HomePage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token');
+      // final selectedId = prefs.getInt('student_id');
       final selectedId = prefs.getInt('selected_student_id');
 
       final apiService = ApiService();

@@ -27,4 +27,8 @@ class ApiConstants {
 
   static const String busNotifications =
       "$baseUrl/parent/student-bus-notifications";
+
+  static const String eventsList = "$baseUrl/parent/events-list";
+
+  static const String eventsImagesList = "$baseUrl/parent/events-images-list";
 }

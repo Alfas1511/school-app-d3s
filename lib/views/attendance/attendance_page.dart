@@ -71,7 +71,8 @@ class _AttendancePageState extends State<AttendancePage> {
 
   Future<StudentAttendanceData?> _getStudentAttendance() async {
     final prefs = await SharedPreferences.getInstance();
-    final studentId = prefs.getInt('student_id');
+    // final studentId = prefs.getInt('student_id');
+    final studentId = prefs.getInt('selected_student_id');
 
     if (studentId == null) {
       debugPrint("⚠️ No student_id found in SharedPreferences");
