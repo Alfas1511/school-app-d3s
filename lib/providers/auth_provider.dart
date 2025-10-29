@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/constants/api_constants.dart';
 import '../models/login_response.dart';
 import '../core/utils/shared_prefs.dart';
-import 'package:school_app/views/auth/login_page.dart';
+import 'package:school_app/views/auth/login/login_page.dart';
 
 class AuthProvider with ChangeNotifier {
   bool _isLoggedIn = false;

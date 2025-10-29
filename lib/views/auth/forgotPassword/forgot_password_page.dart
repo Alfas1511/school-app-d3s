@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart';
+import '../login/login_page.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -72,7 +72,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   Center(
                     child: Column(
                       crossAxisAlignment:
-                      CrossAxisAlignment.center, // Center horizontally
+                          CrossAxisAlignment.center, // Center horizontally
                       children: const [
                         Text(
                           "Forgot Password?",

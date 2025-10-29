@@ -7,9 +7,9 @@ import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/resources/app_spacing.dart';
 import 'package:school_app/resources/app_strings.dart';
 import 'package:school_app/resources/app_styles.dart';
-import '../../providers/auth_provider.dart';
-import '../home/home_page.dart';
-import 'forgot_password_page.dart';
+import '../../../providers/auth_provider.dart';
+import '../../home/home_page.dart';
+import '../forgotPassword/forgot_password_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -89,10 +89,70 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Keep scaffold background transparent so gradient is the visible background
+      resizeToAvoidBottomInset: true,
+
+      // body: Container(
+      //   width: double.infinity,
+      //   height: double.infinity,
+      //   decoration: const BoxDecoration(
+      //     gradient: LinearGradient(
+      //       colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
+      //       begin: Alignment.topCenter,
+      //       end: Alignment.bottomCenter,
+      //     ),
+      //   ),
+      //   child: Padding(
+      //     padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
+      //     child: SafeArea(
+      //       child: SingleChildScrollView(
+      //         child: Column(
+      //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //           children: [
+      //             // Title & subtitle
+      //             Column(
+      //               children: [
+      //                 Image.asset("assets/images/logo.png", height: 100),
+      //                 Text(
+      //                   AppStrings.loginScreenTitle,
+      //                   style: AppStyles.title(size: 40.0),
+      //                 ),
+      //                 SizedBox(height: 6),
+      //                 Text(
+      //                   AppStrings.loginScreenDescription,
+      //                   style: AppStyles.description(
+      //                     color: Colors.white70,
+      //                     size: 18,
+      //                   ),
+      //                 ),
+      //               ],
+      //             ),
+
+      //             // Login box
+      //             Container(
+      //               padding: const EdgeInsets.all(20),
+      //               decoration: BoxDecoration(
+      //                 color: Colors.white,
+      //                 borderRadius: BorderRadius.circular(20),
+      //                 boxShadow: [
+      //                   BoxShadow(
+      //                     color: Colors.black.withOpacity(0.08),
+      //                     blurRadius: 10,
+      //                     offset: const Offset(0, 6),
+      //                   ),
+      //                 ],
+      //               ),
+      //               child: loginForm(), // login Form
+      //             ),
+
+      //             // Footer (help / terms)
+      //             footer(),
+      //           ],
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // ),
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
@@ -100,54 +160,72 @@ class _LoginPageState extends State<LoginPage> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              // Title & subtitle
-              Column(
-                children: [
-                  Image.asset("assets/images/logo.png", height: 100),
-                  Text(
-                    AppStrings.loginScreenTitle,
-                    style: AppStyles.title(size: 40.0),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight, // 👈 ensures full height
                   ),
-                  SizedBox(height: 6),
-                  Text(
-                    AppStrings.loginScreenDescription,
-                    style: AppStyles.description(
-                      color: Colors.white70,
-                      size: 18,
+                  child: IntrinsicHeight(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 40,
+                        horizontal: 20,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              Image.asset(
+                                "assets/images/logo.png",
+                                height: 100,
+                              ),
+                              Text(
+                                AppStrings.loginScreenTitle,
+                                style: AppStyles.title(size: 40.0),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                AppStrings.loginScreenDescription,
+                                style: AppStyles.description(
+                                  color: Colors.white70,
+                                  size: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.08),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            child: loginForm(),
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          footer(),
+                        ],
+                      ),
                     ),
                   ),
-                ],
-              ),
-
-              // AppSpacing.vertical(),
-
-              // Login box
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 10,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
                 ),
-                child: loginForm(), // login Form
-              ),
-
-              // AppSpacing.vertical(height: 40),
-
-              // Footer (help / terms)
-              footer(),
-            ],
+              );
+            },
           ),
         ),
       ),
@@ -257,6 +335,7 @@ class _LoginPageState extends State<LoginPage> {
                 text: AppStrings.contact,
                 style: TextStyle(
                   color: Colors.white,
+
                   fontWeight: FontWeight.bold,
                 ),
               ),
