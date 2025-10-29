@@ -28,7 +28,7 @@ class _TransportPageState extends State<TransportPage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token');
-      final studentId = prefs.getInt('student_id');
+      final studentId = prefs.getInt('selected_student_id');
       studentName = prefs.getString('student_name') ?? '';
 
       final apiService = ApiService();
@@ -60,7 +60,7 @@ class _TransportPageState extends State<TransportPage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token');
-      final studentId = prefs.getInt('student_id');
+      final studentId = prefs.getInt('selected_student_id');
       studentName = prefs.getString('student_name') ?? '';
 
       final apiService = ApiService();
@@ -92,7 +92,7 @@ class _TransportPageState extends State<TransportPage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token');
-      final studentId = prefs.getInt('student_id');
+      final studentId = prefs.getInt('selected_student_id');
       studentName = prefs.getString('student_name') ?? '';
 
       final apiService = ApiService();
