@@ -9,4 +9,12 @@ class AppColours {
   static Color singleDeepblue = const Color(0xFF2057e0);
 
   static Color singleDeepOrange = const Color(0xFFd94f0d);
+
+  Color hexToColor(String hex) {
+    hex = hex.replaceAll('#', '');
+    if (hex.length == 6) {
+      hex = 'FF$hex'; // add alpha (opacity) if not provided
+    }
+    return Color(int.parse(hex, radix: 16));
+  }
 }
