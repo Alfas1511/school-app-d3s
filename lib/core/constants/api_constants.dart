@@ -19,17 +19,23 @@ class ApiConstants {
   static const String gradeStudyMaterials =
       "$baseUrl/parent/grade-study-materials";
 
+  // Bus Information Endpoints
   static const String studentBusInformation =
       "$baseUrl/parent/student-bus-information";
-
   static const String busRecentTrips =
       "$baseUrl/parent/student-bus-recent-trips";
-
   static const String busNotifications =
       "$baseUrl/parent/student-bus-notifications";
 
+  // Events Endpoints
   static const String eventsList = "$baseUrl/parent/events-list";
   static const String eventsImagesList = "$baseUrl/parent/events-images-list";
   static const String upcomingEventsList =
       "$baseUrl/parent/upcoming-events-list";
+
+  // Anecdotal Records Endpoints
+  static const String anecdotalCategories =
+      "$baseUrl/parent/anecdotal-categories-list";
+  static const String studentAnecdotalRecords =
+      "$baseUrl/parent/student-anecdotal-records";
 }

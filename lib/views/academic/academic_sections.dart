@@ -10,6 +10,7 @@ import 'package:school_app/views/academic/widgets/syllabus_component.dart';
 import 'package:school_app/core/constants/api_constants.dart';
 import 'package:school_app/core/services/api_service.dart';
 import 'package:school_app/models/grade_study_materials.dart';
+import 'package:school_app/views/anecdotalRecords/anecdotal_records_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AcademicSections extends StatefulWidget {
@@ -136,9 +137,18 @@ class _AcademicSectionsState extends State<AcademicSections> {
 
         return GestureDetector(
           onTap: () {
-            setState(() {
-              selectedSectionIndex = index;
-            });
+            if (section.title == "Records") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AnecdotalRecordsPage(),
+                ),
+              );
+            } else {
+              setState(() {
+                selectedSectionIndex = index;
+              });
+            }
           },
           child: Container(
             decoration: BoxDecoration(
@@ -189,27 +199,12 @@ class _AcademicSectionsState extends State<AcademicSections> {
         return ResultsComponent();
       case 4:
         return _buildProgressContent();
-      case 5:
-        return _buildRecordsContent();
       default:
         return const SizedBox.shrink();
     }
   }
 
   Widget _buildProgressContent() {
-    return Column(
-      children: const [
-        SectionTitle(title: "Content Area"),
-        SizedBox(height: 10),
-        Text(
-          "This area can be used to display detailed content based on the selected academic section. For example, if 'Materials' is selected, you could show a list of downloadable files here.",
-          style: TextStyle(color: Colors.grey),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRecordsContent() {
     return Column(
       children: const [
         SectionTitle(title: "Content Area"),
