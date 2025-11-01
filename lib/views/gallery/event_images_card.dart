@@ -32,20 +32,51 @@ class EventImagesCard extends StatelessWidget {
       );
     }
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 0.75,
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-      itemCount: images.length,
-      itemBuilder: (context, index) {
-        final imageItem = images[index];
-        return _buildImageCard(imageItem);
-      },
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Images from Events',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
+              ),
+            ),
+          ),
+          SizedBox(height: 12),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.55,
+            ),
+            itemCount: images.length,
+            itemBuilder: (context, index) {
+              final imageItem = images[index];
+              return _buildImageCard(imageItem);
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -75,13 +106,13 @@ class EventImagesCard extends StatelessWidget {
               ),
               child: Image.network(
                 imageItem.imageUrl,
-                height: 120,
+                // height: 120,
                 width: double.infinity,
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return Container(
-                    height: 120,
+                    // height: 120,
                     width: double.infinity,
                     color: Colors.grey[200],
                     child: Center(
@@ -123,7 +154,7 @@ class EventImagesCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     imageItem.eventName,
-                    style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                    style: TextStyle(color: Colors.grey[600], fontSize: 10),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
