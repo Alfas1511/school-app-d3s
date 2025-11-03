@@ -2,9 +2,9 @@
 class ApiConstants {
   // static const String baseUrl = "http://127.0.0.1:8000/api"; // Localhost
   // static const String baseUrl = "http://192.168.1.19:8000/api"; // Physical Device
-  // static const String baseUrl = "http://10.0.2.2:8000/api";  // Android Emulator
-  static const String baseUrl =
-      "https://mediumorchid-falcon-472579.hostingersite.com/api"; // Server
+  static const String baseUrl = "http://10.0.2.2:8000/api";  // Android Emulator
+  // static const String baseUrl =
+  //     "https://mediumorchid-falcon-472579.hostingersite.com/api"; // Server
 
   // Endpoints
   static const String login = "$baseUrl/parent/login";
