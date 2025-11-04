@@ -2,7 +2,7 @@
 class ApiConstants {
   // static const String baseUrl = "http://127.0.0.1:8000/api"; // Localhost
   // static const String baseUrl = "http://192.168.1.19:8000/api"; // Physical Device
-  static const String baseUrl = "http://10.0.2.2:8000/api";  // Android Emulator
+  static const String baseUrl = "http://10.0.2.2:8000/api"; // Android Emulator
   // static const String baseUrl =
   //     "https://mediumorchid-falcon-472579.hostingersite.com/api"; // Server
 
@@ -15,7 +15,10 @@ class ApiConstants {
   static const String studentAttendance = "$baseUrl/parent/student-attendance";
 
   static const String homeImportantUpdates =
-      "$baseUrl/parent/important-updates-notifications";
+      "$baseUrl/parent/important-updates";
+
+  static const String academicImportantUpdates =
+      "$baseUrl/parent/academic-important-updates";
 
   static const String gradeStudyMaterials =
       "$baseUrl/parent/grade-study-materials";

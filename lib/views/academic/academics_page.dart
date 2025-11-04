@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/core/constants/api_constants.dart';
+import 'package:school_app/core/services/api_service.dart';
+import 'package:school_app/models/important_updates_model.dart';
 import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/resources/app_spacing.dart';
 import 'package:school_app/views/academic/academic_sections.dart';
@@ -13,14 +16,20 @@ class AcademicPage extends StatefulWidget {
 }
 
 class _AcademicPageState extends State<AcademicPage> {
+  bool isLoading = true;
+  int? studentId;
   String? studentName;
+  int? gradeId;
   String? grade;
+  int? divisionId;
   String? division;
+  ImportantUpdatesModel? importantUpdates;
 
   @override
   void initState() {
     super.initState();
     _loadStudentName();
+    _loadImportantUpdates();
   }
 
   Future<void> _loadStudentName() async {
@@ -33,6 +42,36 @@ class _AcademicPageState extends State<AcademicPage> {
       grade = gradeValue ?? "";
       division = divisionValue ?? "";
     });
+  }
+
+  Future<void> _loadImportantUpdates() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      // final studentId = prefs.getInt('selected_student_id');
+      // final gradeId = prefs.getInt('grade_id');
+      // final divisionId = prefs.getInt('division_id');
+
+      final apiService = ApiService();
+      final response = await apiService.getRequest(
+        ApiConstants.academicImportantUpdates,
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        setState(() {
+          importantUpdates = ImportantUpdatesModel.fromJson(response);
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message']);
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      debugPrint("Error loading academic important updates: $e");
+    }
   }
 
   @override
@@ -84,7 +123,7 @@ class _AcademicPageState extends State<AcademicPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ImportantUpdates(),
+            ImportantUpdates(importantUpdatesData: importantUpdates),
             AppSpacing.vertical(height: 20),
             AcademicSections(),
           ],

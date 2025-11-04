@@ -40,7 +40,9 @@ class ImportantUpdatesData {
   final String academicYear;
   final String links;
   final int studentId;
-  final dynamic studentName; // keeping dynamic since it's '1' in sample
+  final String studentName;
+  final String color;
+  final String createdAt;
 
   ImportantUpdatesData({
     required this.id,
@@ -53,6 +55,8 @@ class ImportantUpdatesData {
     required this.links,
     required this.studentId,
     required this.studentName,
+    required this.color,
+    required this.createdAt,
   });
 
   factory ImportantUpdatesData.fromJson(Map<String, dynamic> json) {
@@ -67,6 +71,8 @@ class ImportantUpdatesData {
       links: json['links'] ?? '',
       studentId: json['student_id'] ?? 0,
       studentName: json['student_name'],
+      color: json['color'],
+      createdAt: json['created_at'],
     );
   }
 
@@ -82,6 +88,8 @@ class ImportantUpdatesData {
       'links': links,
       'student_id': studentId,
       'student_name': studentName,
+      'color': color,
+      'created_at': createdAt,
     };
   }
 }
