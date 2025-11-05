@@ -24,7 +24,26 @@ class ImportantUpdates extends StatelessWidget {
           children: [
             AppSpacing.vertical(height: 10),
 
-            SectionTitle(title: "Important Updates"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SectionTitle(title: "Important Updates"),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: Colors.red[100],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    "${updates.length} New",
+                    style: TextStyle(
+                      color: Colors.red[900],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
 
             const SizedBox(height: 10),
 
@@ -36,18 +55,17 @@ class ImportantUpdates extends StatelessWidget {
                 ),
               )
             else
-              // 🔹 Loop through updates
               ...updates.map((update) {
                 return ListingCardComponent(
                   cardTitle: "",
-                  icon: AppIcons.file, // or choose based on update.type
+                  icon: AppIcons.file,
                   title: update.title,
                   subtitle: update.description,
                   tag: "",
                   color: Colors.blue[50],
                   trailingContent: "",
                 );
-              }).toList(),
+              }),
           ],
         ),
       ),

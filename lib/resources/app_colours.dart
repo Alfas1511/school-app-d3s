@@ -10,7 +10,7 @@ class AppColours {
 
   static Color singleDeepOrange = const Color(0xFFd94f0d);
 
-  Color hexToColor(String hex) {
+  static Color hexToColor(String hex) {
     hex = hex.replaceAll('#', '');
     if (hex.length == 6) {
       hex = 'FF$hex'; // add alpha (opacity) if not provided

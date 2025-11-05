@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/models/important_updates_model.dart';
+import 'package:school_app/resources/app_colours.dart';
 import 'package:school_app/views/home/widgets/update_card.dart';
 
 class ImportantUpdates extends StatelessWidget {
@@ -70,28 +71,22 @@ class ImportantUpdates extends StatelessWidget {
             else
               ...updates.map((update) {
                 // Optional: Map color based on type
-                MaterialColor cardColor;
                 IconData icon;
 
                 switch (update.typeName.toLowerCase()) {
                   case "fees":
-                    cardColor = Colors.lightBlue;
                     icon = Icons.payment;
                     break;
                   case "events":
-                    cardColor = Colors.lightGreen;
                     icon = Icons.event;
                     break;
                   case "exams":
-                    cardColor = Colors.orange;
                     icon = Icons.book;
                     break;
                   case "results":
-                    cardColor = Colors.purple;
                     icon = Icons.assessment;
                     break;
                   default:
-                    cardColor = Colors.grey;
                     icon = Icons.notifications;
                 }
 
@@ -99,7 +94,7 @@ class ImportantUpdates extends StatelessWidget {
                   icon: icon,
                   title: update.title,
                   subtitle: update.description,
-                  color: cardColor,
+                  color: AppColours.hexToColor(update.color),
                   actionText: update.links.isNotEmpty ? "View Details" : null,
                 );
               }),

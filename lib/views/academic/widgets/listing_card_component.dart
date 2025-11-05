@@ -30,7 +30,14 @@ class ListingCardComponent extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, color: Colors.red, size: 22),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              shape: BoxShape.circle, 
+            ),
+            child: Icon(icon, color: Colors.red, size: 22),
+          ),
 
           const SizedBox(width: 12),
 

@@ -42,4 +42,8 @@ class ApiConstants {
       "$baseUrl/parent/anecdotal-categories-list";
   static const String studentAnecdotalRecords =
       "$baseUrl/parent/student-anecdotal-records";
+
+  // Student Achievement Endpoints
+  static const String studentAchievements =
+      "$baseUrl/parent/student-achievements-list";
 }

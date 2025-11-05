@@ -4,6 +4,7 @@ import 'package:school_app/core/constants/api_constants.dart';
 import 'package:school_app/core/services/api_service.dart';
 import 'package:school_app/models/important_updates_model.dart';
 import 'package:school_app/models/parent_profile_model.dart';
+import 'package:school_app/models/student_achievements_model.dart';
 import 'package:school_app/models/student_details_model.dart';
 import 'package:school_app/models/students_list_model.dart';
 import 'package:school_app/views/attendance/attendance_page.dart';
@@ -31,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   ParentProfileModel? parentProfile;
   StudentsListModel? selectedStudent;
   ImportantUpdatesModel? importantUpdates;
+  StudentAchievementsModel? studentAchievements;
 
   List<StudentsListModel> students = [];
   List<Widget> get _pages => [
@@ -40,15 +42,6 @@ class _HomePageState extends State<HomePage> {
     const TransportPage(),
     const MoreOptionsPage(),
   ];
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _loadSelectedStudent();
-  //   _fetchParentProfile();
-  //   _fetchStudentsList();
-  //   _loadImportantUpdates();
-  // }
 
   @override
   void initState() {
@@ -69,21 +62,13 @@ class _HomePageState extends State<HomePage> {
       await _loadImportantUpdates(
         selectedStudent!.id,
       ); // Load updates for selected student
+      await _loadStudentAchievements(selectedStudent!.id);
     }
 
     setState(() {
       isLoading = false;
     });
   }
-
-  // Future<void> _debugPrintSharedPrefs() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final allPrefs = prefs.getKeys();
-
-  //   for (var key in allPrefs) {
-  //     debugPrint('$key: ${prefs.get(key)}');
-  //   }
-  // }
 
   Future<void> _fetchParentProfile() async {
     try {
@@ -130,43 +115,6 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-
-  // Future<void> _fetchStudentsList() async {
-  //   try {
-  //     final prefs = await SharedPreferences.getInstance();
-  //     final token = prefs.getString('auth_token');
-
-  //     final apiService = ApiService();
-  //     final response = await apiService.getRequest(
-  //       ApiConstants.studentList,
-  //       token: token,
-  //     );
-
-  //     if (response['status'] == true) {
-  //       final data = response['data'] as List;
-  //       setState(() {
-  //         students = data
-  //             .map((json) => StudentsListModel.fromJson(json))
-  //             .toList();
-  //         if (students.isNotEmpty) {
-  //           selectedStudent = students.first;
-  //         }
-  //         isLoading = false;
-  //       });
-
-  //       // Save selected student ID
-  //       if (students.isNotEmpty) {
-  //         await prefs.setInt('selected_student_id', students.first.id);
-  //       }
-  //     } else {
-  //       throw Exception(response['message']);
-  //     }
-  //   } catch (e) {
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //   }
-  // }
 
   Future<void> _fetchStudentsList() async {
     try {
@@ -247,7 +195,7 @@ class _HomePageState extends State<HomePage> {
 
       final apiService = ApiService();
       final response = await apiService.getRequest(
-        '${ApiConstants.homeImportantUpdates}?student_id=$studentId',
+        ApiConstants.homeImportantUpdates,
         token: token,
       );
 
@@ -267,6 +215,34 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _loadStudentAchievements(int studentId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+
+      final apiService = ApiService();
+      final response = await apiService.postRequest(
+        ApiConstants.studentAchievements,
+        {'student_id': studentId},
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        setState(() {
+          studentAchievements = StudentAchievementsModel.fromJson(response);
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message']);
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      debugPrint("Error loading student achievements: $e");
+    }
+  }
+
   Future<void> _handleRefresh() async {
     setState(() {
       isLoading = true;
@@ -279,6 +255,7 @@ class _HomePageState extends State<HomePage> {
       _fetchParentProfile(),
       _fetchStudentsList(),
       if (selectedId != null) _loadImportantUpdates(selectedId),
+      if (selectedId != null) _loadStudentAchievements(selectedId),
     ]);
 
     setState(() {
@@ -310,55 +287,6 @@ class _HomePageState extends State<HomePage> {
                 students: students,
                 isLoading: isLoading,
                 selectedStudent: selectedStudent,
-
-                // onStudentSelected: (student) async {
-                //   setState(() {
-                //     selectedStudent = student;
-                //   });
-
-                //   final prefs = await SharedPreferences.getInstance();
-                //   await prefs.setInt('student_id', student.id);
-                //   await prefs.setString(
-                //     'student_name',
-                //     "${student.firstName} ${student.lastName}",
-                //   );
-
-                //   // Fetch full student details
-                //   final studentDetails = await _fetchStudentDetails(student.id);
-                //   if (studentDetails != null) {
-                //     await prefs.setString(
-                //       'student_grade',
-                //       studentDetails.grade,
-                //     );
-                //     await prefs.setString(
-                //       'student_grade_id',
-                //       studentDetails.gradeId,
-                //     );
-                //     await prefs.setString(
-                //       'student_division',
-                //       studentDetails.division,
-                //     );
-                //     await prefs.setString(
-                //       'student_division_id',
-                //       studentDetails.divisionId,
-                //     );
-
-                //     setState(() {
-                //       selectedStudent = StudentsListModel(
-                //         id: studentDetails.id,
-                //         admissionNo: '',
-                //         firstName: studentDetails.firstName,
-                //         lastName: studentDetails.lastName,
-                //         admissionDate: '',
-                //         dob: studentDetails.dob,
-                //         gender: '',
-                //       );
-                //     });
-                //   }
-
-                //   // 🔹 Fetch important updates for newly selected student
-                //   await _loadImportantUpdates(student.id);
-                // },
                 onStudentSelected: (student) async {
                   setState(() {
                     selectedStudent = student;
@@ -408,6 +336,7 @@ class _HomePageState extends State<HomePage> {
 
                   // 🔹 Fetch important updates for the newly selected student
                   await _loadImportantUpdates(student.id);
+                  await _loadStudentAchievements(student.id);
 
                   setState(() {
                     isLoading = false;
@@ -429,7 +358,7 @@ class _HomePageState extends State<HomePage> {
 
               const SizedBox(height: 20),
               // Recent Achievements
-              RecentAchievements(),
+              RecentAchievements(studentAchievements: studentAchievements),
 
               const SizedBox(height: 20),
               // Latest Exam Results

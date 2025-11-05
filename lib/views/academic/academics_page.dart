@@ -49,12 +49,13 @@ class _AcademicPageState extends State<AcademicPage> {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token');
       // final studentId = prefs.getInt('selected_student_id');
-      // final gradeId = prefs.getInt('grade_id');
-      // final divisionId = prefs.getInt('division_id');
+      final gradeId = prefs.getString('student_grade_id');
+      final divisionId = prefs.getString('student_division_id');
 
       final apiService = ApiService();
-      final response = await apiService.getRequest(
+      final response = await apiService.postRequest(
         ApiConstants.academicImportantUpdates,
+        {'grade_id': gradeId, 'division_id': divisionId},
         token: token,
       );
 
