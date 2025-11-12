@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/views/academic/widgets/progress_row_component.dart';
-import 'package:school_app/views/academic/widgets/section_title.dart';
+import 'package:school_app/components/section_title.dart';
 
 class SyllabusComponent extends StatelessWidget {
   const SyllabusComponent({super.key});

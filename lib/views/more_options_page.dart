@@ -13,7 +13,7 @@ import 'package:school_app/views/notifications_page.dart';
 import 'package:school_app/views/privacy_policy_page.dart';
 import 'package:school_app/views/profile_management_page.dart';
 import 'package:school_app/views/settings_page.dart';
-import 'package:school_app/views/timetable_page.dart';
+import 'package:school_app/views/timetable/timetable_page.dart';
 import 'package:school_app/views/transport/transport_page.dart';
 
 class MoreOptionsPage extends StatelessWidget {

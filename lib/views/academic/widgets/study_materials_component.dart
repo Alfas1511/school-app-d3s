@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_app/core/constants/api_constants.dart';
 import 'package:school_app/models/grade_study_materials.dart';
 import 'package:school_app/resources/app_spacing.dart';
-import 'package:school_app/views/academic/widgets/section_title.dart';
+import 'package:school_app/components/section_title.dart';
 
 class StudyMaterialsComponent extends StatelessWidget {
   final bool isLoading;

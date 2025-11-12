@@ -3,7 +3,7 @@ import 'package:school_app/models/important_updates_model.dart';
 import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/resources/app_spacing.dart';
 import 'package:school_app/views/academic/widgets/listing_card_component.dart';
-import 'package:school_app/views/academic/widgets/section_title.dart';
+import 'package:school_app/components/section_title.dart';
 
 class ImportantUpdates extends StatelessWidget {
   final ImportantUpdatesModel? importantUpdatesData;

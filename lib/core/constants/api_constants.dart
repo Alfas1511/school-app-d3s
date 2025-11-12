@@ -46,4 +46,9 @@ class ApiConstants {
   // Student Achievement Endpoints
   static const String studentAchievements =
       "$baseUrl/parent/student-achievements-list";
+
+  // Timetable Endpoints
+  static const String daysList = "$baseUrl/parent/days-list";
+  static const String gradeDivisionTimetable =
+      "$baseUrl/parent/grade-division-timetable";
 }

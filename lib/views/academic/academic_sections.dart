@@ -4,7 +4,7 @@ import 'package:school_app/resources/app_spacing.dart';
 import 'package:school_app/views/academic/widgets/academic_sections_list.dart';
 import 'package:school_app/views/academic/widgets/exams_component.dart';
 import 'package:school_app/views/academic/widgets/results_component.dart';
-import 'package:school_app/views/academic/widgets/section_title.dart';
+import 'package:school_app/components/section_title.dart';
 import 'package:school_app/views/academic/widgets/study_materials_component.dart';
 import 'package:school_app/views/academic/widgets/syllabus_component.dart';
 import 'package:school_app/core/constants/api_constants.dart';
