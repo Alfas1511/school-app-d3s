@@ -1,4 +1,9 @@
 import "package:flutter/material.dart";
+import "package:school_app/components/section_title.dart";
+import "package:school_app/views/settings/account_settings_card.dart";
+import "package:school_app/views/settings/app_preferences_card.dart";
+import "package:school_app/views/settings/change_password_page.dart";
+import "package:school_app/views/settings/edit_profile_page.dart";
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -80,161 +85,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-              child: Container(
-                decoration: BoxDecoration(color: Colors.white),
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "Account Settings",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: ListTile(
-                        leading: Icon(Icons.person, color: Colors.blue),
-                        title: Text(
-                          "Edit Profile",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text(
-                          "Update your personal information",
-                          style: TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                        trailing: Icon(Icons.arrow_right),
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(color: Colors.grey[200]),
-                      child: ListTile(
-                        leading: Icon(Icons.lock, color: Colors.blue),
-                        title: Text(
-                          "Change Password",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text(
-                          "Update your account password",
-                          style: TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                        trailing: Icon(Icons.arrow_right),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
 
-            // App Preferences Section
             Padding(
-              padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-              child: Container(
-                decoration: BoxDecoration(color: Colors.white),
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "App Preferences",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                "Language",
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                10,
-                                10,
-                                10,
-                                10,
-                              ),
-                              child: DropdownButton<String>(
-                                value: selectedLanguage,
-                                isExpanded: true,
-                                underline: const SizedBox(),
-                                items: languages
-                                    .map(
-                                      (child) => DropdownMenuItem(
-                                        value: child,
-                                        child: Text(child),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedLanguage = value!;
-                                  });
-                                },
-                              ),
-                            ),
-
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                "Theme",
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                10,
-                                10,
-                                10,
-                                10,
-                              ),
-                              child: DropdownButton<String>(
-                                value: selectedTheme,
-                                isExpanded: true,
-                                underline: const SizedBox(),
-                                items: themeModes
-                                    .map(
-                                      (child) => DropdownMenuItem(
-                                        value: child,
-                                        child: Text(child),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedTheme = value!;
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  AccountSettingsCard(),
+                  SizedBox(height: 10),
+                  AppPreferencesCard(),
+                ],
               ),
             ),
 
