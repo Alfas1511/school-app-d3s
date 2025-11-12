@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/components/section_title.dart';
 
 class LatestExamResults extends StatelessWidget {
   const LatestExamResults({super.key});
@@ -12,6 +13,14 @@ class LatestExamResults extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -19,10 +28,8 @@ class LatestExamResults extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
-                Text(
-                  "Latest Exam Results",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                SectionTitle(title: "Lastest Exam Results"),
+
                 Text(
                   "View Report",
                   style: TextStyle(

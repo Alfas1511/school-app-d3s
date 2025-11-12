@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/components/section_title.dart';
 import 'package:school_app/views/academic/widgets/exam_card_component.dart';
 import 'package:school_app/views/academic/widgets/tab_button_component.dart';
 
@@ -34,11 +35,11 @@ class ExamsComponent extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              "Upcoming Exams",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+
+            SectionTitle(title: "Upcoming Exams"),
+
             const SizedBox(height: 16),
+            
             ExamCardComponent(
               subject: "Mathematics Mid-term",
               date: "March 18, 2024 • 10:00 AM",

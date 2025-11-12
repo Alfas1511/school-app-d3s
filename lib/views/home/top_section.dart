@@ -58,6 +58,7 @@ class TopSection extends StatelessWidget {
               ),
             ],
           ),
+
           Text(
             parentProfile?.parentInfo.fatherName.isNotEmpty == true
                 ? parentProfile!.parentInfo.fatherName
@@ -68,7 +69,9 @@ class TopSection extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
+
           AppSpacing.vertical(height: 8),
+
           isLoading
               ? const Center(
                   child: Padding(
@@ -145,7 +148,9 @@ class TopSection extends StatelessWidget {
             radius: 20,
             backgroundImage: AssetImage('assets/images/student.png'),
           ),
+          
           const SizedBox(width: 10),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +164,9 @@ class TopSection extends StatelessWidget {
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
+
                 const SizedBox(height: 4),
+
                 Text(
                   grade,
                   style: const TextStyle(color: Colors.white70, fontSize: 12),

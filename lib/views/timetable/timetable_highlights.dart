@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/components/section_title.dart';
+import 'package:school_app/components/update_card.dart';
 
 class TimetableHighlights extends StatelessWidget {
   const TimetableHighlights({super.key});
@@ -24,22 +25,20 @@ class TimetableHighlights extends StatelessWidget {
         children: [
           SectionTitle(title: "Today's Highlights"),
 
-          ListTile(
-            leading: Icon(Icons.science, color: Colors.blue),
-            title: Text(
-              "Science Lab",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text("Experiment on plant growth - bring notebook"),
+          SizedBox(height: 10),
+
+          UpdateCard(
+            icon: Icons.emoji_events,
+            title: "Science Lab",
+            subtitle: "Experiment on plant growth - bring notebook",
+            color: Colors.blue,
           ),
 
-          ListTile(
-            leading: Icon(Icons.sports_gymnastics, color: Colors.blue),
-            title: Text(
-              "PE Class",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text("Swimming practice - bring swimmer"),
+          UpdateCard(
+            icon: Icons.emoji_events,
+            title: "PE Class",
+            subtitle: "Swimming practice - bring swimmer",
+            color: Colors.green,
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/components/section_title.dart';
 import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/views/academic/academics_page.dart';
 import 'package:school_app/views/attendance/attendance_page.dart';
@@ -18,16 +19,23 @@ class QuickAccess extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
-            const Text(
-              "Quick Access",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+
+            SectionTitle(title: "Quick Access"),
+
             GridView.count(
               crossAxisCount: 3,
               shrinkWrap: true,
@@ -54,9 +62,7 @@ class QuickAccess extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) =>  AcademicPage(),
-                      ),
+                      MaterialPageRoute(builder: (context) => AcademicPage()),
                     );
                   },
                 ),

@@ -125,7 +125,9 @@ class _AcademicPageState extends State<AcademicPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ImportantUpdates(importantUpdatesData: importantUpdates),
+
             AppSpacing.vertical(height: 20),
+            
             AcademicSections(),
           ],
         ),

@@ -91,18 +91,30 @@ class _AcademicSectionsState extends State<AcademicSections> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
             child: Column(
               children: [
                 AppSpacing.vertical(height: 4),
+
                 SectionTitle(title: "Academic Sections"),
+
                 const SizedBox(height: 20),
                 _buildAcademicSections(),
               ],
             ),
           ),
         ),
+
         AppSpacing.vertical(height: 12),
+
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
           child: Container(
@@ -168,7 +180,9 @@ class _AcademicSectionsState extends State<AcademicSections> {
                   size: 28,
                   color: isSelected ? Colors.blue : Colors.grey[700],
                 ),
+
                 const SizedBox(height: 8),
+
                 Text(
                   section.title,
                   style: TextStyle(

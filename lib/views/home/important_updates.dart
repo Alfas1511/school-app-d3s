@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/components/section_title.dart';
 import 'package:school_app/models/important_updates_model.dart';
 import 'package:school_app/resources/app_colours.dart';
-import 'package:school_app/views/home/widgets/update_card.dart';
+import 'package:school_app/components/update_card.dart';
 
 class ImportantUpdates extends StatelessWidget {
   final ImportantUpdatesModel? importantUpdatesData;
@@ -10,6 +11,7 @@ class ImportantUpdates extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final updates = importantUpdatesData?.data ?? [];
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(
@@ -17,6 +19,14 @@ class ImportantUpdates extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,10 +34,8 @@ class ImportantUpdates extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "Important Updates",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                SectionTitle(title: "Important Updates"),
+
                 Row(
                   children: [
                     Container(

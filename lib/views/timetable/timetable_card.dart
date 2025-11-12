@@ -74,9 +74,16 @@ class TimetableCard extends StatelessWidget {
 
                       Expanded(
                         flex: 1,
-                        child: const Icon(
-                          Icons.file_copy,
-                          color: Colors.purple,
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: Colors.purple[50],
+                            shape: BoxShape.circle
+                          ),
+                          child: Icon(
+                            Icons.book_outlined,
+                            color: Colors.purple,
+                          ),
                         ),
                       ),
 

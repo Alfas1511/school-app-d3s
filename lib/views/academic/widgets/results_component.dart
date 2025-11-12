@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/resources/app_icons.dart';
-import 'package:school_app/views/academic/widgets/listing_card_component.dart';
+import 'package:school_app/components/listing_card_component.dart';
 import 'package:school_app/components/section_title.dart';
 
 class ResultsComponent extends StatelessWidget {

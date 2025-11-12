@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_app/models/important_updates_model.dart';
 import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/resources/app_spacing.dart';
-import 'package:school_app/views/academic/widgets/listing_card_component.dart';
+import 'package:school_app/components/listing_card_component.dart';
 import 'package:school_app/components/section_title.dart';
 
 class ImportantUpdates extends StatelessWidget {
@@ -19,6 +19,14 @@ class ImportantUpdates extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           children: [
@@ -28,6 +36,7 @@ class ImportantUpdates extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SectionTitle(title: "Important Updates"),
+
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
@@ -50,7 +59,7 @@ class ImportantUpdates extends StatelessWidget {
             if (updates.isEmpty)
               Center(
                 child: Text(
-                  "No Updates Available",
+                  "Updates Unavailable!",
                   style: TextStyle(color: Colors.grey[600]),
                 ),
               )

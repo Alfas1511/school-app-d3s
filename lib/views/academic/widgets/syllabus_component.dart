@@ -10,19 +10,25 @@ class SyllabusComponent extends StatelessWidget {
     return Column(
       children: [
         SectionTitle(title: "Current Syllabus Progress"),
+
         const SizedBox(height: 20),
+
         ProgressRowComponent(
           subject: "Mathematics",
           progress: 0.85,
           color: Colors.blue,
         ),
+
         const SizedBox(height: 12),
+
         ProgressRowComponent(
           subject: "Science",
           progress: 0.78,
           color: Colors.green,
         ),
+
         const SizedBox(height: 12),
+
         ProgressRowComponent(
           subject: "English",
           progress: 0.92,
