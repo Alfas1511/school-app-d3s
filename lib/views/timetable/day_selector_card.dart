@@ -40,10 +40,12 @@ class DaySelectorCard extends StatelessWidget {
           const SizedBox(height: 12),
 
           if (days.isEmpty)
-            const Text(
-              "No Days available",
-              style: TextStyle(color: Colors.grey),
-            )
+             Center(
+               child: Text(
+                "Days filter unavailable!",
+                style: TextStyle(color: Colors.black),
+                           ),
+             )
           else
             SizedBox(
               height: 40,

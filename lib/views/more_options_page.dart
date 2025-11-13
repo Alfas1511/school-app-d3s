@@ -8,7 +8,7 @@ import 'package:school_app/views/contact_support_page.dart';
 import 'package:school_app/views/fee_management_page.dart';
 import 'package:school_app/views/gallery/gallery_page.dart';
 import 'package:school_app/views/help_and_support_page.dart';
-import 'package:school_app/views/leave_management_page.dart';
+import 'package:school_app/views/leaveManagement/leave_management_page.dart';
 import 'package:school_app/views/notifications_page.dart';
 import 'package:school_app/views/privacyPolicy/privacy_policy_page.dart';
 import 'package:school_app/views/profile_management_page.dart';
