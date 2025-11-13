@@ -52,4 +52,8 @@ class ApiConstants {
   static const String daysList = "$baseUrl/parent/days-list";
   static const String gradeDivisionTimetable =
       "$baseUrl/parent/grade-division-timetable";
+
+  // Leave Management Endpoints
+  static const String leaveTypes = "$baseUrl/parent/leave-types";
+  static const String leaveRequest = "$baseUrl/parent/leave-request";
 }
