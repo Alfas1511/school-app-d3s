@@ -106,7 +106,7 @@ class _AcademicPageState extends State<AcademicPage> {
             SizedBox(height: 5),
             Text(
               studentName != null
-                  ? "Grade ${grade != null && grade!.isNotEmpty ? "$grade" : ""}${division != null && division!.isNotEmpty ? "$division - " : ""}$studentName"
+                  ? "$studentName - Grade ${grade != null && grade!.isNotEmpty ? "$grade" : ""}${division != null && division!.isNotEmpty ? "$division" : ""}"
                   : "Loading...",
               style: const TextStyle(color: Colors.white70, fontSize: 15),
             ),
@@ -127,7 +127,7 @@ class _AcademicPageState extends State<AcademicPage> {
             ImportantUpdates(importantUpdatesData: importantUpdates),
 
             AppSpacing.vertical(height: 20),
-            
+
             AcademicSections(),
           ],
         ),

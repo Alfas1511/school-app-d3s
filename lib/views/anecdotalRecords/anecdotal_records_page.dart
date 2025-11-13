@@ -22,19 +22,6 @@ class _AnecdotalRecordsPageState extends State<AnecdotalRecordsPage> {
   AnecdotalCategoryModel? anecdotalCategories;
   AnecdotalRecordsModel? anecdotalRecords;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _loadStudentName();
-  //   _loadAnecdotalCategories();
-  //   _loadAnecdotalRecords() async {
-  //     setState(() {
-  //       isLoading = true;
-  //     });
-  //     // await _loadAnecdotalRecords(category);
-  //   }
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -161,7 +148,7 @@ class _AnecdotalRecordsPageState extends State<AnecdotalRecordsPage> {
             ),
             SizedBox(height: 5),
             Text(
-              "Grade ${grade ?? 'N/A'}${division ?? 'N/A'} - ${studentName ?? 'N/A'}",
+              "${studentName ?? 'N/A'} - Grade ${grade ?? 'N/A'}${division ?? 'N/A'}",
               style: const TextStyle(color: Colors.white, fontSize: 14),
             ),
           ],

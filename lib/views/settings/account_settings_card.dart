@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/components/section_title.dart';
-import 'package:school_app/views/settings/change_password_page.dart';
+import 'package:school_app/views/settings/changePassword/change_password_page.dart';
 import 'package:school_app/views/settings/edit_profile_page.dart';
 
 class AccountSettingsCard extends StatelessWidget {

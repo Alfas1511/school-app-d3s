@@ -119,7 +119,7 @@ class _AttendancePageState extends State<AttendancePage> {
             SizedBox(height: 5),
             Text(
               studentName != null
-                  ? "Grade ${grade != null && grade!.isNotEmpty ? "$grade" : ""}${division != null && division!.isNotEmpty ? "$division - " : ""}$studentName"
+                  ? "$studentName - Grade ${grade != null && grade!.isNotEmpty ? "$grade" : ""}${division != null && division!.isNotEmpty ? "$division" : ""}"
                   : "Loading...",
               style: const TextStyle(color: Colors.white70, fontSize: 15),
             ),
