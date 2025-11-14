@@ -92,7 +92,7 @@ class LeaveHistoryCard extends StatelessWidget {
                               ),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
-                                color: Colors.white
+                                color: Colors.white,
                               ),
                               width: double.infinity,
                               child: Column(

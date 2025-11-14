@@ -70,7 +70,6 @@ class _LeaveManagementState extends State<LeaveManagementPage> {
         body,
         token: token,
       );
-
       // debugPrint("REPONSE LEAVE HISTORY: ${response}");
 
       if (response['status'] == true) {
