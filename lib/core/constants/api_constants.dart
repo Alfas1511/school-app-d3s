@@ -56,4 +56,6 @@ class ApiConstants {
   // Leave Management Endpoints
   static const String leaveTypes = "$baseUrl/parent/leave-types";
   static const String leaveRequest = "$baseUrl/parent/leave-request";
+  static const String leaveRequestHistory =
+      "$baseUrl/parent/leave-request-history";
 }

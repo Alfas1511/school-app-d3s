@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/core/constants/api_constants.dart';
 import 'package:school_app/core/services/api_service.dart';
+import 'package:school_app/models/leave_request_history_model.dart';
 import 'package:school_app/models/leave_types_model.dart';
 import 'package:school_app/views/leaveManagement/leave_form_card.dart';
 import 'package:school_app/views/leaveManagement/leave_guidelines_card.dart';
+import 'package:school_app/views/leaveManagement/leave_history_card.dart';
 import 'package:school_app/views/more_options_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,6 +27,7 @@ class _LeaveManagementState extends State<LeaveManagementPage> {
   String? divisionId;
   String? divisionName;
   LeaveTypesModel? leaveTypes;
+  LeaveRequestHistoryModel? leaveRequestHistory;
 
   final List<String> leaveSectionTypes = ["Apply Leave", "Leave History"];
 
@@ -42,6 +45,37 @@ class _LeaveManagementState extends State<LeaveManagementPage> {
       if (response['status'] == true) {
         setState(() {
           leaveTypes = LeaveTypesModel.fromJson(response);
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message']);
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadLeaveRequestHistory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      final studentId = prefs.getInt('selected_student_id');
+      final body = {'student_id': studentId};
+
+      final apiService = ApiService();
+      final response = await apiService.postRequest(
+        ApiConstants.leaveRequestHistory,
+        body,
+        token: token,
+      );
+
+      // debugPrint("REPONSE LEAVE HISTORY: ${response}");
+
+      if (response['status'] == true) {
+        setState(() {
+          leaveRequestHistory = LeaveRequestHistoryModel.fromJson(response);
           isLoading = false;
         });
       } else {
@@ -75,8 +109,19 @@ class _LeaveManagementState extends State<LeaveManagementPage> {
   @override
   void initState() {
     super.initState();
-    _loadStudentName();
-    _loadLeaveTypes();
+    // _loadStudentName();
+    // _loadLeaveTypes();
+    // _loadLeaveRequestHistory();
+    loadAllData();
+  }
+
+  Future<void> loadAllData() async {
+    await _loadStudentName();
+    await _loadLeaveTypes();
+    await _loadLeaveRequestHistory();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -97,10 +142,7 @@ class _LeaveManagementState extends State<LeaveManagementPage> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const MoreOptionsPage()),
-          ),
+          onPressed: () => Navigator.pop(context),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,14 +220,15 @@ class _LeaveManagementState extends State<LeaveManagementPage> {
                   ),
                   const SizedBox(height: 20),
 
-                  LeaveFormCard(
-                    leaveTypes:
-                        leaveTypes?.data.map((e) => e.leaveType).toList() ?? [],
-                  ),
+                  if (leaveSectionType == 0) ...[
+                    LeaveFormCard(leaveTypes: leaveTypes),
+                    const SizedBox(height: 10),
+                    LeaveGuidelinesCard(),
+                  ],
 
-                  const SizedBox(height: 10),
-
-                  LeaveGuidelinesCard(),
+                  if (leaveSectionType == 1) ...[
+                    LeaveHistoryCard(leaveRequestHistory: leaveRequestHistory),
+                  ],
                 ],
               ),
             ),

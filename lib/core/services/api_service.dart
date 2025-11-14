@@ -13,6 +13,7 @@ class ApiService {
       body: jsonEncode(body),
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json", 
         if (token != null) "Authorization": "Bearer $token",
       },
     );

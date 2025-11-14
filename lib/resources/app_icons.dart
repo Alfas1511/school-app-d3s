@@ -31,4 +31,22 @@ class AppIcons {
   static const IconData results = Icons.leaderboard;
   static const IconData records = Icons.data_array;
   static const IconData check = Icons.check;
+  static const IconData cross = Icons.close;
+  static const IconData delete = Icons.delete;
+  static const IconData alert = Icons.notifications_active;
+
+  static IconData statusIcon(String status) {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return alert;
+      case "approved":
+        return check;
+      case "rejected":
+        return cross;
+      case "cancelled":
+        return delete;
+      default:
+        return Icons.help_outline;
+    }
+  }
 }

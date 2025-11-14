@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/components/section_title.dart';
+import 'package:school_app/core/constants/api_constants.dart';
+import 'package:school_app/core/services/api_service.dart';
+import 'package:school_app/models/leave_types_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LeaveType {
   final int id;
@@ -9,7 +13,7 @@ class LeaveType {
 }
 
 class LeaveFormCard extends StatefulWidget {
-  final List<LeaveType>? leaveTypes;
+  final LeaveTypesModel? leaveTypes;
 
   const LeaveFormCard({super.key, this.leaveTypes});
 
@@ -41,9 +45,100 @@ class _LeaveFormCardState extends State<LeaveFormCard> {
     }
   }
 
+  Future<void> _submitLeave() async {
+    if (selectedLeaveTypeId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please select a leave type."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (startDate == null || endDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please select both start and end dates."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (reasonController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter a reason for leave."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      final studentId = prefs.getInt('selected_student_id');
+      final gradeId = prefs.getString('student_grade_id');
+      final divisionId = prefs.getString('student_division_id');
+
+      final apiService = ApiService();
+
+      // Prepare body for API
+      final body = {
+        "leave_type_id": selectedLeaveTypeId.toString(),
+        "student_id": studentId,
+        "grade_id": gradeId,
+        "division_id": divisionId,
+        "start_date":
+            "${startDate!.year}-${startDate!.month}-${startDate!.day}",
+        "end_date": "${endDate!.year}-${endDate!.month}-${endDate!.day}",
+        "description": reasonController.text.trim(),
+      };
+
+      final response = await apiService.postRequest(
+        ApiConstants.leaveRequest,
+        body,
+        token: token,
+      );
+
+      debugPrint("RAW RESPONSE BODY ===> ${response}");
+
+      if (response['status'] == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Leave submitted successfully!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Reset fields if needed
+        setState(() {
+          selectedLeaveTypeId = null;
+          startDate = null;
+          endDate = null;
+          reasonController.clear();
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response['message'] ?? "Something went wrong"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print("JSON ERROR ===> $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final leaveTypes = widget.leaveTypes ?? [];
+    final leaveTypes = widget.leaveTypes?.data ?? [];
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
@@ -106,7 +201,7 @@ class _LeaveFormCardState extends State<LeaveFormCard> {
                     });
                   },
                   child: Text(
-                    leaveType.name,
+                    leaveType.leaveType,
                     style: TextStyle(
                       color: isSelected ? Colors.white : Colors.black87,
                       fontWeight: FontWeight.w600,
@@ -178,43 +273,7 @@ class _LeaveFormCardState extends State<LeaveFormCard> {
                 ),
                 backgroundColor: const Color(0xFF6A11CB),
               ),
-              onPressed: () {
-                if (selectedLeaveTypeId == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Please select a leave type."),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return;
-                }
-                if (startDate == null || endDate == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Please select both start and end dates."),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return;
-                }
-                if (reasonController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Please enter a reason for leave."),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return;
-                }
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Leave submitted successfully!"),
-                    backgroundColor: Colors.green,
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              },
+              onPressed: _submitLeave,
               child: const Text(
                 "Submit Leave",
                 style: TextStyle(
