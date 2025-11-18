@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_app/components/section_title.dart';
 import 'package:school_app/core/constants/api_constants.dart';
 import 'package:school_app/core/services/api_service.dart';
+import 'package:school_app/models/student_certificates_model.dart';
 import 'package:school_app/models/students_list_model.dart';
 import 'package:school_app/views/certificates/available_certificates_card.dart';
 import 'package:school_app/views/certificates/child_selector_card.dart';
@@ -17,8 +18,10 @@ class CertificatesPage extends StatefulWidget {
 class _CertificatesPageState extends State<CertificatesPage> {
   bool isLoading = true;
   StudentsListModel? fetchedStudents;
+  StudentCertificatesModel? studentCertificates;
   List<StudentsListModel> students = [];
   StudentsListModel? selectedStudent;
+  List<StudentCertificateData> certificates = [];
 
   Future<void> _fetchStudentsList() async {
     try {
@@ -69,44 +72,37 @@ class _CertificatesPageState extends State<CertificatesPage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token');
-      // final selectedId = prefs.getInt('student_id');
       final selectedId = prefs.getInt('selected_student_id');
 
       final apiService = ApiService();
-      final response = await apiService.getRequest(
-        ApiConstants.studentList,
+      final body = {'student_id': selectedId};
+
+      final response = await apiService.postRequest(
+        ApiConstants.studentCertificatesList,
+        body,
         token: token,
       );
-      // debugPrint("API RESPONSE ${response}");
 
       if (response['status'] == true) {
         final data = response['data'] as List;
-        final fetchedStudents = data
-            .map((json) => StudentsListModel.fromJson(json))
-            .toList();
-
-        StudentsListModel? matchedStudent;
-        if (selectedId != null) {
-          matchedStudent = fetchedStudents.firstWhere(
-            (s) => s.id == selectedId,
-            orElse: () => fetchedStudents.first,
-          );
-        }
 
         setState(() {
-          students = fetchedStudents;
-          selectedStudent = matchedStudent ?? fetchedStudents.first;
+          certificates = data
+              .map((json) => StudentCertificateData.fromJson(json))
+              .toList();
           isLoading = false;
         });
-
-        // Make sure to store the correct selected ID again
-        await prefs.setInt('selected_student_id', selectedStudent!.id);
       } else {
-        throw Exception(response['message']);
+        setState(() {
+          certificates = [];
+          isLoading = false;
+        });
       }
     } catch (e) {
-      debugPrint("Error fetching student list: $e");
+      debugPrint("Error fetching student certificates: $e");
+
       setState(() {
+        certificates = [];
         isLoading = false;
       });
     }
@@ -169,7 +165,11 @@ class _CertificatesPageState extends State<CertificatesPage> {
 
                 setState(() {
                   selectedStudent = student;
+                  isLoading = true;
+                  certificates = [];
                 });
+
+                await _fetchStudentsCertificates();
               },
             ),
 
@@ -195,15 +195,19 @@ class _CertificatesPageState extends State<CertificatesPage> {
               child: Column(
                 children: [
                   SectionTitle(title: "Available Certificates"),
-
                   const SizedBox(height: 10),
 
-                  AvailableCertificatesCard(
-                    title: "Academic Excellense Award",
-                    subtitle: "Achievement Certificate",
-                    status: "Available",
-                    date: "15/11/2025",
-                  ),
+                  if (certificates.isEmpty)
+                    Center(child: Text("Certificates Unavailable!"))
+                  else
+                    ...certificates.map((cert) {
+                      return AvailableCertificatesCard(
+                        title: cert.competitionName,
+                        subtitle: cert.competitionItemName,
+                        status: cert.status == 1 ? "Available" : "Processing",
+                        date: cert.date,
+                      );
+                    }),
                 ],
               ),
             ),

@@ -58,4 +58,8 @@ class ApiConstants {
   static const String leaveRequest = "$baseUrl/parent/leave-request";
   static const String leaveRequestHistory =
       "$baseUrl/parent/leave-request-history";
+
+  // Student Certficates Endpoints
+  static const String studentCertificatesList =
+      "$baseUrl/parent/student-certificates-list";
 }
