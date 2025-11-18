@@ -71,7 +71,7 @@ class ImportantUpdates extends StatelessWidget {
                   title: update.title,
                   subtitle: update.description,
                   tag: "",
-                  color: Colors.blue[50],
+                  color: "#00BCD4",
                   trailingContent: "",
                 );
               }),

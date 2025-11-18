@@ -34,6 +34,7 @@ class AppIcons {
   static const IconData cross = Icons.close;
   static const IconData delete = Icons.delete;
   static const IconData alert = Icons.notifications_active;
+  static const IconData trophy = Icons.workspace_premium;
 
   static IconData statusIcon(String status) {
     switch (status.toLowerCase()) {

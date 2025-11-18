@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/resources/app_colours.dart';
 
 class ListingCardComponent extends StatelessWidget {
   final String? cardTitle;
@@ -6,7 +7,7 @@ class ListingCardComponent extends StatelessWidget {
   final String title;
   final String subtitle;
   final String? tag;
-  final Color? color;
+  final String color;
   final String? trailingContent;
   const ListingCardComponent({
     super.key,
@@ -25,7 +26,7 @@ class ListingCardComponent extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color,
+        color: AppColours.hexToColor(color).withOpacity(0.6),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -34,9 +35,9 @@ class ListingCardComponent extends StatelessWidget {
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Colors.grey[100],
-              shape: BoxShape.circle, 
+              shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: Colors.red, size: 22),
+            child: Icon(icon, color: AppColours.hexToColor(color), size: 22),
           ),
 
           const SizedBox(width: 12),
@@ -49,14 +50,17 @@ class ListingCardComponent extends StatelessWidget {
                   title,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 20,
                   ),
                 ),
 
-                Text(subtitle, style: const TextStyle(color: Colors.grey)),
+                Text(
+                  subtitle,
+                  style: const TextStyle(color: Colors.black, fontSize: 15),
+                ),
 
                 tag != null
-                    ? Text(tag!, style: const TextStyle(color: Colors.grey))
+                    ? Text(tag!, style: const TextStyle(color: Colors.black))
                     : SizedBox.shrink(),
               ],
             ),
@@ -64,9 +68,20 @@ class ListingCardComponent extends StatelessWidget {
 
           const SizedBox(width: 12),
 
-          Text(
-            '$trailingContent',
-            style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              '$trailingContent',
+              style: TextStyle(
+                color: AppColours.hexToColor(color),
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
           ),
         ],
       ),

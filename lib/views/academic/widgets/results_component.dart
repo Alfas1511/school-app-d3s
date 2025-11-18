@@ -1,78 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/models/student_exam_results_model.dart';
 import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/components/listing_card_component.dart';
 import 'package:school_app/components/section_title.dart';
 
 class ResultsComponent extends StatelessWidget {
-  const ResultsComponent({super.key});
+  final bool isLoading;
+  final StudentExamResultsModel? examsResults;
+  const ResultsComponent({
+    super.key,
+    required this.isLoading,
+    required this.examsResults,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final examsResultsList = examsResults?.data ?? [];
+
     return Column(
       children: [
         SectionTitle(title: "Recent Results"),
 
         SizedBox(height: 10),
 
-        ListingCardComponent(
-          cardTitle: "",
-          icon: AppIcons.pdf,
-          title: "Mathematics",
-          subtitle: "92/100 - Grade A+ - rank #3",
-          tag: 'Mid-term Exam',
-          color: Colors.green[50],
-          trailingContent: "A+",
-        ),
+        if (isLoading) const Center(child: CircularProgressIndicator()),
 
-        ListingCardComponent(
-          cardTitle: "",
-          icon: AppIcons.file,
-          title: "Science",
-          subtitle: "88/100 - Grade A - rank #5",
-          tag: 'Mid-term Exam',
-          color: Colors.blue[50],
-          trailingContent: "A",
-        ),
+        if (!isLoading && examsResultsList.isEmpty)
+          const Center(child: Text("No Results available")),
 
-        ListingCardComponent(
-          cardTitle: "",
-          icon: AppIcons.file,
-          title: "English",
-          subtitle: "88/100 - Grade A - rank #5",
-          tag: 'Mid-term Exam',
-          color: Colors.purple[50],
-          trailingContent: "A+",
-        ),
-
-        ListingCardComponent(
-          cardTitle: "",
-          icon: AppIcons.file,
-          title: "History",
-          subtitle: "90/100 - Grade A - rank #1",
-          tag: 'Mid-term Exam',
-          color: Colors.orange[50],
-          trailingContent: "A+",
-        ),
-
-        ListingCardComponent(
-          cardTitle: "",
-          icon: AppIcons.file,
-          title: "Art",
-          subtitle: "98/100 - Grade A+ - rank #1",
-          tag: 'Mid-term Exam',
-          color: Colors.blue[50],
-          trailingContent: "A+",
-        ),
-
-        ListingCardComponent(
-          cardTitle: "",
-          icon: AppIcons.file,
-          title: "Physical Education",
-          subtitle: "85/100 - Grade A - rank #4",
-          tag: 'Mid-term Exam',
-          color: Colors.blue[50],
-          trailingContent: "A",
-        ),
+        if (!isLoading)
+          Column(
+            children: examsResultsList.map((result) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: ListingCardComponent(
+                  cardTitle: "",
+                  icon: AppIcons.trophy,
+                  title: "${result.subjectName}",
+                  subtitle:
+                      "${result.obtainedMarks}/${result.maxMarks} - Grade ${result.gradeLetter}",
+                  tag: result.examType,
+                  color: result.subjectColor ?? "",
+                  trailingContent: result.gradeLetter,
+                ),
+              );
+            }).toList(),
+          ),
       ],
     );
   }

@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/components/section_title.dart';
+import 'package:school_app/models/exam_timetable_model.dart';
 import 'package:school_app/views/academic/widgets/exam_card_component.dart';
 import 'package:school_app/views/academic/widgets/tab_button_component.dart';
 
 class ExamsComponent extends StatelessWidget {
-  const ExamsComponent({super.key});
+  final bool isLoading;
+  final ExamTimeTableModel? examsTimeTable;
+  const ExamsComponent({
+    super.key,
+    required this.isLoading,
+    required this.examsTimeTable,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final examList = examsTimeTable?.data ?? [];
     return Column(
       children: [
         Column(
@@ -39,30 +47,27 @@ class ExamsComponent extends StatelessWidget {
             SectionTitle(title: "Upcoming Exams"),
 
             const SizedBox(height: 16),
-            
-            ExamCardComponent(
-              subject: "Mathematics Mid-term",
-              date: "March 18, 2024 • 10:00 AM",
-              details: "Chapters 6–8 • Duration 2 hours",
-              daysLeft: 3,
-              color: Colors.redAccent.shade100,
-            ),
-            const SizedBox(height: 12),
-            ExamCardComponent(
-              subject: "Science Practical",
-              date: "March 22, 2024 • 2:00 PM",
-              details: "Lab experiments • Duration 1.5 hours",
-              daysLeft: 7,
-              color: Colors.orangeAccent.shade100,
-            ),
-            const SizedBox(height: 12),
-            ExamCardComponent(
-              subject: "English Literature",
-              date: "March 25, 2024 • 9:00 AM",
-              details: "Poetry & Stories • Duration 2.5 hours",
-              daysLeft: 10,
-              color: Colors.amberAccent.shade100,
-            ),
+
+            if (isLoading) const Center(child: CircularProgressIndicator()),
+
+            if (!isLoading && examList.isEmpty)
+              const Center(child: Text("No exams available")),
+
+            if (!isLoading)
+              Column(
+                children: examList.map((exam) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: ExamCardComponent(
+                      subject: exam.subject ?? "",
+                      date: "${exam.examDate} • ${exam.examTime}",
+                      details: "${exam.examType} • Duration:  ${exam.duration}",
+                      daysLeft: exam.daysLeft ?? 0,
+                      color: exam.subjectColor ?? "",
+                    ),
+                  );
+                }).toList(),
+              ),
           ],
         ),
       ],

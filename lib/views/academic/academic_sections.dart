@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/models/exam_timetable_model.dart';
+import 'package:school_app/models/student_exam_results_model.dart';
 import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/resources/app_spacing.dart';
 import 'package:school_app/views/academic/widgets/academic_sections_list.dart';
@@ -39,6 +41,8 @@ class _AcademicSectionsState extends State<AcademicSections> {
   int selectedSectionIndex = 0;
   bool isLoading = true;
   List<GradeStudyMaterial> materials = [];
+  ExamTimeTableModel? examsTimeTable;
+  StudentExamResultsModel? examsResults;
 
   Future<void> _fetchStudyMaterials() async {
     try {
@@ -74,10 +78,75 @@ class _AcademicSectionsState extends State<AcademicSections> {
     }
   }
 
+  Future<void> _fetchExamTimetable() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      final gradeId = prefs.getString('student_grade_id');
+
+      if (gradeId == null) throw Exception("Grade ID missing");
+
+      final apiService = ApiService();
+      final body = {'grade_id': gradeId};
+
+      final response = await apiService.postRequest(
+        ApiConstants.examTimetableList,
+        body,
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        final examTable = ExamTimeTableModel.fromJson(response);
+        setState(() {
+          examsTimeTable = examTable;
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message'] ?? 'Unknown error');
+      }
+    } catch (e) {
+      debugPrint("Error fetching exam timetable: $e");
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _fetchStudentExamResults() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      final studentId = prefs.getInt('selected_student_id');
+      // final gradeId = prefs.getString('student_grade_id');
+
+      final apiService = ApiService();
+      final body = {'student_id': studentId};
+
+      final response = await apiService.postRequest(
+        ApiConstants.studentExamResultsList,
+        body,
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        final studentExamResults = StudentExamResultsModel.fromJson(response);
+        setState(() {
+          examsResults = studentExamResults;
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message'] ?? 'Unknown error');
+      }
+    } catch (e) {
+      debugPrint("Error fetching exam timetable: $e");
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _fetchStudyMaterials();
+    _fetchExamTimetable();
+    _fetchStudentExamResults();
   }
 
   @override
@@ -208,9 +277,15 @@ class _AcademicSectionsState extends State<AcademicSections> {
       case 1:
         return SyllabusComponent();
       case 2:
-        return ExamsComponent();
+        return ExamsComponent(
+          isLoading: isLoading,
+          examsTimeTable: examsTimeTable,
+        );
       case 3:
-        return ResultsComponent();
+        return ResultsComponent(
+          isLoading: isLoading,
+          examsResults: examsResults,
+        );
       case 4:
         return _buildProgressContent();
       default:

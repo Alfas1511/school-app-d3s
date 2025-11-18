@@ -62,4 +62,11 @@ class ApiConstants {
   // Student Certficates Endpoints
   static const String studentCertificatesList =
       "$baseUrl/parent/student-certificates-list";
+
+  // Exam Timetable Endpoints
+  static const String examTimetableList = "$baseUrl/parent/exam-timetable-list";
+
+  // Student Exam Result Endpoints
+  static const String studentExamResultsList =
+      "$baseUrl/parent/student-exam-results";
 }
