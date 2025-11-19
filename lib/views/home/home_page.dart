@@ -6,6 +6,7 @@ import 'package:school_app/models/important_updates_model.dart';
 import 'package:school_app/models/parent_profile_model.dart';
 import 'package:school_app/models/student_achievements_model.dart';
 import 'package:school_app/models/student_details_model.dart';
+import 'package:school_app/models/student_exam_results_model.dart';
 import 'package:school_app/models/students_list_model.dart';
 import 'package:school_app/views/attendance/attendance_page.dart';
 import 'package:school_app/views/home/important_updates.dart';
@@ -33,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   StudentsListModel? selectedStudent;
   ImportantUpdatesModel? importantUpdates;
   StudentAchievementsModel? studentAchievements;
+  StudentExamResultsModel? examsResults;
 
   List<StudentsListModel> students = [];
   List<Widget> get _pages => [
@@ -59,10 +61,9 @@ class _HomePageState extends State<HomePage> {
     await _fetchStudentsList(); // Load student list & set selected student
 
     if (selectedStudent != null) {
-      await _loadImportantUpdates(
-        selectedStudent!.id,
-      ); // Load updates for selected student
+      await _loadImportantUpdates(selectedStudent!.id);
       await _loadStudentAchievements(selectedStudent!.id);
+      await _fetchStudentExamResults(selectedStudent!.id);
     }
 
     setState(() {
@@ -243,6 +244,43 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _fetchStudentExamResults(int studentId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+
+      final apiService = ApiService();
+      final body = {'student_id': studentId};
+
+      final response = await apiService.postRequest(
+        ApiConstants.studentExamResultsList,
+        body,
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        final studentExamResults = StudentExamResultsModel.fromJson(response);
+        setState(() {
+          examsResults = studentExamResults;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          examsResults = StudentExamResultsModel(data: []);
+          isLoading = false;
+        });
+        throw Exception(response['message'] ?? 'Unknown error');
+      }
+    } catch (e) {
+      debugPrint("Error fetching exam results: $e");
+
+      setState(() {
+        examsResults = StudentExamResultsModel(data: []);
+        isLoading = false;
+      });
+    }
+  }
+
   Future<void> _handleRefresh() async {
     setState(() {
       isLoading = true;
@@ -256,6 +294,7 @@ class _HomePageState extends State<HomePage> {
       _fetchStudentsList(),
       if (selectedId != null) _loadImportantUpdates(selectedId),
       if (selectedId != null) _loadStudentAchievements(selectedId),
+      if (selectedId != null) _fetchStudentExamResults(selectedId),
     ]);
 
     setState(() {
@@ -337,6 +376,7 @@ class _HomePageState extends State<HomePage> {
                   // 🔹 Fetch important updates for the newly selected student
                   await _loadImportantUpdates(student.id);
                   await _loadStudentAchievements(student.id);
+                  await _fetchStudentExamResults(student.id);
 
                   setState(() {
                     isLoading = false;
@@ -362,7 +402,7 @@ class _HomePageState extends State<HomePage> {
 
               const SizedBox(height: 20),
               // Latest Exam Results
-              LatestExamResults(),
+              LatestExamResults(examsResultsData: examsResults),
 
               const SizedBox(height: 20),
             ],

@@ -69,4 +69,6 @@ class ApiConstants {
   // Student Exam Result Endpoints
   static const String studentExamResultsList =
       "$baseUrl/parent/student-exam-results";
+  static const String studentExamRanksList =
+      "$baseUrl/parent/student-exam-ranks";
 }

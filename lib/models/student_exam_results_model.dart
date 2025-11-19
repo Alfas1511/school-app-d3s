@@ -43,6 +43,7 @@ class StudentExamData {
   String? gradeLetter;
   String? resultStatus;
   String? subjectColor;
+  String? resultPercentage;
 
   StudentExamData({
     this.id,
@@ -61,6 +62,7 @@ class StudentExamData {
     this.gradeLetter,
     this.resultStatus,
     this.subjectColor,
+    this.resultPercentage,
   });
 
   factory StudentExamData.fromJson(Map<String, dynamic> json) {
@@ -81,6 +83,7 @@ class StudentExamData {
       gradeLetter: json['grade_letter'],
       resultStatus: json['result_status'],
       subjectColor: json['subject_color'],
+      resultPercentage: json['result_percentage'],
     );
   }
 
@@ -102,6 +105,7 @@ class StudentExamData {
       "grade_letter": gradeLetter,
       "result_status": resultStatus,
       "subject_color": subjectColor,
+      "result_percentage": resultPercentage,
     };
   }
 }

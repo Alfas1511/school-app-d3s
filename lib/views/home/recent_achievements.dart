@@ -37,7 +37,6 @@ class RecentAchievements extends StatelessWidget {
               const Center(
                 child: Text(
                   "Achievements info unavailable!",
-                  style: TextStyle(color: Colors.grey),
                 ),
               )
             else

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/models/exam_timetable_model.dart';
+import 'package:school_app/models/student_exam_ranks_model.dart';
 import 'package:school_app/models/student_exam_results_model.dart';
+import 'package:school_app/resources/app_colours.dart';
 import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/resources/app_spacing.dart';
 import 'package:school_app/views/academic/widgets/academic_sections_list.dart';
 import 'package:school_app/views/academic/widgets/exams_component.dart';
 import 'package:school_app/views/academic/widgets/results_component.dart';
 import 'package:school_app/components/section_title.dart';
+import 'package:school_app/views/academic/widgets/student_progress_component.dart';
 import 'package:school_app/views/academic/widgets/study_materials_component.dart';
 import 'package:school_app/views/academic/widgets/syllabus_component.dart';
 import 'package:school_app/core/constants/api_constants.dart';
@@ -30,12 +33,12 @@ class _AcademicSectionsState extends State<AcademicSections> {
   final List<String> tabs = ["Study Materials", "Syllabus"];
 
   final List<AcademicSectionsList> sections = [
-    AcademicSectionsList("Materials", AppIcons.file),
-    AcademicSectionsList("Syllabus", AppIcons.book),
-    AcademicSectionsList("Exams", AppIcons.exam),
-    AcademicSectionsList("Results", AppIcons.results),
-    AcademicSectionsList("Progress", AppIcons.progress),
-    AcademicSectionsList("Records", AppIcons.records),
+    AcademicSectionsList("Materials", AppIcons.file, "#6610F2"),
+    AcademicSectionsList("Syllabus", AppIcons.book, "#28A745"),
+    AcademicSectionsList("Exams", AppIcons.exam, "#9C27B0"),
+    AcademicSectionsList("Results", AppIcons.results, "#FF5722"),
+    AcademicSectionsList("Progress", AppIcons.progress, "#3F51B5"),
+    AcademicSectionsList("Records", AppIcons.records, "#198754"),
   ];
 
   int selectedSectionIndex = 0;
@@ -43,6 +46,7 @@ class _AcademicSectionsState extends State<AcademicSections> {
   List<GradeStudyMaterial> materials = [];
   ExamTimeTableModel? examsTimeTable;
   StudentExamResultsModel? examsResults;
+  StudentExamRanksModel? examRanks;
 
   Future<void> _fetchStudyMaterials() async {
     try {
@@ -115,28 +119,33 @@ class _AcademicSectionsState extends State<AcademicSections> {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token');
       final studentId = prefs.getInt('selected_student_id');
-      // final gradeId = prefs.getString('student_grade_id');
+      final gradeId = prefs.getString('student_grade_id');
+      final divisionId = prefs.getString('student_division_id');
 
       final apiService = ApiService();
-      final body = {'student_id': studentId};
+      final body = {
+        'student_id': studentId,
+        'grade_id': gradeId,
+        'division_id': divisionId,
+      };
 
       final response = await apiService.postRequest(
-        ApiConstants.studentExamResultsList,
+        ApiConstants.studentExamRanksList,
         body,
         token: token,
       );
 
       if (response['status'] == true) {
-        final studentExamResults = StudentExamResultsModel.fromJson(response);
+        final studentExamRanks = StudentExamRanksModel.fromJson(response);
         setState(() {
-          examsResults = studentExamResults;
+          examRanks = studentExamRanks;
           isLoading = false;
         });
       } else {
         throw Exception(response['message'] ?? 'Unknown error');
       }
     } catch (e) {
-      debugPrint("Error fetching exam timetable: $e");
+      debugPrint("Error fetching exam ranks: $e");
       setState(() => isLoading = false);
     }
   }
@@ -233,7 +242,9 @@ class _AcademicSectionsState extends State<AcademicSections> {
           },
           child: Container(
             decoration: BoxDecoration(
-              color: isSelected ? Colors.blue[100] : Colors.grey[100],
+              color: isSelected
+                  ? AppColours.hexToColor(section.color ?? "").withOpacity(0.6)
+                  : AppColours.hexToColor(section.color ?? "").withOpacity(0.9),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isSelected ? Colors.blue : Colors.transparent,
@@ -244,10 +255,17 @@ class _AcademicSectionsState extends State<AcademicSections> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  section.icon,
-                  size: 28,
-                  color: isSelected ? Colors.blue : Colors.grey[700],
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColours.hexToColor(section.color ?? ""),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    section.icon,
+                    size: 28,
+                    color: isSelected ? Colors.white : Colors.white,
+                  ),
                 ),
 
                 const SizedBox(height: 8),
@@ -256,7 +274,7 @@ class _AcademicSectionsState extends State<AcademicSections> {
                   section.title,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: isSelected ? Colors.blue : Colors.grey[700],
+                    color: isSelected ? Colors.white : Colors.white,
                   ),
                 ),
               ],
@@ -287,22 +305,9 @@ class _AcademicSectionsState extends State<AcademicSections> {
           examsResults: examsResults,
         );
       case 4:
-        return _buildProgressContent();
+        return StudentProgressComponent(examRanksData: examRanks);
       default:
         return const SizedBox.shrink();
     }
-  }
-
-  Widget _buildProgressContent() {
-    return Column(
-      children: const [
-        SectionTitle(title: "Content Area"),
-        SizedBox(height: 10),
-        Text(
-          "This area can be used to display detailed content based on the selected academic section. For example, if 'Materials' is selected, you could show a list of downloadable files here.",
-          style: TextStyle(color: Colors.grey),
-        ),
-      ],
-    );
   }
 }

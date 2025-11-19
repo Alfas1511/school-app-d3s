@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/components/listing_component_one.dart';
 import 'package:school_app/components/section_title.dart';
+import 'package:school_app/models/student_exam_results_model.dart';
 
 class LatestExamResults extends StatelessWidget {
-  const LatestExamResults({super.key});
+  final StudentExamResultsModel? examsResultsData;
+  const LatestExamResults({super.key, this.examsResultsData});
 
   @override
   Widget build(BuildContext context) {
+    final examsResults = examsResultsData?.data ?? [];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(
@@ -39,29 +43,20 @@ class LatestExamResults extends StatelessWidget {
                 ),
               ],
             ),
-            ListTile(
-              title: Text("Mathematics"),
-              tileColor: Colors.green,
-              trailing: Text(
-                "95%",
-                style: TextStyle(color: Colors.greenAccent, fontSize: 15),
-              ),
-            ),
-            ListTile(
-              title: Text("English"),
-              tileColor: Colors.green,
-              trailing: Text(
-                "88%",
-                style: TextStyle(color: Colors.blueAccent, fontSize: 15),
-              ),
-            ),
-            ListTile(
-              title: Text("Science"),
-              tileColor: Colors.green,
-              trailing: Text(
-                "92%",
-                style: TextStyle(color: Colors.redAccent, fontSize: 15),
-              ),
+            SizedBox(height: 10),
+
+            if (examsResults.isEmpty)
+              const Center(child: Text("Results Unavailable!")),
+
+            Column(
+              children: examsResults.map((examsResult) {
+                return ListingComponentOne(
+                  title: examsResult.subjectName ?? "",
+                  value: examsResult.resultPercentage ?? "",
+                  bgColor: examsResult.subjectColor ?? "",
+                  textColor: examsResult.subjectColor ?? "",
+                );
+              }).toList(),
             ),
           ],
         ),
