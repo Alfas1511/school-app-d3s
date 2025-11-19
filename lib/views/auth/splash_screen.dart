@@ -55,20 +55,27 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // ✅ App Logo
-            Image.asset("assets/images/logo.png", height: 120),
+            // Image.asset("assets/images/S360_Logo.png", height: 120),
+            ClipOval(
+              child: Image.asset(
+                "assets/images/S360_Logo.png",
+                height: 200,
+                width: 200,
+                fit: BoxFit.cover,
+              ),
+            ),
 
             const SizedBox(height: 20),
 
-            // ✅ App Title (optional)
-            const Text(
-              "SCHOOL APP",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-              ),
-            ),
+            // const Text(
+            //   "SCHOOL APP",
+            //   style: TextStyle(
+            //     color: Colors.white,
+            //     fontSize: 28,
+            //     fontWeight: FontWeight.bold,
+            //     letterSpacing: 1.2,
+            //   ),
+            // ),
 
             // const SizedBox(height: 8),
 

@@ -90,68 +90,6 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-
-      // body: Container(
-      //   width: double.infinity,
-      //   height: double.infinity,
-      //   decoration: const BoxDecoration(
-      //     gradient: LinearGradient(
-      //       colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
-      //       begin: Alignment.topCenter,
-      //       end: Alignment.bottomCenter,
-      //     ),
-      //   ),
-      //   child: Padding(
-      //     padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
-      //     child: SafeArea(
-      //       child: SingleChildScrollView(
-      //         child: Column(
-      //           mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //           children: [
-      //             // Title & subtitle
-      //             Column(
-      //               children: [
-      //                 Image.asset("assets/images/logo.png", height: 100),
-      //                 Text(
-      //                   AppStrings.loginScreenTitle,
-      //                   style: AppStyles.title(size: 40.0),
-      //                 ),
-      //                 SizedBox(height: 6),
-      //                 Text(
-      //                   AppStrings.loginScreenDescription,
-      //                   style: AppStyles.description(
-      //                     color: Colors.white70,
-      //                     size: 18,
-      //                   ),
-      //                 ),
-      //               ],
-      //             ),
-
-      //             // Login box
-      //             Container(
-      //               padding: const EdgeInsets.all(20),
-      //               decoration: BoxDecoration(
-      //                 color: Colors.white,
-      //                 borderRadius: BorderRadius.circular(20),
-      //                 boxShadow: [
-      //                   BoxShadow(
-      //                     color: Colors.black.withOpacity(0.08),
-      //                     blurRadius: 10,
-      //                     offset: const Offset(0, 6),
-      //                   ),
-      //                 ],
-      //               ),
-      //               child: loginForm(), // login Form
-      //             ),
-
-      //             // Footer (help / terms)
-      //             footer(),
-      //           ],
-      //         ),
-      //       ),
-      //     ),
-      //   ),
-      // ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -161,173 +99,171 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight, // 👈 ensures full height
-                  ),
-                  child: IntrinsicHeight(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 40,
-                        horizontal: 20,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            children: [
-                              Image.asset(
-                                "assets/images/logo.png",
-                                height: 100,
-                              ),
-                              Text(
-                                AppStrings.loginScreenTitle,
-                                style: AppStyles.title(size: 40.0),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                AppStrings.loginScreenDescription,
-                                style: AppStyles.description(
-                                  color: Colors.white70,
-                                  size: 18,
-                                ),
-                              ),
-                            ],
-                          ),
+          child: Column(
+            children: [
+              /// ----------- TOP SPACER ------------
+              const Spacer(flex: 1),
 
-                          const SizedBox(height: 20),
+              /// ----------- LOGO SECTION -----------
+              logoSection(),
 
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.08),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 6),
-                                ),
-                              ],
-                            ),
-                            child: loginForm(),
-                          ),
+              const SizedBox(height: 20),
 
-                          const SizedBox(height: 20),
+              /// ----------- LOGIN FORM IN CENTER -----------
+              /// Expands and keeps the form centered
+              Expanded(flex: 5, child: Center(child: loginForm())),
 
-                          footer(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
+              /// ----------- BOTTOM SPACER -----------
+              const Spacer(flex: 2),
+
+              /// ----------- FOOTER AT BOTTOM -----------
+              Padding(
+                padding: const EdgeInsets.only(bottom: 25),
+                child: footer(),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
+  logoSection() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ClipOval(
+          child: Image.asset(
+            "assets/images/S360_Logo.png",
+            height: 150,
+            width: 150,
+            fit: BoxFit.cover,
+          ),
+        ),
+        // Text(
+        //   AppStrings.loginScreenTitle,
+        //   style: AppStyles.title(size: 40.0),
+        // ),
+        const SizedBox(height: 6),
+        Text(
+          AppStrings.loginScreenDescription,
+          style: AppStyles.description(color: Colors.white70, size: 18),
+        ),
+      ],
+    );
+  }
+
   // form and button
   loginForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        AppSpacing.vertical(height: 8),
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+      margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppSpacing.vertical(height: 15),
 
-        const Text(
-          AppStrings.phoneNumber,
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-        ),
+          const Text(
+            AppStrings.phoneNumber,
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
 
-        AppSpacing.vertical(height: 8),
+          AppSpacing.vertical(height: 8),
 
-        TextFieldComponent(
-          controller: phoneController,
-          hint: "Enter your phone number",
-          prefixIcon: Icons.phone,
-          keyboardType: TextInputType.phone,
-          label: "Phone",
-          onChanged: (value) {
-            //
-          },
-        ),
+          TextFieldComponent(
+            controller: phoneController,
+            hint: "Enter your phone number",
+            prefixIcon: Icons.phone,
+            keyboardType: TextInputType.phone,
+            label: "Phone",
+            onChanged: (value) {
+              //
+            },
+          ),
 
-        AppSpacing.vertical(height: 8),
+          AppSpacing.vertical(height: 8),
 
-        const Text(
-          AppStrings.password,
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-        ),
+          const Text(
+            AppStrings.password,
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
 
-        AppSpacing.vertical(height: 8),
+          AppSpacing.vertical(height: 8),
 
-        TextField(
-          controller: passwordController,
-          obscureText: _obscurePassword,
-          decoration: _inputDecoration(
-            hint: "Enter your password",
-            prefix: Icon(AppIcons.lock),
-            suffix: IconButton(
-              icon: Icon(
-                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+          TextField(
+            controller: passwordController,
+            obscureText: _obscurePassword,
+            decoration: _inputDecoration(
+              hint: "Enter your password",
+              prefix: Icon(AppIcons.lock),
+              suffix: IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                ),
+                onPressed: () {
+                  setState(() => _obscurePassword = !_obscurePassword);
+                },
               ),
-              onPressed: () {
-                setState(() => _obscurePassword = !_obscurePassword);
-              },
             ),
           ),
-        ),
 
-        AppSpacing.vertical(height: 8),
+          AppSpacing.vertical(height: 8),
 
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ForgotPassword()),
-              );
-            },
-            child: Text(AppStrings.forgotPassword),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ForgotPassword()),
+                );
+              },
+              child: Text(AppStrings.forgotPassword),
+            ),
           ),
-        ),
 
-        AppSpacing.vertical(height: 8),
+          AppSpacing.vertical(height: 8),
 
-        _loading
-            ? const Center(child: CircularProgressIndicator())
-            : ButtonComponent(
-                onPressed: _login,
-                label: AppStrings.signIn,
-                // backgroundColor: AppColours.primaryColor1,
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFF2575FC), // Start color
-                    Color(0xFF6A11CB), // End color
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+          _loading
+              ? const Center(child: CircularProgressIndicator())
+              : ButtonComponent(
+                  onPressed: _login,
+                  label: AppStrings.signIn,
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF2575FC), // Start color
+                      Color(0xFF6A11CB), // End color
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                 ),
-              ),
-      ],
+        ],
+      ),
     );
   }
 
   // footer
   footer() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         const Text.rich(
           TextSpan(
             children: [
               TextSpan(
-                text: AppStrings.needHelp,
+                text: "${AppStrings.needHelp} ",
                 style: TextStyle(color: Colors.white),
               ),
 
