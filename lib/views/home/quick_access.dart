@@ -139,10 +139,10 @@ class QuickAccess extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color,
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: color, size: 28),
+            child: Icon(icon, color: Colors.white, size: 28),
           ),
           const SizedBox(height: 6),
           Text(label, style: const TextStyle(fontSize: 14)),
