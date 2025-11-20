@@ -4,7 +4,7 @@ import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/resources/app_spacing.dart';
 import 'package:school_app/resources/app_strings.dart';
 import 'package:school_app/views/certificates/certificates_page.dart';
-import 'package:school_app/views/contact_support_page.dart';
+import 'package:school_app/views/contactSchool/contact_support_page.dart';
 import 'package:school_app/views/fee_management_page.dart';
 import 'package:school_app/views/gallery/gallery_page.dart';
 import 'package:school_app/views/help_and_support_page.dart';
