@@ -7,6 +7,7 @@ import '../core/constants/api_constants.dart';
 import '../models/login_response.dart';
 import '../core/utils/shared_prefs.dart';
 import 'package:school_app/views/auth/login/login_page.dart';
+import 'package:school_app/main.dart';
 
 class AuthProvider with ChangeNotifier {
   bool _isLoggedIn = false;
@@ -51,6 +52,45 @@ class AuthProvider with ChangeNotifier {
     _user = null;
     await SharedPrefs.clearToken();
     notifyListeners();
+  }
+
+  // Future<void> forceLogout() async {
+  //   _isLoggedIn = false;
+  //   _user = null;
+
+  //   await SharedPrefs.clearToken();
+  //   notifyListeners();
+
+  //   navigatorKey.currentState?.pushNamedAndRemoveUntil(
+  //     '/login',
+  //     (route) => false,
+  //   );
+  // }
+
+  Future<void> forceLogout() async {
+    _isLoggedIn = false;
+    _user = null;
+
+    await SharedPrefs.clearToken();
+    notifyListeners();
+
+    final context = navigatorKey.currentContext;
+
+    if (context != null) {
+      // 👉 Show logout message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("You have been logged out."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+
+    // 👉 Navigate to login page
+    navigatorKey.currentState?.pushNamedAndRemoveUntil(
+      '/login',
+      (route) => false,
+    );
   }
 
   // For checking token on app start
