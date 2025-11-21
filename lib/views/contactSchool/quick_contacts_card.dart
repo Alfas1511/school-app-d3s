@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/models/school_contacts_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class QuickContactsCard extends StatelessWidget {
   final SchoolContactsModel? schoolContactsData;
   const QuickContactsCard({super.key, this.schoolContactsData});
+
+  Future<void> _launchDialer(String phoneNumber) async {
+    final Uri url = Uri(scheme: 'tel', path: phoneNumber);
+
+    if (!await launchUrl(url)) {
+      throw 'Could not launch dialer';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +85,7 @@ class QuickContactsCard extends StatelessWidget {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  // Add call function here
+                                  _launchDialer(contact.phone);
                                 },
                                 child: Container(
                                   padding: EdgeInsets.all(8),
