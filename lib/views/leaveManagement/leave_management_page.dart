@@ -6,7 +6,6 @@ import 'package:school_app/models/leave_types_model.dart';
 import 'package:school_app/views/leaveManagement/leave_form_card.dart';
 import 'package:school_app/views/leaveManagement/leave_guidelines_card.dart';
 import 'package:school_app/views/leaveManagement/leave_history_card.dart';
-import 'package:school_app/views/more_options_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LeaveManagementPage extends StatefulWidget {

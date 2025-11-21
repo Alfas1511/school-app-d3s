@@ -1,12 +1,8 @@
 import "package:flutter/material.dart";
-import "package:school_app/components/section_title.dart";
-import "package:school_app/views/privacyPolicy/data_security_card.dart";
 import "package:school_app/views/settings/about_app_card.dart";
 import "package:school_app/views/settings/account_settings_card.dart";
 import "package:school_app/views/settings/app_preferences_card.dart";
-import "package:school_app/views/settings/changePassword/change_password_page.dart";
 import "package:school_app/views/settings/data_storage_card.dart";
-import "package:school_app/views/settings/edit_profile_page.dart";
 import "package:school_app/views/settings/notifications_preferences_card.dart";
 
 class SettingsPage extends StatefulWidget {
