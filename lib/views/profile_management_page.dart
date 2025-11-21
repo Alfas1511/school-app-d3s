@@ -21,13 +21,6 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
 
   List<StudentsListModel> students = [];
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _fetchParentProfile();
-  //   _fetchStudents();
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -265,9 +258,6 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
 }
 
 Widget _buildStudentCard(StudentsListModel student) {
-  String studentImage =
-      // student.studentImage ??
-      "https://img.freepik.com/free-photo/programming-background-with-person-working-with-codes-computer_23-2150010125.jpg";
   return Container(
     margin: const EdgeInsets.only(bottom: 16),
     padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
@@ -290,10 +280,20 @@ Widget _buildStudentCard(StudentsListModel student) {
           children: [
             ClipOval(
               child: Image.network(
-                studentImage,
+                (student.studentImage?.isNotEmpty ?? false)
+                    ? student.studentImage!
+                    : "invalid-url",
                 height: 80,
                 width: 80,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    "assets/images/student.png",
+                    height: 80,
+                    width: 80,
+                    fit: BoxFit.cover,
+                  );
+                },
               ),
             ),
             const SizedBox(width: 16),

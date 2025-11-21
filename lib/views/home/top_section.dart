@@ -97,6 +97,7 @@ class TopSection extends StatelessWidget {
                             "${student.firstName} ${student.lastName}",
                             "Grade - ${student.grade}${student.division}",
                             isSelected,
+                            student.studentImage,
                           ),
                         ),
                       );
@@ -109,7 +110,12 @@ class TopSection extends StatelessWidget {
   }
 
   // Child List Widgets
-  Widget _buildStudentCard(String name, String grade, bool isSelected) {
+  Widget _buildStudentCard(
+    String name,
+    String grade,
+    bool isSelected,
+    String? image,
+  ) {
     return Container(
       width: 180,
       padding: const EdgeInsets.all(12),
@@ -144,11 +150,14 @@ class TopSection extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 20,
-            backgroundImage: AssetImage('assets/images/student.png'),
+            backgroundImage: (image != null && image.isNotEmpty)
+                ? NetworkImage(image)
+                : const AssetImage('assets/images/student.png')
+                      as ImageProvider,
           ),
-          
+
           const SizedBox(width: 10),
 
           Expanded(
