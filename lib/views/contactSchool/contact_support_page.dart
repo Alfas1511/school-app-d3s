@@ -3,7 +3,7 @@ import "package:school_app/components/section_title.dart";
 import "package:school_app/core/constants/api_constants.dart";
 import "package:school_app/core/services/api_service.dart";
 import "package:school_app/models/school_contacts_model.dart";
-import "package:school_app/models/school_departments_model.dart";
+import "package:school_app/models/department_contacts_model.dart";
 import "package:school_app/views/contactSchool/quick_contacts_card.dart";
 import "package:school_app/views/contactSchool/send_message_form_card.dart";
 import "package:school_app/views/contactSchool/visit_us_card.dart";
@@ -19,7 +19,7 @@ class ContactSupportPage extends StatefulWidget {
 
 class _ContactSupportPageState extends State<ContactSupportPage> {
   SchoolContactsModel? schoolContacts;
-  SchoolDepartmentsModel? schoolDepartments;
+  DepartmentContactsModel? schoolDepartments;
   String? selectedDepartment = null;
 
   Future<void> _fetchSchoolContacts() async {
@@ -62,7 +62,7 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
 
       if (response['status'] == true) {
         setState(() {
-          schoolDepartments = SchoolDepartmentsModel.fromJson(response);
+          schoolDepartments = DepartmentContactsModel.fromJson(response);
         });
       } else {
         throw Exception(response['message'] ?? 'Unknown error');

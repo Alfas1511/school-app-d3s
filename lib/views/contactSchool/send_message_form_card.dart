@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:school_app/components/section_title.dart';
 import 'package:school_app/core/constants/api_constants.dart';
 import 'package:school_app/core/services/api_service.dart';
-import 'package:school_app/models/school_departments_model.dart';
+import 'package:school_app/models/department_contacts_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SendMessageFormCard extends StatefulWidget {
-  final SchoolDepartmentsModel? schoolDepartments;
+  final DepartmentContactsModel? schoolDepartments;
   final String? selectedDepartment;
   final Function(String) onDepartmentChanged;
 
@@ -135,7 +135,7 @@ class _SendMessageFormCardState extends State<SendMessageFormCard> {
                                   .map(
                                     (item) => DropdownMenuItem(
                                       value: item.id.toString(),
-                                      child: Text(item.departmentName),
+                                      child: Text(item.name),
                                     ),
                                   )
                                   .toList(),
