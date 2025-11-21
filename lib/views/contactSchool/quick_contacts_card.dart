@@ -6,11 +6,23 @@ class QuickContactsCard extends StatelessWidget {
   final SchoolContactsModel? schoolContactsData;
   const QuickContactsCard({super.key, this.schoolContactsData});
 
-  Future<void> _launchDialer(String phoneNumber) async {
+  Future<void> _launchDialer(BuildContext context, String phoneNumber) async {
     final Uri url = Uri(scheme: 'tel', path: phoneNumber);
 
-    if (!await launchUrl(url)) {
-      throw 'Could not launch dialer';
+    try {
+      final success = await launchUrl(url);
+      if (!success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Could not open dialer"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
+      );
     }
   }
 
@@ -85,7 +97,7 @@ class QuickContactsCard extends StatelessWidget {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  _launchDialer(contact.phone);
+                                  _launchDialer(context, contact.phone);
                                 },
                                 child: Container(
                                   padding: EdgeInsets.all(8),
