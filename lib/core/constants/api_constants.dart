@@ -77,4 +77,6 @@ class ApiConstants {
       "$baseUrl/parent/school-contacts-list";
 
   static const String departmentEnquiry = "$baseUrl/parent/department-enquiry";
+  static const String schoolDepartmentsList =
+      "$baseUrl/parent/school-departments-list";
 }

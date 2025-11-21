@@ -3,8 +3,10 @@ import "package:school_app/components/section_title.dart";
 import "package:school_app/core/constants/api_constants.dart";
 import "package:school_app/core/services/api_service.dart";
 import "package:school_app/models/school_contacts_model.dart";
+import "package:school_app/models/school_departments_model.dart";
 import "package:school_app/views/contactSchool/quick_contacts_card.dart";
 import "package:school_app/views/contactSchool/send_message_form_card.dart";
+import "package:school_app/views/contactSchool/visit_us_card.dart";
 import "package:shared_preferences/shared_preferences.dart";
 // import "package:school_app/views/contactSchool/send_message_form_card.dart";
 
@@ -17,14 +19,8 @@ class ContactSupportPage extends StatefulWidget {
 
 class _ContactSupportPageState extends State<ContactSupportPage> {
   SchoolContactsModel? schoolContacts;
-  String selectedDepartment = "Education";
-  final List<String> departments = [
-    "Education",
-    "Finance",
-    "Transport",
-    "Cultural",
-    "Health",
-  ];
+  SchoolDepartmentsModel? schoolDepartments;
+  String? selectedDepartment = null;
 
   Future<void> _fetchSchoolContacts() async {
     try {
@@ -51,10 +47,37 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
     }
   }
 
+  Future<void> _fetchSchoolDepartmentsList() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+
+      final apiService = ApiService();
+      final response = await apiService.getRequest(
+        ApiConstants.schoolDepartmentsList,
+        token: token,
+      );
+
+      // debugPrint("SCHOOL CONTACTS RESPONSE: ${response}");
+
+      if (response['status'] == true) {
+        setState(() {
+          schoolDepartments = SchoolDepartmentsModel.fromJson(response);
+        });
+      } else {
+        throw Exception(response['message'] ?? 'Unknown error');
+      }
+    } catch (e) {
+      debugPrint("Error fetching school departments: $e");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    selectedDepartment = null;
     _fetchSchoolContacts();
+    _fetchSchoolDepartmentsList();
   }
 
   @override
@@ -135,7 +158,7 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
               padding: const EdgeInsets.all(12.0),
               child: SendMessageFormCard(
                 selectedDepartment: selectedDepartment,
-                departments: departments,
+                schoolDepartments: schoolDepartments,
                 onDepartmentChanged: (value) {
                   setState(() {
                     selectedDepartment = value;
@@ -144,59 +167,7 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
               ),
             ),
 
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Container(
-                decoration: BoxDecoration(color: Colors.white),
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        children: [
-                          SectionTitle(title: "Visit Us"),
-
-                          SizedBox(height: 10),
-
-                          Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              // color: Colors.blueGrey
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Icon(Icons.location_on_outlined),
-                                ),
-                                Expanded(
-                                  flex: 4,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("123 Education Street"),
-                                      Text("Springfield, ST 12345"),
-                                      Text("United States"),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            Padding(padding: const EdgeInsets.all(12), child: VisitUsCard()),
 
             SizedBox(height: 20),
           ],

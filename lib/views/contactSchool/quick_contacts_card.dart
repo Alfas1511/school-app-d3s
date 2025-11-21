@@ -30,9 +30,10 @@ class QuickContactsCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 4,
-                offset: Offset(0, 2),
+                color: Colors.grey.withOpacity(0.1),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -84,7 +85,7 @@ class QuickContactsCard extends StatelessWidget {
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
-                                    Icons.call,
+                                    Icons.call_outlined,
                                     size: 18,
                                     color: Colors.lightGreen,
                                   ),
@@ -102,7 +103,7 @@ class QuickContactsCard extends StatelessWidget {
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
-                                    Icons.mail,
+                                    Icons.mail_outlined,
                                     size: 18,
                                     color: Colors.lightBlue,
                                   ),
@@ -117,7 +118,7 @@ class QuickContactsCard extends StatelessWidget {
 
                     Row(
                       children: [
-                        const Icon(Icons.call, size: 14),
+                        const Icon(Icons.call_outlined, size: 15),
                         const SizedBox(width: 5),
                         Text(
                           contact.phone,
@@ -129,7 +130,7 @@ class QuickContactsCard extends StatelessWidget {
 
                     Row(
                       children: [
-                        const Icon(Icons.mail, size: 14),
+                        const Icon(Icons.mail_outlined, size: 15),
                         const SizedBox(width: 5),
                         Text(
                           contact.email,
@@ -139,12 +140,15 @@ class QuickContactsCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
 
-                    Text(
-                      "${contact.days} | ${contact.time}",
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontSize: 15,
-                      ),
+                    Row(
+                      children: [
+                        const Icon(Icons.schedule_outlined, size: 15),
+                        const SizedBox(width: 5),
+                        Text(
+                          "${contact.days} | ${contact.time}",
+                          style: TextStyle(color: Colors.black, fontSize: 15),
+                        ),
+                      ],
                     ),
                   ],
                 ),
