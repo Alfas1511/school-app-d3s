@@ -10,10 +10,15 @@ class LatestExamResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final examsResults = examsResultsData?.data ?? [];
+
+    if (examsResults.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -32,8 +37,7 @@ class LatestExamResults extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
-                SectionTitle(title: "Lastest Exam Results"),
-
+                SectionTitle(title: "Latest Exam Results"),
                 Text(
                   "View Report",
                   style: TextStyle(
@@ -43,11 +47,9 @@ class LatestExamResults extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-            if (examsResults.isEmpty)
-              const Center(child: Text("Results Unavailable!")),
-
+            // List of exam results
             Column(
               children: examsResults.map((examsResult) {
                 return ListingComponentOne(

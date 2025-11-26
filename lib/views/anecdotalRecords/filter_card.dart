@@ -19,11 +19,10 @@ class _FilterCardState extends State<FilterCard> {
 
   @override
   Widget build(BuildContext context) {
-    // final categories = widget.anecdotalCategories?.data ?? [];
     final categories = ["All", ...?widget.anecdotalCategories?.data];
 
     return Container(
-      width: double.infinity, // ✅ makes it take full width
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -34,7 +33,7 @@ class _FilterCardState extends State<FilterCard> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min, // ✅ makes height fit content
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
             "Filter by Category",
@@ -51,7 +50,6 @@ class _FilterCardState extends State<FilterCard> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: categories.map((category) {
-                  // final isSelected = selectedCategory == category;
                   final isSelected =
                       selectedCategory == category ||
                       (selectedCategory == null && category == "All");
@@ -60,19 +58,15 @@ class _FilterCardState extends State<FilterCard> {
                     child: ChoiceChip(
                       label: Text(category),
                       selected: isSelected,
-                      // onSelected: (selected) {
-                      //   setState(() {
-                      //     selectedCategory = selected ? category : null;
-                      //   });
-                      //   widget.onCategorySelected(selectedCategory);
-                      // },
+                      checkmarkColor: (isSelected == true)
+                          ? Colors.white
+                          : Colors.black,
                       onSelected: (selected) {
                         setState(() {
                           selectedCategory = selected
                               ? (category == "All" ? null : category)
                               : null;
                         });
-                        // ✅ Send null if “All” selected
                         widget.onCategorySelected(
                           category == "All" ? null : selectedCategory,
                         );

@@ -10,6 +10,9 @@ class RecentAchievements extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final achievements = studentAchievements?.data ?? [];
+    if (achievements.isEmpty) {
+      return const SizedBox.shrink();
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(
@@ -34,12 +37,6 @@ class RecentAchievements extends StatelessWidget {
             const SizedBox(height: 10),
 
             if (achievements.isEmpty)
-              const Center(
-                child: Text(
-                  "Achievements info unavailable!",
-                ),
-              )
-            else
               ...achievements.map((achievement) {
                 return UpdateCard(
                   icon: Icons.emoji_events,

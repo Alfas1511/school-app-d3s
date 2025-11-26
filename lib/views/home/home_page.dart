@@ -144,14 +144,26 @@ class _HomePageState extends State<HomePage> {
           );
         }
 
+        // setState(() {
+        //   students = fetchedStudents;
+        //   selectedStudent = matchedStudent ?? fetchedStudents.first;
+        //   isLoading = false;
+        // });
+
+        // // Make sure to store the correct selected ID again
+        // await prefs.setInt('selected_student_id', selectedStudent!.id);
+
         setState(() {
           students = fetchedStudents;
-          selectedStudent = matchedStudent ?? fetchedStudents.first;
-          isLoading = false;
         });
 
-        // Make sure to store the correct selected ID again
+        selectedStudent = matchedStudent ?? fetchedStudents.first;
+
+        // Save correct ID again
         await prefs.setInt('selected_student_id', selectedStudent!.id);
+
+        // 🔹 Auto-select student and load all related data
+        await _selectStudent(selectedStudent!);
       } else {
         throw Exception(response['message']);
       }
@@ -244,6 +256,51 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _selectStudent(StudentsListModel student) async {
+    setState(() {
+      selectedStudent = student;
+      importantUpdates = null;
+      isLoading = true;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('selected_student_id', student.id);
+    await prefs.setString(
+      'student_name',
+      "${student.firstName} ${student.lastName}",
+    );
+
+    // Fetch full student details
+    final studentDetails = await _fetchStudentDetails(student.id);
+    if (studentDetails != null) {
+      await prefs.setString('student_grade', studentDetails.grade);
+      await prefs.setString('student_grade_id', studentDetails.gradeId);
+      await prefs.setString('student_division', studentDetails.division);
+      await prefs.setString('student_division_id', studentDetails.divisionId);
+
+      setState(() {
+        selectedStudent = StudentsListModel(
+          id: studentDetails.id,
+          admissionNo: '',
+          firstName: studentDetails.firstName,
+          lastName: studentDetails.lastName,
+          admissionDate: '',
+          dob: studentDetails.dob,
+          gender: '',
+        );
+      });
+    }
+
+    // Load related API data
+    await _loadImportantUpdates(student.id);
+    await _loadStudentAchievements(student.id);
+    await _fetchStudentExamResults(student.id);
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   Future<void> _fetchStudentExamResults(int studentId) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -326,62 +383,64 @@ class _HomePageState extends State<HomePage> {
                 students: students,
                 isLoading: isLoading,
                 selectedStudent: selectedStudent,
-                onStudentSelected: (student) async {
-                  setState(() {
-                    selectedStudent = student;
-                    importantUpdates = null; // Clear old updates
-                    isLoading = true;
-                  });
 
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.setInt('selected_student_id', student.id);
-                  await prefs.setString(
-                    'student_name',
-                    "${student.firstName} ${student.lastName}",
-                  );
+                // onStudentSelected: (student) async {
+                //   setState(() {
+                //     selectedStudent = student;
+                //     importantUpdates = null; // Clear old updates
+                //     isLoading = true;
+                //   });
 
-                  // Fetch full student details
-                  final studentDetails = await _fetchStudentDetails(student.id);
-                  if (studentDetails != null) {
-                    await prefs.setString(
-                      'student_grade',
-                      studentDetails.grade,
-                    );
-                    await prefs.setString(
-                      'student_grade_id',
-                      studentDetails.gradeId,
-                    );
-                    await prefs.setString(
-                      'student_division',
-                      studentDetails.division,
-                    );
-                    await prefs.setString(
-                      'student_division_id',
-                      studentDetails.divisionId,
-                    );
+                //   final prefs = await SharedPreferences.getInstance();
+                //   await prefs.setInt('selected_student_id', student.id);
+                //   await prefs.setString(
+                //     'student_name',
+                //     "${student.firstName} ${student.lastName}",
+                //   );
 
-                    setState(() {
-                      selectedStudent = StudentsListModel(
-                        id: studentDetails.id,
-                        admissionNo: '',
-                        firstName: studentDetails.firstName,
-                        lastName: studentDetails.lastName,
-                        admissionDate: '',
-                        dob: studentDetails.dob,
-                        gender: '',
-                      );
-                    });
-                  }
+                //   // Fetch full student details
+                //   final studentDetails = await _fetchStudentDetails(student.id);
+                //   if (studentDetails != null) {
+                //     await prefs.setString(
+                //       'student_grade',
+                //       studentDetails.grade,
+                //     );
+                //     await prefs.setString(
+                //       'student_grade_id',
+                //       studentDetails.gradeId,
+                //     );
+                //     await prefs.setString(
+                //       'student_division',
+                //       studentDetails.division,
+                //     );
+                //     await prefs.setString(
+                //       'student_division_id',
+                //       studentDetails.divisionId,
+                //     );
 
-                  // 🔹 Fetch important updates for the newly selected student
-                  await _loadImportantUpdates(student.id);
-                  await _loadStudentAchievements(student.id);
-                  await _fetchStudentExamResults(student.id);
+                //     setState(() {
+                //       selectedStudent = StudentsListModel(
+                //         id: studentDetails.id,
+                //         admissionNo: '',
+                //         firstName: studentDetails.firstName,
+                //         lastName: studentDetails.lastName,
+                //         admissionDate: '',
+                //         dob: studentDetails.dob,
+                //         gender: '',
+                //       );
+                //     });
+                //   }
 
-                  setState(() {
-                    isLoading = false;
-                  });
-                },
+                //   // 🔹 Fetch important updates for the newly selected student
+                //   await _loadImportantUpdates(student.id);
+                //   await _loadStudentAchievements(student.id);
+                //   await _fetchStudentExamResults(student.id);
+
+                //   setState(() {
+                //     isLoading = false;
+                //   });
+                // },
+                onStudentSelected: (student) => _selectStudent(student),
               ),
 
               const SizedBox(height: 20),

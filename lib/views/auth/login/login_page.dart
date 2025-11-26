@@ -90,38 +90,30 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              /// ----------- TOP SPACER ------------
-              const Spacer(flex: 1),
-
-              /// ----------- LOGO SECTION -----------
-              logoSection(),
-
-              const SizedBox(height: 20),
-
-              /// ----------- LOGIN FORM IN CENTER -----------
-              /// Expands and keeps the form centered
-              Expanded(flex: 5, child: Center(child: loginForm())),
-
-              /// ----------- BOTTOM SPACER -----------
-              const Spacer(flex: 2),
-
-              /// ----------- FOOTER AT BOTTOM -----------
-              Padding(
-                padding: const EdgeInsets.only(bottom: 25),
-                child: footer(),
-              ),
-            ],
+          child: SafeArea(
+            child: Column(
+              children: [
+                const Spacer(flex: 1),
+                logoSection(),
+                const SizedBox(height: 20),
+                Expanded(flex: 5, child: Center(child: loginForm())),
+                const Spacer(flex: 2),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 25),
+                  child: footer(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
