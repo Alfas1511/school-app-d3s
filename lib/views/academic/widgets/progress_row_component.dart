@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/resources/app_colours.dart';
 
 class ProgressRowComponent extends StatelessWidget {
   final String subject;
   final double progress;
-  final Color color;
+  final int displayPercentage;
+  final String color;
 
   const ProgressRowComponent({
     super.key,
     required this.subject,
     required this.progress,
+    required this.displayPercentage,
     required this.color,
   });
 
@@ -17,19 +20,21 @@ class ProgressRowComponent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 12),
+
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               subject,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
             ),
             Text(
-              "${(progress * 100).toInt()}%",
+              "$displayPercentage%",
               style: const TextStyle(
-                fontSize: 13,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: Colors.black,
               ),
             ),
           ],
@@ -41,7 +46,9 @@ class ProgressRowComponent extends StatelessWidget {
             value: progress,
             minHeight: 8,
             backgroundColor: Colors.grey.shade200,
-            valueColor: AlwaysStoppedAnimation<Color>(color),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              AppColours.hexToColor(color),
+            ),
           ),
         ),
       ],

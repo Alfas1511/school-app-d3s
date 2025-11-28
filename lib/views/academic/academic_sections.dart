@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_app/models/exam_timetable_model.dart';
 import 'package:school_app/models/student_exam_ranks_model.dart';
 import 'package:school_app/models/student_exam_results_model.dart';
+import 'package:school_app/models/syllabus_progress_model.dart';
 import 'package:school_app/resources/app_colours.dart';
 import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/resources/app_spacing.dart';
@@ -47,6 +48,7 @@ class _AcademicSectionsState extends State<AcademicSections> {
   ExamTimeTableModel? examsTimeTable;
   StudentExamResultsModel? examsResults;
   StudentExamRanksModel? examRanks;
+  SyllabusProgressModel? syllabusProgress;
 
   Future<void> _fetchStudyMaterials() async {
     try {
@@ -150,12 +152,46 @@ class _AcademicSectionsState extends State<AcademicSections> {
     }
   }
 
+  Future<void> _fetchCurrentSyllabusProgress() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      final gradeId = prefs.getString('student_grade_id');
+      final divisionId = prefs.getString('student_division_id');
+
+      final apiService = ApiService();
+      final body = {'grade_id': gradeId, 'division_id': divisionId};
+
+      final response = await apiService.postRequest(
+        ApiConstants.syllabusProgress,
+        body,
+        token: token,
+      );
+
+      debugPrint("Current Syllabus Progress RESPONSE ${response}");
+
+      if (response['status'] == true) {
+        final syllabusProgressModel = SyllabusProgressModel.fromJson(response);
+        setState(() {
+          syllabusProgress = syllabusProgressModel;
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message'] ?? 'Unknown error');
+      }
+    } catch (e) {
+      debugPrint("Error Syllabus Progress: $e");
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _fetchStudyMaterials();
     _fetchExamTimetable();
     _fetchStudentExamResults();
+    _fetchCurrentSyllabusProgress();
   }
 
   @override
@@ -293,7 +329,7 @@ class _AcademicSectionsState extends State<AcademicSections> {
           materials: materials,
         );
       case 1:
-        return SyllabusComponent();
+        return SyllabusComponent(syllabusProgress: syllabusProgress);
       case 2:
         return ExamsComponent(
           isLoading: isLoading,
