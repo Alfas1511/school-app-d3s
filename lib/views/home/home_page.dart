@@ -8,6 +8,7 @@ import 'package:school_app/models/student_achievements_model.dart';
 import 'package:school_app/models/student_details_model.dart';
 import 'package:school_app/models/student_exam_results_model.dart';
 import 'package:school_app/models/students_list_model.dart';
+import 'package:school_app/models/todays_highlights_model.dart';
 import 'package:school_app/views/attendance/attendance_page.dart';
 import 'package:school_app/views/home/important_updates.dart';
 import 'package:school_app/views/home/latest_exam_results.dart';
@@ -35,6 +36,7 @@ class _HomePageState extends State<HomePage> {
   ImportantUpdatesModel? importantUpdates;
   StudentAchievementsModel? studentAchievements;
   StudentExamResultsModel? examsResults;
+  TodaysHighlightsModel? todaysHighlightsModel;
 
   List<StudentsListModel> students = [];
   List<Widget> get _pages => [
@@ -228,6 +230,36 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _loadTodaysHighlights(int studentId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      final studentId = prefs.getString('selected_student_id');
+      final body = {'student_id': studentId};
+
+      final apiService = ApiService();
+      final response = await apiService.postRequest(
+        ApiConstants.homeTodaysHighlights,
+        body,
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        setState(() {
+          todaysHighlightsModel = TodaysHighlightsModel.fromJson(response);
+          isLoading = false;
+        });
+      } else {
+        throw Exception(response['message']);
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      debugPrint("Error loading important updates: $e");
+    }
+  }
+
   Future<void> _loadStudentAchievements(int studentId) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -295,6 +327,7 @@ class _HomePageState extends State<HomePage> {
     await _loadImportantUpdates(student.id);
     await _loadStudentAchievements(student.id);
     await _fetchStudentExamResults(student.id);
+    await _loadTodaysHighlights(student.id);
 
     setState(() {
       isLoading = false;
@@ -352,6 +385,7 @@ class _HomePageState extends State<HomePage> {
       if (selectedId != null) _loadImportantUpdates(selectedId),
       if (selectedId != null) _loadStudentAchievements(selectedId),
       if (selectedId != null) _fetchStudentExamResults(selectedId),
+      if (selectedId != null) _loadTodaysHighlights(selectedId),
     ]);
 
     setState(() {
@@ -453,7 +487,7 @@ class _HomePageState extends State<HomePage> {
 
               const SizedBox(height: 20),
               // Today's Highlights
-              TodaysHighlights(),
+              TodaysHighlights(todaysHighlights: todaysHighlightsModel),
 
               const SizedBox(height: 20),
               // Recent Achievements

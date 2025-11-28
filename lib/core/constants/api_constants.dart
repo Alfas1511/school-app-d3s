@@ -18,6 +18,9 @@ class ApiConstants {
   static const String homeImportantUpdates =
       "$baseUrl/parent/important-updates";
 
+  static const String homeTodaysHighlights =
+      "$baseUrl/parent/student-todays-highlights";
+
   static const String academicImportantUpdates =
       "$baseUrl/parent/academic-important-updates";
 

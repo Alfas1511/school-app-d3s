@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/components/section_title.dart';
 import 'package:school_app/components/update_card.dart';
+import 'package:school_app/models/todays_highlights_model.dart';
 
 class TodaysHighlights extends StatelessWidget {
-  const TodaysHighlights({super.key});
+  final TodaysHighlightsModel? todaysHighlights;
+  const TodaysHighlights({super.key, this.todaysHighlights});
 
   @override
   Widget build(BuildContext context) {
+    final todaysHighlightsData = todaysHighlights?.data ?? [];
+    if (todaysHighlightsData.isEmpty) {
+      return const SizedBox.shrink();
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(
@@ -30,19 +36,15 @@ class TodaysHighlights extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            UpdateCard(
-              icon: Icons.event,
-              title: "Math Assignment Submitted",
-              subtitle: "Grade; A+ Great Work",
-              color: Colors.lightBlue,
-            ),
-
-            UpdateCard(
-              icon: Icons.book,
-              title: "Science Project Winner",
-              subtitle: "1st Place in School Science Fair",
-              color: Colors.lightGreen,
-            ),
+            if (todaysHighlightsData.isNotEmpty)
+              ...todaysHighlightsData.map((item) {
+                return UpdateCard(
+                  icon: Icons.event,
+                  title: item.title,
+                  subtitle: item.description,
+                  color: Colors.lightBlue,
+                );
+              }).toList(),
           ],
         ),
       ),

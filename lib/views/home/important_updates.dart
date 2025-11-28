@@ -3,6 +3,7 @@ import 'package:school_app/components/section_title.dart';
 import 'package:school_app/models/important_updates_model.dart';
 import 'package:school_app/resources/app_colours.dart';
 import 'package:school_app/components/update_card.dart';
+import 'package:school_app/views/home/notifications_expanded_page.dart';
 
 class ImportantUpdates extends StatelessWidget {
   final ImportantUpdatesModel? importantUpdatesData;
@@ -10,8 +11,10 @@ class ImportantUpdates extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final updates = importantUpdatesData?.data ?? [];
-    
+    // final updates = importantUpdatesData?.data ?? [];
+    final count = (importantUpdatesData?.data ?? []).toList();
+    final updates = (importantUpdatesData?.data ?? []).take(3).toList();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(
@@ -45,7 +48,7 @@ class ImportantUpdates extends StatelessWidget {
                         color: Colors.red[100],
                       ),
                       child: Text(
-                        "${updates.length} New",
+                        "${count.length} New",
                         style: TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
@@ -53,7 +56,16 @@ class ImportantUpdates extends StatelessWidget {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => NotificationsExpandedPage(
+                              updates: importantUpdatesData?.data ?? [],
+                            ),
+                          ),
+                        );
+                      },
                       child: Text(
                         'View All',
                         style: TextStyle(
