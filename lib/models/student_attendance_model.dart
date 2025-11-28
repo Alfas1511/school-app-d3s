@@ -30,6 +30,7 @@ class StudentAttendanceData {
   final int absentCount;
   final int lateCount;
   final List<AttendanceDetail> attendanceDetails;
+  final List<Holidays> holidays;
 
   StudentAttendanceData({
     required this.studentName,
@@ -37,6 +38,7 @@ class StudentAttendanceData {
     required this.absentCount,
     required this.lateCount,
     required this.attendanceDetails,
+    required this.holidays,
   });
 
   factory StudentAttendanceData.fromJson(Map<String, dynamic> json) {
@@ -46,10 +48,15 @@ class StudentAttendanceData {
       absentCount: json['absent_count'] ?? 0,
       lateCount: json['late_count'] ?? 0,
       attendanceDetails:
-          (json['attendance_details'] as List<dynamic>?)
-              ?.map((item) => AttendanceDetail.fromJson(item))
-              .toList() ??
-          [],
+          json['attendance_details'] != null &&
+              json['attendance_details'] is List
+          ? (json['attendance_details'] as List)
+                .map((e) => AttendanceDetail.fromJson(e))
+                .toList()
+          : [],
+      holidays: json['holidays'] != null && json['holidays'] is List
+          ? (json['holidays'] as List).map((e) => Holidays.fromJson(e)).toList()
+          : [],
     );
   }
 
@@ -62,6 +69,7 @@ class StudentAttendanceData {
       'attendance_details': attendanceDetails
           .map((item) => item.toJson())
           .toList(),
+      'holidays': holidays.map((item) => item.toJson()).toList(),
     };
   }
 }
@@ -73,6 +81,7 @@ class AttendanceDetail {
   final String attendanceNote;
   final String createdAt;
   final String updatedAt;
+  final String color;
 
   AttendanceDetail({
     required this.id,
@@ -81,6 +90,7 @@ class AttendanceDetail {
     required this.attendanceNote,
     required this.createdAt,
     required this.updatedAt,
+    required this.color,
   });
 
   factory AttendanceDetail.fromJson(Map<String, dynamic> json) {
@@ -91,6 +101,7 @@ class AttendanceDetail {
       attendanceNote: json['attendance_note'] ?? '',
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',
+      color: json['color'] ?? '',
     );
   }
 
@@ -102,6 +113,43 @@ class AttendanceDetail {
       'attendance_note': attendanceNote,
       'created_at': createdAt,
       'updated_at': updatedAt,
+      'color': color,
+    };
+  }
+}
+
+class Holidays {
+  final int id;
+  final String holidayType;
+  final String holidayName;
+  final String holidayDate;
+  final String holidayDescription;
+
+  Holidays({
+    required this.id,
+    required this.holidayType,
+    required this.holidayName,
+    required this.holidayDate,
+    required this.holidayDescription,
+  });
+
+  factory Holidays.fromJson(Map<String, dynamic> json) {
+    return Holidays(
+      id: json['id'] ?? 0,
+      holidayType: json['holiday_type'] ?? '',
+      holidayName: json['holiday_name'] ?? '',
+      holidayDate: json['holiday_date'] ?? '',
+      holidayDescription: json['holiday_description'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'holiday_type': holidayType,
+      'holiday_name': holidayName,
+      'holiday_date': holidayDate,
+      'holiday_description': holidayDescription,
     };
   }
 }

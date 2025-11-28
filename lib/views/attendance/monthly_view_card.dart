@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/models/student_attendance_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class MonthlyViewCard extends StatefulWidget {
-  final Map<DateTime, String> attendanceStatus;
+  final StudentAttendanceModel? studentResponse;
 
-  const MonthlyViewCard({super.key, required this.attendanceStatus});
+  const MonthlyViewCard({super.key, required this.studentResponse});
 
   @override
   State<MonthlyViewCard> createState() => _MonthlyViewCardState();
@@ -14,10 +15,38 @@ class _MonthlyViewCardState extends State<MonthlyViewCard> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
+  // Read attendance status for a given day
+  String? _getStatus(DateTime day) {
+    final attendanceList =
+        widget.studentResponse?.data?.attendanceDetails ?? [];
+    final holidayList = widget.studentResponse?.data?.holidays ?? [];
+
+    for (var item in attendanceList) {
+      final itemDate = DateTime.parse(item.attendanceDate);
+
+      if (itemDate.year == day.year &&
+          itemDate.month == day.month &&
+          itemDate.day == day.day) {
+        return item.attendanceStatus.toLowerCase();
+      }
+    }
+
+    for (var h in holidayList) {
+      final hDate = DateTime.parse(h.holidayDate);
+      if (hDate.year == day.year &&
+          hDate.month == day.month &&
+          hDate.day == day.day) {
+        return "holiday";
+      }
+    }
+
+    return null; // No record for this day
+  }
+
   // Get color based on status
   Color _getStatusColor(DateTime day) {
-    final status =
-        widget.attendanceStatus[DateTime(day.year, day.month, day.day)];
+    final status = _getStatus(day);
+
     switch (status) {
       case 'present':
         return Colors.green;
@@ -61,15 +90,16 @@ class _MonthlyViewCardState extends State<MonthlyViewCard> {
                 ),
               ],
             ),
+
             const SizedBox(height: 16),
 
-            // TableCalendar
+            // Table Calendar
             TableCalendar(
               focusedDay: _focusedDay,
               firstDay: DateTime(2020),
               lastDay: DateTime(2030),
-              calendarFormat: CalendarFormat.month,
               startingDayOfWeek: StartingDayOfWeek.monday,
+              calendarFormat: CalendarFormat.month,
               availableGestures: AvailableGestures.all,
               selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
               onDaySelected: (selectedDay, focusedDay) {
@@ -125,12 +155,14 @@ class _MonthlyViewCardState extends State<MonthlyViewCard> {
     );
   }
 
+  // Build Each Day Box
   Widget _buildDayCell(
     DateTime day, {
     bool isToday = false,
     bool isSelected = false,
   }) {
     final bgColor = _getStatusColor(day);
+
     return Center(
       child: Container(
         margin: const EdgeInsets.all(4),
@@ -147,8 +179,8 @@ class _MonthlyViewCardState extends State<MonthlyViewCard> {
         alignment: Alignment.center,
         child: Text(
           '${day.day}',
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: (isSelected || isToday) ? Colors.white : Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -156,6 +188,7 @@ class _MonthlyViewCardState extends State<MonthlyViewCard> {
     );
   }
 
+  // Legend Builder
   Widget _buildLegend(Color color, String label) {
     return Row(
       children: [
@@ -174,7 +207,7 @@ class _MonthlyViewCardState extends State<MonthlyViewCard> {
   }
 }
 
-// Extension for month name formatting
+// Extension for month names
 extension MonthName on DateTime {
   String get monthName {
     const months = [

@@ -19,6 +19,7 @@ class _AttendancePageState extends State<AttendancePage> {
   String? studentName;
   String? grade;
   String? division;
+  StudentAttendanceModel? studentResponse;
 
   // Example attendance data
   final Map<DateTime, String> attendanceStatus = {
@@ -57,8 +58,7 @@ class _AttendancePageState extends State<AttendancePage> {
 
       // Check if API returned a proper JSON with 'status'
       if (response['status'] == true) {
-        final studentResponse = StudentAttendanceModel.fromJson(response);
-        return studentResponse.data;
+        studentResponse = StudentAttendanceModel.fromJson(response);
       } else {
         debugPrint("⚠️ No attendance data: ${response['message']}");
         return null;
@@ -69,23 +69,25 @@ class _AttendancePageState extends State<AttendancePage> {
     }
   }
 
-  Future<StudentAttendanceData?> _getStudentAttendance() async {
-    final prefs = await SharedPreferences.getInstance();
-    // final studentId = prefs.getInt('student_id');
-    final studentId = prefs.getInt('selected_student_id');
-
-    if (studentId == null) {
-      debugPrint("⚠️ No student_id found in SharedPreferences");
-      return null;
-    }
-
-    return await _fetchStudentAttendance(studentId);
-  }
-
   @override
   void initState() {
     super.initState();
     _loadStudentName();
+    _loadAttendance();
+  }
+
+  Future<void> _loadAttendance() async {
+    final prefs = await SharedPreferences.getInstance();
+    final studentId = prefs.getInt('selected_student_id');
+
+    if (studentId == null) {
+      debugPrint("⚠️ No student_id found in SharedPreferences");
+      return;
+    }
+
+    await _fetchStudentAttendance(studentId);
+
+    setState(() {});
   }
 
   @override
@@ -132,48 +134,20 @@ class _AttendancePageState extends State<AttendancePage> {
           ),
         ],
       ),
-      body: FutureBuilder<StudentAttendanceData?>(
-        future: _getStudentAttendance(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          } else if (!snapshot.hasData || snapshot.data == null) {
-            return const Center(child: Text("No attendance data available"));
-          }
-
-          final attendanceData = snapshot.data!;
-
-          final totalDays =
-              attendanceData.presentCount +
-              attendanceData.absentCount +
-              attendanceData.lateCount;
-
-          // ✅ Build map from attendance details
-          final Map<DateTime, String> attendanceStatusMap = {
-            for (var detail in attendanceData.attendanceDetails)
-              DateTime.parse(detail.attendanceDate): detail.attendanceStatus
-                  .toLowerCase(),
-          };
-
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                AttendanceSummaryCard(
-                  presentCount: attendanceData.presentCount.toString(),
-                  absentCount: attendanceData.absentCount.toString(),
-                  lateCount: attendanceData.lateCount.toString(),
-                  totalDays: totalDays.toString(),
-                ),
-                MonthlyViewCard(attendanceStatus: attendanceStatusMap),
-                RecentActivityCard(
-                  attendanceDetails: attendanceData.attendanceDetails,
-                ),
-              ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            AttendanceSummaryCard(
+              presentCount: studentResponse?.data?.presentCount ?? 0,
+              absentCount: studentResponse?.data?.absentCount ?? 0,
+              lateCount: studentResponse?.data?.lateCount ?? 0,
             ),
-          );
-        },
+
+            MonthlyViewCard(studentResponse: studentResponse),
+
+            RecentActivityCard(studentResponse: studentResponse),
+          ],
+        ),
       ),
     );
   }

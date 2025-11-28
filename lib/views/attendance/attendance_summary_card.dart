@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 
 class AttendanceSummaryCard extends StatelessWidget {
-  final String presentCount;
-  final String absentCount;
-  final String lateCount;
-  final String totalDays;
+  final int presentCount;
+  final int absentCount;
+  final int lateCount;
 
   const AttendanceSummaryCard({
     super.key,
     required this.presentCount,
     required this.absentCount,
     required this.lateCount,
-    required this.totalDays,
   });
 
   @override
@@ -37,7 +35,7 @@ class AttendanceSummaryCard extends StatelessWidget {
             _buildSummaryItem(Icons.schedule, lateCount, "Late", Colors.orange),
             _buildSummaryItem(
               Icons.calendar_month,
-              totalDays,
+              presentCount + absentCount + lateCount,
               "Total Days",
               Colors.blue,
             ),
@@ -49,7 +47,7 @@ class AttendanceSummaryCard extends StatelessWidget {
 
   Widget _buildSummaryItem(
     IconData icon,
-    String value,
+    int value,
     String label,
     Color color,
   ) {
@@ -66,7 +64,7 @@ class AttendanceSummaryCard extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          value,
+          "$value",
           style: TextStyle(
             color: color,
             fontWeight: FontWeight.bold,

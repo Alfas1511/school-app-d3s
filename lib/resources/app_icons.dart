@@ -50,4 +50,17 @@ class AppIcons {
         return Icons.help_outline;
     }
   }
+
+  static IconData attendanceIcons(String status) {
+    switch (status.toLowerCase()) {
+      case "present":
+        return Icons.check_outlined;
+      case "absent":
+        return Icons.close;
+      case "late":
+        return Icons.schedule;
+      default:
+        return Icons.help_outline;
+    }
+  }
 }

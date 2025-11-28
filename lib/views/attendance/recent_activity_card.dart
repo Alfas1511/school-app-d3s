@@ -1,52 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/models/student_attendance_model.dart';
+import 'package:school_app/resources/app_colours.dart';
+import 'package:school_app/resources/app_icons.dart';
 
 class RecentActivityCard extends StatelessWidget {
-  final List<AttendanceDetail> attendanceDetails;
+  final StudentAttendanceModel? studentResponse;
 
-  const RecentActivityCard({super.key, required this.attendanceDetails});
-
-  Color _getCardColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'present':
-        return Colors.green[100]!;
-      case 'absent':
-        return Colors.red[100]!;
-      case 'late':
-        return Colors.orange[100]!;
-      default:
-        return Colors.grey[200]!;
-    }
-  }
-
-  IconData _getIcon(String status) {
-    switch (status.toLowerCase()) {
-      case 'present':
-        return Icons.check_circle;
-      case 'absent':
-        return Icons.close;
-      case 'late':
-        return Icons.schedule;
-      default:
-        return Icons.help_outline;
-    }
-  }
-
-  Color _getIconColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'present':
-        return Colors.green;
-      case 'absent':
-        return Colors.red;
-      case 'late':
-        return Colors.orange;
-      default:
-        return Colors.grey;
-    }
-  }
+  const RecentActivityCard({super.key, required this.studentResponse});
 
   @override
   Widget build(BuildContext context) {
+    final details = studentResponse?.data?.attendanceDetails ?? [];
+
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Container(
@@ -64,26 +29,9 @@ class RecentActivityCard extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            attendanceDetails.isNotEmpty
-                ? Column(
-                    children: attendanceDetails.map((detail) {
-                      return Card(
-                        color: _getCardColor(detail.attendanceStatus),
-                        child: ListTile(
-                          leading: Icon(
-                            _getIcon(detail.attendanceStatus),
-                            color: _getIconColor(detail.attendanceStatus),
-                          ),
-                          title: Text(
-                            detail.attendanceStatus,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(detail.attendanceDate),
-                        ),
-                      );
-                    }).toList(),
-                  )
-                : const Center(
+
+            details.isEmpty
+                ? const Center(
                     child: Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text(
@@ -91,6 +39,39 @@ class RecentActivityCard extends StatelessWidget {
                         style: TextStyle(color: Colors.grey),
                       ),
                     ),
+                  )
+                : Column(
+                    children: details.reversed
+                        .map(
+                          (detail) => Card(
+                            color: AppColours.hexToColor(
+                              detail.color,
+                            ).withOpacity(0.5),
+                            child: ListTile(
+                              leading: Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                ),
+                                child: Icon(
+                                  AppIcons.attendanceIcons(
+                                    detail.attendanceStatus,
+                                  ),
+                                  color: AppColours.hexToColor(detail.color),
+                                ),
+                              ),
+                              title: Text(
+                                detail.attendanceStatus,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Text(detail.attendanceDate),
+                            ),
+                          ),
+                        )
+                        .toList(),
                   ),
           ],
         ),

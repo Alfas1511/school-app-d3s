@@ -168,7 +168,7 @@ class _AcademicSectionsState extends State<AcademicSections> {
         token: token,
       );
 
-      debugPrint("Current Syllabus Progress RESPONSE ${response}");
+      // debugPrint("Current Syllabus Progress RESPONSE ${response}");
 
       if (response['status'] == true) {
         final syllabusProgressModel = SyllabusProgressModel.fromJson(response);
