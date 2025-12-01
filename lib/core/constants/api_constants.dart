@@ -85,4 +85,11 @@ class ApiConstants {
 
   static const String syllabusProgress =
       "$baseUrl/parent/syllabus-progress-list";
+
+  static const String fatherInformationEdit =
+      "$baseUrl/parent/father-information-edit";
+  static const String motherInformationEdit =
+      "$baseUrl/parent/mother-information-edit";
+  static const String contactInformationEdit =
+      "$baseUrl/parent/contact-information-edit";
 }

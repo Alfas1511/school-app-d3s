@@ -4,7 +4,7 @@ import 'package:school_app/resources/app_icons.dart';
 import 'package:school_app/views/academic/academics_page.dart';
 import 'package:school_app/views/attendance/attendance_page.dart';
 import 'package:school_app/views/fee_management_page.dart';
-import 'package:school_app/views/profile_management_page.dart';
+import 'package:school_app/views/profileManagement/profile_management_page.dart';
 import 'package:school_app/views/timetable/timetable_page.dart';
 import 'package:school_app/views/transport/transport_page.dart';
 

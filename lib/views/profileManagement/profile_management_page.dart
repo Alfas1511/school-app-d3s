@@ -21,6 +21,27 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
 
   List<StudentsListModel> students = [];
 
+  bool isEditingFather = false;
+  bool isEditingMother = false;
+  bool isEditingContact = false;
+
+  // Controllers
+  final TextEditingController fatherNameController = TextEditingController();
+  final TextEditingController fatherPhoneController = TextEditingController();
+  final TextEditingController fatherEmailController = TextEditingController();
+  final TextEditingController fatherOccupationController =
+      TextEditingController();
+
+  final TextEditingController motherNameController = TextEditingController();
+  final TextEditingController motherPhoneController = TextEditingController();
+  final TextEditingController motherEmailController = TextEditingController();
+  final TextEditingController motherOccupationController =
+      TextEditingController();
+
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController emergencyContactController =
+      TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -107,6 +128,110 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
     });
   }
 
+  Future<void> _saveFatherInfo() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      final studentId = prefs.getInt('selected_student_id');
+
+      debugPrint("Here..!");
+      final body = {
+        'student_id': studentId,
+        'father_name': fatherNameController.text.trim(),
+        'father_email': fatherEmailController.text.trim(),
+        'father_phone': fatherPhoneController.text.trim(),
+        'father_occupation': fatherOccupationController.text.trim(),
+      };
+
+      final apiService = ApiService();
+      final response = await apiService.postRequest(
+        ApiConstants.fatherInformationEdit,
+        body,
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        await _loadAllData();
+        setState(() => isEditingFather = false);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Father information updated successfully"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {}
+  }
+
+  Future<void> _saveMotherInfo() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      final studentId = prefs.getInt('selected_student_id');
+
+      final body = {
+        'student_id': studentId,
+        'mother_name': motherNameController.text.trim(),
+        'mother_email': motherEmailController.text.trim(),
+        'mother_phone': motherPhoneController.text.trim(),
+        'mother_occupation': motherOccupationController.text.trim(),
+      };
+
+      final apiService = ApiService();
+      final response = await apiService.postRequest(
+        ApiConstants.motherInformationEdit,
+        body,
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        await _loadAllData();
+        setState(() => isEditingMother = false);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Mother information updated successfully"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {}
+  }
+
+  Future<void> _saveContactInfo() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      final studentId = prefs.getInt('selected_student_id');
+
+      final body = {
+        'student_id': studentId,
+        'address': addressController.text.trim(),
+        'emergency_contact': emergencyContactController.text.trim(),
+      };
+
+      final apiService = ApiService();
+      final response = await apiService.postRequest(
+        ApiConstants.contactInformationEdit,
+        body,
+        token: token,
+      );
+
+      if (response['status'] == true) {
+        await _loadAllData();
+        setState(() => isEditingContact = false);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Contact information updated successfully"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -179,10 +304,22 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
                               children: List.generate(students.length, (index) {
                                 final student = students[index];
                                 return GestureDetector(
-                                  onTap: () {
+                                  // onTap: () {
+                                  //   setState(() {
+                                  //     selectedStudentIndex = index;
+                                  //   });
+                                  // },
+                                  onTap: () async {
                                     setState(() {
                                       selectedStudentIndex = index;
                                     });
+
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    await prefs.setInt(
+                                      'selected_student_id',
+                                      students[index].id,
+                                    );
                                   },
                                   child: Container(
                                     margin: const EdgeInsets.only(right: 8),
@@ -223,32 +360,52 @@ class _ProfileManagementState extends State<ProfileManagementPage> {
                   : const Text("No student data available"),
 
               // Father Information
-              AppSpacing.vertical(height: 8),
               _parentInformation(
                 title: "Father Information",
                 name: parentProfile!.parentInfo.fatherName,
                 phone: parentProfile!.parentPhone,
                 email: parentProfile!.parentInfo.fatherEmail,
                 occupation: parentProfile!.parentInfo.fatherOccupation,
+                isEditing: isEditingFather,
+                onEdit: () => setState(() => isEditingFather = true),
+                onSave: _saveFatherInfo,
+                nameCtrl: fatherNameController,
+                phoneCtrl: fatherPhoneController,
+                emailCtrl: fatherEmailController,
+                occupationCtrl: fatherOccupationController,
               ),
 
-              // Mother Information
+              // // Mother Information
               AppSpacing.vertical(height: 8),
+
               _parentInformation(
                 title: "Mother Information",
                 name: parentProfile!.parentInfo.motherName,
                 phone: parentProfile!.parentInfo.motherPhone,
                 email: parentProfile!.parentInfo.motherEmail,
                 occupation: parentProfile!.parentInfo.motherOccupation,
+                isEditing: isEditingMother,
+                onEdit: () => setState(() => isEditingMother = true),
+                onSave: _saveMotherInfo,
+                nameCtrl: motherNameController,
+                phoneCtrl: motherPhoneController,
+                emailCtrl: motherEmailController,
+                occupationCtrl: motherOccupationController,
               ),
 
               // Contact Information
               AppSpacing.vertical(height: 8),
-              isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : students.isNotEmpty
-                  ? _contactInformation(students[selectedStudentIndex])
-                  : const Text("Contact information unavailable"),
+
+              _contactInformation(
+                students[selectedStudentIndex],
+                isEditingContact,
+                addressController,
+                emergencyContactController,
+                () => setState(() => isEditingContact = true),
+                _saveContactInfo,
+              ),
+
+              AppSpacing.vertical(height: 8),
             ],
           ),
         ),
@@ -396,240 +553,147 @@ Widget _parentInformation({
   required String phone,
   required String email,
   required String occupation,
+  required bool isEditing,
+  required VoidCallback onEdit,
+  required VoidCallback onSave,
+  required TextEditingController nameCtrl,
+  required TextEditingController phoneCtrl,
+  required TextEditingController emailCtrl,
+  required TextEditingController occupationCtrl,
 }) {
+  if (isEditing && nameCtrl.text.isEmpty) {
+    nameCtrl.text = name;
+    phoneCtrl.text = phone;
+    emailCtrl.text = email;
+    occupationCtrl.text = occupation;
+  }
+
   return Container(
     padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.05),
-          blurRadius: 5,
-          offset: const Offset(0, 3),
-        ),
-      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-              ],
+            Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
+            isEditing
+                ? TextButton(onPressed: onSave, child: const Text("Save"))
+                : IconButton(onPressed: onEdit, icon: const Icon(Icons.edit)),
           ],
         ),
 
-        // ✅ Structured info with Table
-        Table(
-          columnWidths: const {0: FlexColumnWidth(3), 1: FlexColumnWidth(2)},
-          children: [
-            TableRow(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                  child: Text("Name"),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                  child: Text(
-                    "",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-            TableRow(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                  child: Text(
-                    name,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                  child: Text(
-                    "",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-            TableRow(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                  child: Text("Phone"),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                  child: Text("Occupation"),
-                ),
-              ],
-            ),
+        const SizedBox(height: 10),
 
-            TableRow(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                  child: Text(
-                    phone,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                  child: Text(
-                    occupation,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-
-            TableRow(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                  child: Text("Email"),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                  child: Text(""),
-                ),
-              ],
-            ),
-
-            TableRow(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                  child: Text(
-                    email,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                  child: Text(""),
-                ),
-              ],
-            ),
-          ],
-        ),
+        isEditing
+            ? Column(
+                children: [
+                  _inputField("Name", nameCtrl),
+                  _inputField("Phone", phoneCtrl),
+                  _inputField("Email", emailCtrl),
+                  _inputField("Occupation", occupationCtrl),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _displayRow("Name", name),
+                  _displayRow("Phone", phone),
+                  _displayRow("Email", email),
+                  _displayRow("Occupation", occupation),
+                ],
+              ),
       ],
     ),
   );
 }
 
-Widget _contactInformation(StudentsListModel student) {
+Widget _contactInformation(
+  StudentsListModel student,
+  bool isEditing,
+  TextEditingController addressCtrl,
+  TextEditingController emergencyCtrl,
+  VoidCallback onEdit,
+  VoidCallback onSave,
+) {
+  if (isEditing) {
+    addressCtrl.text = student.address ?? "";
+    emergencyCtrl.text = student.emergencyContact ?? "";
+  }
+
   return Container(
-    padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
+    padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.05),
-          blurRadius: 5,
-          offset: const Offset(0, 3),
-        ),
-      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Contact Information",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-              ],
+            const Text(
+              "Contact Information",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
+            isEditing
+                ? TextButton(onPressed: onSave, child: const Text("Save"))
+                : IconButton(onPressed: onEdit, icon: const Icon(Icons.edit)),
           ],
         ),
 
-        Table(
-          columnWidths: const {0: FlexColumnWidth(3), 1: FlexColumnWidth(1)},
-          children: [
-            TableRow(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                  child: Text("Home Address"),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                  child: Text(
-                    "",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-            TableRow(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                  child: Text(
-                    student.address ?? "--",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                  child: Text(
-                    "",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-            TableRow(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                  child: Text("Emergency Contact"),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 10, 2, 6),
-                  child: Text(""),
-                ),
-              ],
-            ),
-
-            TableRow(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                  child: Text(
+        isEditing
+            ? Column(
+                children: [
+                  _inputField("Home Address", addressCtrl),
+                  _inputField("Emergency Contact", emergencyCtrl),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _displayRow("Home Address", student.address ?? "--"),
+                  _displayRow(
+                    "Emergency Contact",
                     student.emergencyContact ?? "--",
-                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(2, 0, 2, 6),
-                  child: Text(
-                    "",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+      ],
+    ),
+  );
+}
+
+Widget _inputField(String label, TextEditingController controller) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label, style: const TextStyle(color: Colors.grey)),
+      TextField(controller: controller),
+      const SizedBox(height: 10),
+    ],
+  );
+}
+
+Widget _displayRow(String label, String value) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Row(
+      children: [
+        Expanded(child: Text(label)),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     ),
