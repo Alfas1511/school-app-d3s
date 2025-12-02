@@ -84,22 +84,25 @@ class _AcademicSectionsState extends State<AcademicSections> {
     }
   }
 
-  Future<void> _fetchExamTimetable() async {
+  Future<void> _fetchExamTimetable(int selectedTab) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token');
       final gradeId = prefs.getString('student_grade_id');
 
-      if (gradeId == null) throw Exception("Grade ID missing");
-
       final apiService = ApiService();
-      final body = {'grade_id': gradeId};
+      final body = {
+        'grade_id': gradeId,
+        'exam_status': selectedTab == 0 ? 0 : 1,
+      };
 
       final response = await apiService.postRequest(
         ApiConstants.examTimetableList,
         body,
         token: token,
       );
+
+      // debugPrint("Timetable data: $response");
 
       if (response['status'] == true) {
         final examTable = ExamTimeTableModel.fromJson(response);
@@ -112,7 +115,11 @@ class _AcademicSectionsState extends State<AcademicSections> {
       }
     } catch (e) {
       debugPrint("Error fetching exam timetable: $e");
-      setState(() => isLoading = false);
+
+      setState(() {
+        isLoading = false;
+        examsTimeTable = ExamTimeTableModel(data: []);
+      });
     }
   }
 
@@ -185,11 +192,16 @@ class _AcademicSectionsState extends State<AcademicSections> {
     }
   }
 
+  Future<void> _fetchExamTimetableWithTab(int tabIndex) async {
+    setState(() => isLoading = true);
+    await _fetchExamTimetable(tabIndex);
+  }
+
   @override
   void initState() {
     super.initState();
     _fetchStudyMaterials();
-    _fetchExamTimetable();
+    _fetchExamTimetable(0);
     _fetchStudentExamResults();
     _fetchCurrentSyllabusProgress();
   }
@@ -334,6 +346,9 @@ class _AcademicSectionsState extends State<AcademicSections> {
         return ExamsComponent(
           isLoading: isLoading,
           examsTimeTable: examsTimeTable,
+          onTabChanged: (tabIndex) {
+            _fetchExamTimetableWithTab(tabIndex);
+          },
         );
       case 3:
         return ResultsComponent(
