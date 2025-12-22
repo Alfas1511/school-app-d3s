@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:school_app/providers/auth_provider.dart';
 import '../login/login_page.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -10,6 +12,37 @@ class ForgotPassword extends StatefulWidget {
 
 class _ForgotPasswordState extends State<ForgotPassword> {
   final TextEditingController phoneController = TextEditingController();
+
+  bool _loading = false;
+
+  Future<void> _sendResetLink() async {
+    final phone = phoneController.text.trim();
+
+    if (phone.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Phone number is required')));
+      return;
+    }
+
+    setState(() => _loading = true);
+
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      final message = await authProvider.forgotPassword(phone);
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceAll('Exception:', ''))),
+      );
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,9 +166,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   const SizedBox(height: 20),
 
                   ElevatedButton(
-                    onPressed: () {
-                      //
-                    },
+                    onPressed: _loading ? null : _sendResetLink,
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
@@ -143,10 +174,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       ),
                       backgroundColor: const Color.fromARGB(255, 17, 135, 203),
                     ),
-                    child: const Text(
-                      "Send OTP",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
+                    child: _loading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            "Send Reset Link",
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          ),
                   ),
                 ],
               ),

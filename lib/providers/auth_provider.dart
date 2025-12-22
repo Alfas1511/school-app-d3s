@@ -148,4 +148,25 @@ class AuthProvider with ChangeNotifier {
       ).showSnackBar(SnackBar(content: Text('Failed to log out. Try again.')));
     }
   }
+
+  Future<String> forgotPassword(String parentPhone) async {
+    final url = Uri.parse(ApiConstants.forgotPassword);
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'parent_phone': parentPhone}),
+    );
+
+    final jsonData = jsonDecode(response.body);
+
+    if (response.statusCode == 200 && jsonData['status'] == true) {
+      return jsonData['message'];
+    } else {
+      throw Exception(jsonData['message'] ?? 'Unable to send reset link');
+    }
+  }
 }
